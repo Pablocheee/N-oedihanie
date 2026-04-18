@@ -397,46 +397,45 @@
     }
 
     function sendOrder(event) {
-        event.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const status = document.getElementById('paymentStatus');
-        const email = document.getElementById('customerEmail').value;
-        
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        status.style.display = 'block';
-        status.innerText = "Связываемся с сервером...";
+    event.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const status = document.getElementById('paymentStatus');
+    const email = document.getElementById('customerEmail').value;
+    
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    status.style.display = 'block';
+    status.innerText = "Отправка формы...";
 
-        // Отправка через Formspree
-        fetch("https://formspree.io/f/pablo.che.sunset@gmail.com", {
-            method: "POST",
-            body: JSON.stringify({
-                email: email,
-                memo: generatedMemo,
-                message: "Клиент сообщил об оплате 500 USDT (TON)",
-                project: "ИNOE ДЫХАНИЕ"
-            }),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                status.innerHTML = `Заявка принята! Мы проверим транзакцию по Memo <b>${generatedMemo}</b>. Пароль придет на <b>${email}</b>.`;
-                btn.style.display = 'none';
-                setTimeout(() => { closePaymentModal(); }, 6000);
-            } else {
-                status.innerText = "Ошибка отправки. Пожалуйста, напишите в поддержку.";
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            }
-        }).catch(error => {
-            status.innerText = "Ошибка сети. Проверьте соединение.";
+    // Создаем виртуальную форму для обхода ограничений
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('memo', generatedMemo);
+    formData.append('message', "Заявка на доступ к ИNOE ДЫХАНИЕ. Проверьте оплату 500 USDT.");
+
+    fetch("https://formspree.io/f/pablo.che.sunset@gmail.com", {
+        method: "POST",
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            status.innerHTML = `Заявка принята! Мы проверим транзакцию по Memo <b>${generatedMemo}</b>. Пароль придет на <b>${email}</b>.`;
+            btn.style.display = 'none';
+        } else {
+            // Если всё еще ошибка, попробуй открыть эту ссылку в браузере для ручной активации:
+            // https://formspree.io/confirm/pablo.che.sunset@gmail.com
+            status.innerText = "Нужно подтвердить почту в письме от Formspree.";
             btn.disabled = false;
             btn.style.opacity = '1';
-            console.error('Formspree Error:', error);
-        });
-    }
+        }
+    }).catch(error => {
+        status.innerText = "Ошибка сети. Попробуйте обновить страницу.";
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    });
+}
 
     function toggleChat() {
         const win = document.getElementById('ai-window');
