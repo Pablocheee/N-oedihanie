@@ -296,9 +296,10 @@
     </a>
 
     <div class="nav-right">
-        <a href="#" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
+        <a href="#" class="lk-link" onclick="logout(); return false;">ВЫХОД</a>
         <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
-    </div></header><div id="full-menu">
+    </div>
+</header> <div id="full-menu">
     <div class="close-menu" onclick="toggleMenu(false)">×</div>
     <a href="#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
     <a href="#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
@@ -377,6 +378,17 @@
     const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
     document.getElementById('memoDisplay').innerText = generatedMemo;
     document.getElementById('hiddenMemo').value = generatedMemo;
+
+    function logout() {
+        // 1. Удаляем куки сессии (если используем их)
+        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
+        // 2. Очищаем LocalStorage (на случай, если там хранятся токены)
+        localStorage.clear();
+        
+        // 3. Перенаправляем на главную или страницу логина
+        window.location.href = "https://aio-core-blank.vercel.app/";
+    }
 
     function toggleMenu(s) {
         document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
