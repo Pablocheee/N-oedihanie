@@ -315,141 +315,46 @@
     <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a></div><main class="product-page">
     <div class="product-grid">
         <div class="product-image-wrap">
-            <img src="https://i.postimg.cc/gkk9P3C1/photo-2026-04-14-00-10-42.jpg" alt="Victory">
+            <img src="https://i.postimg.cc/gkk9P3C1/photo-2026-04-14-00-10-42.jpg">
         </div>
-
         <div class="product-info">
+            <h1 style="font-family: 'Manrope', sans-serif; font-size: clamp(32px, 5vw, 48px); font-weight: 200; margin-bottom: 30px; line-height: 1.2;">Чистый бланк <br><span style="color: var(--accent); font-weight: 400;">Перезагрузка</span></h1>
+            
             <ul class="benefits-list">
                 <li>
-                    <span class="bullet">✧</span>
-                    <p>Моментальный выход из стресса и тревоги. Эффект ощущается сразу, с регулярной практикой закрепляется на долго.</p>
+                    <span class="bullet">/</span>
+                    <p>Глубокое очищение ментального пространства от лишнего шума и тревожных мыслей.</p>
                 </li>
                 <li>
-                    <span class="bullet">✧</span>
-                    <p>Норма, а не усилие. Тебе больше не нужно себя успокаивать или контролировать — спокойствие и баланс становятся естественными.</p>
+                    <span class="bullet">/</span>
+                    <p>Активация парасимпатической системы для мгновенного восстановления сил.</p>
                 </li>
                 <li>
-                    <span class="bullet">✧</span>
-                    <p>Инструмент, который всегда под рукой. Дыхание всегда с тобой, нервная система восстанавливается, эмоциональный и гормональный фон стабилизируется.</p>
-                </li>
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Ясность мышления, эмоциональная стабильность и точечная концентрация. Без внутреннего шума. Ты выбираешь свои мысли, состояние и направление внимания — и легко удерживаешь фокус на любой задаче.</p>
-                </li>
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Мощная энергия и ресурс без стимуляторов. Ты наполняешься энергией на клеточном уровне за счёт дополнительного кислорода и грамотного газообмена — это естественно, безопасно и полезно для организма.</p>
+                    <span class="bullet">/</span>
+                    <p>Индивидуальный протокол задержек дыхания для работы с состоянием потока.</p>
                 </li>
             </ul>
 
-            <div style="margin-top: 50px;">
-                <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" 
-                   style="border: 1px solid var(--accent); color: var(--text-main); padding: 18px 40px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; display: inline-block; background: rgba(168, 218, 220, 0.05);">
-                    Получить доступ
-                </a>
+            <div style="margin-top: 50px; display: flex; align-items: center; gap: 30px;">
+                <a href="#" class="btn-main">Начать практику</a>
+                <span style="font-size: 24px; font-weight: 200; opacity: 0.6;">4 900 ₽</span>
             </div>
         </div>
-    </div></main><div id="paymentModal" class="modal">
-    <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
-        <div style="margin-bottom: 25px;">
-            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
-            <p style="font-size: 14px; opacity: 0.7;">Введите Email. На него придет пароль после подтверждения оплаты.</p>
-        </div>
+    </div>
+</main>
 
-        <form id="orderForm" action="https://formspree.io/f/xpqkrqng" method="POST">
-            <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
-                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none;">
-            
-            <input type="hidden" name="memo_id" id="hiddenMemo">
-            <input type="hidden" name="_subject" value="Новая оплата: ИNOE ДЫХАНИЕ">
-            
-            <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 20px;">
-                <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
-                <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
-                    Переведите <b>500 USDT</b>
-                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
-                    Комментарий (Memo): <b id="memoDisplay" style="color:var(--accent)">...</b>
-                </p>
-                
-                <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-                    <code id="walletAddr" style="font-size: 10px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
-                    <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 16px;">📋</button>
-                </div>
-            </div>
-
-            <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, отправить заявку</button>
-            <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
-        </form>
-    </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages"><div class="msg msg-ai">Приветствую. Я готов помочь вам с навигацией по сайту. Какой у вас вопрос?</div></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
-    // Уникальный Memo
-    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('memoDisplay').innerText = generatedMemo;
-    document.getElementById('hiddenMemo').value = generatedMemo;
+<script>
+    function toggleMenu(show) {
+        document.getElementById('full-menu').style.display = show ? 'flex' : 'none';
+    }
 
     function logout() {
-        // 1. Удаляем куки сессии (если используем их)
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        
-        // 2. Очищаем LocalStorage (на случай, если там хранятся токены)
-        localStorage.clear();
-        
-        // 3. Перенаправляем на главную или страницу логина
-        window.location.href = "https://aio-core-blank.vercel.app/";
+        // Очистка данных авторизации (пример для localStorage)
+        localStorage.removeItem('user_token');
+        localStorage.removeItem('user_data');
+        // Перенаправление на главную или страницу логина
+        window.location.href = '/';
     }
+</script>
 
-    function toggleMenu(s) {
-        document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
-        document.body.style.overflow = s ? 'hidden' : 'auto';
-    }
-
-    function openPaymentModal() {
-        document.getElementById('paymentModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closePaymentModal() {
-        document.getElementById('paymentModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    function copyWallet() {
-        const addr = document.getElementById('walletAddr').innerText;
-        navigator.clipboard.writeText(addr);
-        alert('Адрес скопирован!');
-    }
-
-    function toggleChat() {
-        const win = document.getElementById('ai-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function sendChat() {
-        const input = document.getElementById('chat-input');
-        const box = document.getElementById('chat-messages');
-        if (!input.value.trim()) return;
-        box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
-        const val = input.value;
-        input.value = '';
-        box.scrollTop = box.scrollHeight;
-        setTimeout(() => {
-            box.innerHTML += `<div class="msg msg-ai">Дыхание — это ваш мост к новому состоянию. Я всегда на связи.</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 600);
-    }
-
-    document.getElementById('chat-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') sendChat();
-    });
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if(href === "#") return;
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                toggleMenu(false);
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        });
-    });</script></body></html>
+</body></html>
