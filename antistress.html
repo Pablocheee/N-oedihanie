@@ -367,7 +367,7 @@
             </div>
 
             <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, проверить транзакцию</button>
-            <div id="paymentStatus" style="margin-top:15px; font-size:12px; color:var(--accent); display:none;">Проверяем блокчейн TON...</div>
+            <div id="paymentStatus" style="margin-top:15px; font-size:12px; color:var(--accent); display:none;">Подключение к шлюзу...</div>
             <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
         </form>
     </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages"><div class="msg msg-ai">Приветствую. Я готов помочь вам с навигацией по сайту. Какой у вас вопрос?</div></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
@@ -397,45 +397,43 @@
     }
 
     function sendOrder(event) {
-    event.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    const status = document.getElementById('paymentStatus');
-    const email = document.getElementById('customerEmail').value;
-    
-    btn.disabled = true;
-    btn.style.opacity = '0.5';
-    status.style.display = 'block';
-    status.innerText = "Отправка формы...";
+        event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('paymentStatus');
+        const email = document.getElementById('customerEmail').value;
+        
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        status.style.display = 'block';
+        status.innerText = "Отправка уведомления...";
 
-    // Создаем виртуальную форму для обхода ограничений
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('memo', generatedMemo);
-    formData.append('message', "Заявка на доступ к ИNOE ДЫХАНИЕ. Проверьте оплату 500 USDT.");
+        // Использование Web3Forms
+        const formData = new FormData();
+        formData.append("access_key", "73b37803-c408-4682-938b-87779b9b47e5"); // Публичный ключ Web3Forms для pablo.che.sunset@gmail.com
+        formData.append("email", email);
+        formData.append("subject", "Новая оплата: ИNOE ДЫХАНИЕ");
+        formData.append("from_name", "TANTRA Victory");
+        formData.append("message", `Клиент ${email} сообщил об оплате 500 USDT. Проверьте Memo: ${generatedMemo}`);
 
-    fetch("https://formspree.io/f/pablo.che.sunset@gmail.com", {
-        method: "POST",
-        body: formData,
-        headers: {
-            'Accept': 'application/json'
-        }
-    }).then(response => {
-        if (response.ok) {
-            status.innerHTML = `Заявка принята! Мы проверим транзакцию по Memo <b>${generatedMemo}</b>. Пароль придет на <b>${email}</b>.`;
-            btn.style.display = 'none';
-        } else {
-            // Если всё еще ошибка, попробуй открыть эту ссылку в браузере для ручной активации:
-            // https://formspree.io/confirm/pablo.che.sunset@gmail.com
-            status.innerText = "Нужно подтвердить почту в письме от Formspree.";
+        fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            body: formData
+        }).then(async (response) => {
+            let res = await response.json();
+            if (response.status == 200) {
+                status.innerHTML = `Заявка принята! Мы проверим транзакцию по Memo <b>${generatedMemo}</b>. Пароль придет на <b>${email}</b>.`;
+                btn.style.display = 'none';
+            } else {
+                status.innerText = "Ошибка: " + res.message;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }).catch(error => {
+            status.innerText = "Ошибка сети. Попробуйте еще раз.";
             btn.disabled = false;
             btn.style.opacity = '1';
-        }
-    }).catch(error => {
-        status.innerText = "Ошибка сети. Попробуйте обновить страницу.";
-        btn.disabled = false;
-        btn.style.opacity = '1';
-    });
-}
+        });
+    }
 
     function toggleChat() {
         const win = document.getElementById('ai-window');
