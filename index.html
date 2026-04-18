@@ -1,1 +1,880 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta property="og:type" content="website">
+<meta property="og:url" content="https://твой-сайт.com/">
+<meta property="og:title" content="ИNOE ДЫХАНИЕ">
+<meta property="og:description" content="Дыхательные практики для ясности ума и спокойствия. Результат с первого дня.">
 
+<meta property="og:image" content="https://твой-сайт.com/shara-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://i.postimg.cc/mgrLTs7q/564896917-17966813276970498-6846623746338872353-n.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Обнуление фона Тильды */
+        #allrecords, .t-records, .r, .t123, .t123__container, [id^="rec"] {
+            background-color: transparent !important;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;500;700&display=swap');
+
+:root {
+    --accent: #a8dadc;
+    --accent-glow: rgba(168, 218, 220, 0.4);
+    --deep: #1d3557;
+    --text-main: #f1faee;
+    --text-muted: rgba(241, 250, 238, 0.8);
+    --glass: rgba(255, 255, 255, 0.12);
+    --border: rgba(255, 255, 255, 0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    color: var(--text-main); 
+    line-height: 1.8; 
+    background: transparent !important; 
+    overflow-x: hidden;
+}
+
+#breath-bg { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    z-index: -1; 
+    background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%),
+                #0d1b2a;
+    background-size: 200% 200%;
+    animation: elementFlow 20s ease-in-out infinite alternate;
+    filter: saturate(1.2);
+}
+
+@keyframes elementFlow {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 100%; }
+}
+
+#programs { scroll-margin-top: 15vh; }
+
+header { 
+    position: fixed; 
+    top: 0; 
+    width: 100%; 
+    padding: 20px 5%; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    z-index: 1000; 
+    background: rgba(9, 21, 34, 0.7); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+
+/* Стили для правой части хедера */
+.nav-right { 
+    display: flex; 
+    align-items: center; 
+    gap: 30px; 
+}
+
+.lk-link {
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    opacity: 0.8;
+    transition: 0.3s;
+    border-bottom: 1px solid transparent;
+    text-transform: uppercase;
+}
+
+.lk-link:hover {
+    opacity: 1;
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Кнопка МЕНЮ текстом и фикс мобильной версии */
+.menu-toggle {
+    color: var(--text-main);
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+    opacity: 0.8;
+    text-transform: uppercase;
+    white-space: nowrap; /* Не дает слову МЕНЮ разрываться */
+}
+
+.menu-toggle:hover {
+    opacity: 1;
+    color: var(--accent);
+}
+
+/* --- ОБНОВЛЕННЫЙ ЛОГОТИП (Сближение букв) --- */
+.logo { 
+    font-family: 'Manrope', sans-serif;
+    font-size: 26px; 
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.logo-composite {
+    font-weight: 800;
+    color: var(--accent);
+    text-shadow: 0 0 15px var(--accent-glow);
+    letter-spacing: 2px;
+    position: relative;
+}
+
+.logo-composite::after {
+    content: "ИN"; 
+    position: absolute;
+    left: 0;
+    top: 52%; 
+    transform: scaleY(-1); 
+    color: var(--accent);
+    opacity: 0.12; 
+    filter: blur(1.5px); 
+    -webkit-mask-image: linear-gradient(to top, transparent 10%, black 90%);
+    mask-image: linear-gradient(to top, transparent 10%, black 90%);
+    pointer-events: none;
+}
+
+/* Прижимаем буквы друг к другу, но без слипания */
+.logo-o { margin-left: -2px; }
+
+.logo-e { margin-left: -2px; }
+
+.logo-bridge {
+    font-weight: 600;
+    color: rgba(168, 218, 220, 0.7);
+    letter-spacing: 1px;
+}
+
+.logo-thin { 
+    font-weight: 200;
+    color: var(--text-main);
+    margin-left: 10px;
+    letter-spacing: 6px;
+    opacity: 0.5;
+}
+
+/* Меню и Герой */
+#full-menu {
+    position: fixed; inset: 0; background: rgba(9, 21, 34, 0.98); z-index: 2000;
+    display: none; flex-direction: column; justify-content: center; 
+    align-items: center; gap: 40px; text-align: center;
+}
+
+#full-menu .close-menu {
+    position: absolute; top: 20px; right: 30px; font-size: 50px; 
+    line-height: 1; cursor: pointer; font-weight: 100; transition: 0.3s; z-index: 2001;
+}
+
+#full-menu a { 
+    display: inline-block; font-size: 36px; color: var(--text-main); 
+    text-decoration: none; font-weight: 200; transition: 0.4s; letter-spacing: 3px; 
+}
+
+/* Стили для новых шагов в Программах */
+.step {
+    display: none;
+    animation: customFadeIn 0.8s ease forwards;
+}
+.step.active { display: block; }
+
+#next-step-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 12px 30px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 10px;
+    letter-spacing: 2px;
+    transition: 0.3s;
+}
+
+#next-step-btn:hover {
+    background: var(--accent);
+    color: var(--deep);
+}
+
+/* Адаптив для мобилок */
+@media screen and (max-width: 768px) {
+    .nav-right { gap: 15px; }
+    .logo-thin { display: none; } /* Скрываем "ДЫХАНИЕ" на очень мелких экранах для места */
+}
+
+.hero { 
+    text-align: center; 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.hero h1 { 
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(40px, 8vw, 95px); 
+    font-weight: 200; 
+    line-height: 1.1; 
+    letter-spacing: -2px; 
+    margin-bottom: 35px; 
+    background: linear-gradient(135deg, #f1faee 0%, #a8dadc 50%, #f1faee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: 0 0 20px rgba(168, 218, 220, 0.3);
+    animation: customFadeIn 3s ease forwards;
+}
+        
+        .btn-main { 
+            background: transparent; color: #fff; padding: 20px 45px; border-radius: 60px; 
+            text-decoration: none; border: 1px solid var(--accent);
+            font-weight: 500; font-size: 13px; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
+        }
+        .btn-main:hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 40px var(--accent-glow); transform: translateY(-3px); }
+
+        .motivation-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 60px 5%;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 60px; max-width: 900px; margin-inline: auto; }
+        .product-card { 
+            padding: 60px 40px; background: var(--glass); border-radius: 20px; 
+            border: 1px solid var(--border); transition: 0.6s; text-align: center;
+            display: flex; flex-direction: column; align-items: center;
+            backdrop-filter: blur(15px);
+        }
+        .product-card:hover { transform: translateY(-15px); border-color: var(--accent); background: rgba(255,255,255,0.18); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .product-card h3 { font-size: 26px; font-weight: 300; margin: 25px 0 15px; letter-spacing: 1px; }
+        .product-card p { font-size: 15px; color: var(--text-muted); margin-bottom: 35px; flex-grow: 1; }
+
+        .vip-block {
+            margin-top: 40px; padding: 50px 40px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.07); border: 1px solid var(--accent); 
+            text-align: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            transition: 0.6s; max-width: 900px; margin-inline: auto;
+        }
+        .vip-block:hover { transform: translateY(-10px); box-shadow: 0 15px 40px var(--accent-glow); }
+
+        .modal {
+            position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(30px);
+            z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-content { width: 100%; max-width: 600px; text-align: center; position: relative; }
+        .slide-box { min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
+        .slide h2 { font-size: clamp(32px, 5vw, 50px); font-weight: 200; color: var(--accent); margin-bottom: 25px; letter-spacing: 2px; }
+        .slide p { font-size: 19px; color: var(--text-main); font-weight: 200; line-height: 1.8; opacity: 0.8; }
+
+        .modal-nav { margin-top: 50px; display: flex; justify-content: center; align-items: center; gap: 30px; }
+        .dot-nav { display: flex; gap: 10px; }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%; transition: 0.4s; }
+        .dot.active { background: var(--accent); transform: scale(1.5); }
+
+        .author-box {
+            display: flex; align-items: center; gap: 50px; background: var(--glass);
+            padding: 60px; border-radius: 40px; border: 1px solid var(--border); backdrop-filter: blur(15px);
+        }
+        .author-img { width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; }
+        .author-text h2 { font-size: 32px; font-weight: 300; margin-bottom: 15px; }
+
+        #ai-trigger { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid var(--accent); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2000; font-size: 24px; transition: 0.4s; backdrop-filter: blur(10px); }
+        #ai-trigger:hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 20px var(--accent-glow); }
+        
+        #ai-window {
+            position: fixed; bottom: 100px; right: 30px; width: 350px; height: 480px; 
+            background: rgba(13, 20, 29, 0.95); backdrop-filter: blur(50px); border-radius: 25px; 
+            z-index: 2000; display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border);
+        }
+
+        #chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 15px; padding-bottom: 80px;
+        }
+
+        .msg { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
+        .msg-user { align-self: flex-end; background: var(--accent); color: var(--deep); border-bottom-right-radius: 4px; }
+
+        .chat-input-area {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 15px; display: flex; gap: 10px; 
+            background: rgba(13, 20, 29, 0.98); border-top: 1px solid var(--border);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            #ai-window { width: calc(100% - 40px); right: 20px; bottom: 90px; height: 60vh; }
+            .products-grid { grid-template-columns: 1fr; }
+            .author-box { flex-direction: column; text-align: center; padding: 40px 20px; }
+            .hero h1 { font-size: 45px; }
+        }
+        
+        /* Стили для обновленной секции Как проходит курс */
+.how-it-works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 50px;
+}
+
+.how-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 24px;
+    padding: 40px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.how-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent-glow);
+}
+
+.how-number {
+    font-family: 'Manrope', sans-serif;
+    font-size: 42px;
+    font-weight: 200;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+.how-card h3 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+}
+
+.how-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Эффект свечения при наведении */
+.how-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+.how-card:hover::after {
+    opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+    /* Растягиваем контейнер секции, чтобы он занимал почти всю ширину экрана */
+    section { 
+        padding: 80px 4% !important; 
+    }
+
+    .how-it-works-grid {
+        grid-template-columns: 1fr; /* Карточки друг под другом */
+        gap: 20px;
+    }
+
+    .how-card {
+        padding: 30px 25px; /* Умеренные отступы внутри */
+        min-height: auto;
+        width: 100%; /* Карточка на всю доступную ширину */
+    }
+
+    .how-card h3 {
+        font-size: 20px; /* Заголовок в одну-две строки */
+        margin-bottom: 12px;
+    }
+
+    .how-card p {
+        font-size: 15px; /* Читабельный размер текста */
+        line-height: 1.5;
+        max-width: 100%; /* Убираем ограничения по ширине текста */
+    }
+}
+
+/* Блок Трансформации: Результаты */
+        /* Блок Трансформации: Результаты */
+        #results { padding: 100px 7%; max-width: 1300px; margin: 0 auto; }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        /* Стили для слайдера ДО/ПОСЛЕ (Справа) */
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            aspect-ratio: 3/4;
+            margin: 0 auto;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            background: #000;
+        }
+        .slider-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .img-before { z-index: 1; }
+        .img-after { z-index: 2; width: 0%; border-right: 2px solid var(--accent); }
+        .slider-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 10; cursor: col-resize; }
+        
+        .slider-btn {
+            position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%);
+            width: 44px; height: 44px; background: var(--accent); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; z-index: 5;
+            box-shadow: 0 0 20px var(--accent-glow); pointer-events: none; color: var(--deep); font-weight: bold; font-size: 18px;
+        }
+
+        .slider-labels {
+            position: absolute; bottom: 20px; left: 0; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 20px;
+            z-index: 4; pointer-events: none;
+        }
+        .slider-label {
+            background: rgba(13, 27, 42, 0.8); backdrop-filter: blur(10px);
+            padding: 6px 15px; border-radius: 20px; font-size: 11px;
+            font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border);
+        }
+        .label-before { color: #ff4d4d; border-color: rgba(255, 77, 77, 0.3); }
+        .label-after { color: var(--accent); border-color: var(--accent); }
+
+        /* Текст (Слева) */
+        .comparison-grid { display: flex; flex-direction: column; gap: 30px; }
+        .compare-card { 
+            padding: 40px; border-radius: 35px; background: var(--glass); 
+            border: 1px solid var(--border); backdrop-filter: blur(20px); transition: 0.5s; 
+        }
+        .compare-card.before { border-color: rgba(255, 255, 255, 0.05); }
+        .compare-card.after { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); background: rgba(168, 218, 220, 0.03); }
+        .compare-card h3 { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 25px; opacity: 0.6; font-weight: 700; }
+        .compare-card.after h3 { color: var(--accent); opacity: 1; }
+        .compare-list { list-style: none; }
+        .compare-list li { margin-bottom: 15px; font-size: 15px; font-weight: 200; display: flex; align-items: flex-start; gap: 15px; line-height: 1.5; }
+        .dot-status { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 8px; }
+        .before .dot-status { background: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; }
+        .after .dot-status { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        
+        @media (max-width: 900px) { 
+            .results-container { grid-template-columns: 1fr; gap: 40px; } 
+            .slider-wrapper { order: -1; } /* На мобилках фото будет сверху */
+            .compare-card { padding: 30px; } 
+        }
+        
+        @keyframes customFadeIn { 
+    from { opacity: 0; transform: translateY(20px) scale(0.98); } 
+    to { opacity: 1; transform: translateY(0) scale(1); } 
+}
+    </style>
+    <meta property="og:image" content="https://ibb.co/dsZmvsqp">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta property="og:title" content="ИNOE ДЫХАНИЕ">
+<meta property="og:description" content="Дыхание как ключ к подсознанию. Простые практики для результата с первого дня.">
+</head>
+<body>
+
+<div id="breath-bg"></div>
+
+<header>
+    <div class="logo">
+        <span class="logo-composite">ИN</span>
+        <span class="logo-bridge logo-o">O</span>
+        <span class="logo-bridge logo-e">E</span>
+        <span class="logo-thin">ДЫХАНИЕ</span>
+    </div>
+
+    <div class="nav-right">
+        <a href="https://твоя-ссылка-на-кабинет.com" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
+        <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
+    </div>
+</header>
+
+<div id="full-menu">
+    <div class="close-menu" onclick="toggleMenu(false)">×</div>
+    <a href="#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
+    <a href="#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
+    <a href="#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
+    <a href="#author" onclick="toggleMenu(false)">Виктория</a>
+    <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a>
+</div>
+
+<section class="hero">
+    <h1>Дыхание — сила,<br>которая всегда с тобой</h1>
+    
+    <div style="height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 40px;">
+    <p id="hero-slogan" style="transition: opacity 1.5s ease; font-weight: 200; opacity: 0; font-size: 18px; max-width: 550px; text-align: center; margin: 0;">
+        </p>
+</div>
+    
+    <a href="#programs" class="btn-main">К программам</a>
+</section> <section id="how-it-works" style="padding-top: 0;">
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 style="font-size: clamp(28px, 4vw, 40px); font-weight: 200; margin-top: 15px; letter-spacing: 2px;">ЧТО ВАС ЖДЕТ ВНУТРИ</h2>
+    </div>
+    
+    <div class="how-it-works-grid">
+        <div class="how-card">
+            <div style="margin-bottom: 25px; color: var(--accent); font-size: 24px; opacity: 0.8;">✧</div>
+            <h3>Практики в записи</h3>
+            <p>Готовые видео-уроки, которые можно включать в любое время. Просто повторяйте за тренером и получайте результат.</p>
+        </div>
+
+        <div class="how-card">
+            <div style="margin-bottom: 25px; color: var(--accent); font-size: 24px; opacity: 0.8;">✧</div>
+            <h3>Лекции и задания</h3>
+            <p>Короткая теория и практические упражнения. Вы поймете, как именно работает ваше тело и как им управлять.</p>
+        </div>
+
+        <div class="how-card">
+            <div style="margin-bottom: 25px; color: var(--accent); font-size: 24px; opacity: 0.8;">✧</div>
+            <h3>Прямые эфиры</h3>
+            <p>Онлайн-встречи с Викторией. Вместе разбираем сложные моменты и делаем глубокие практики в прямом эфире.</p>
+        </div>
+
+        <div class="how-card">
+            <div style="margin-bottom: 25px; color: var(--accent); font-size: 24px; opacity: 0.8;">✧</div>
+            <h3>Разборы и фидбек</h3>
+            <p>Личные советы и ответы на вопросы по каждой практике. Мы сопровождаем вас на каждом этапе трансформации.</p>
+        </div>
+    </div>
+</section>
+
+<section id="results">
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 style="font-size: clamp(28px, 4vw, 40px); font-weight: 200; letter-spacing: 2px; text-transform: uppercase;">Твоя трансформация</h2>
+        <div style="width: 50px; height: 1px; background: var(--accent); margin: 20px auto; opacity: 0.4;"></div>
+    </div>
+
+    <div class="results-container">
+        <div class="comparison-grid">
+            <div class="compare-card before">
+                <h3>Без практик</h3>
+                <ul class="compare-list">
+                    <li><span class="dot-status"></span> <span>Утренняя разбитость и кофе как единственный допинг</span></li>
+                    <li><span class="dot-status"></span> <span>Постоянный фоновый шум мыслей и тревожность</span></li>
+                    <li><span class="dot-status"></span> <span>Эмоциональные качели и острые реакции на стресс</span></li>
+                    <li><span class="dot-status"></span> <span>Тело в зажиме: вечно поднятые плечи и сжатые челюсти</span></li>
+                </ul>
+            </div>
+
+            <div class="compare-card after">
+                <h3>С ИNOE ДЫХАНИЕ</h3>
+                <ul class="compare-list">
+                    <li><span class="dot-status"></span> <span>Ясный подъем и естественный заряд бодрости</span></li>
+                    <li><span class="dot-status"></span> <span>Тишина в голове и умение «выключать» мысли за минуту</span></li>
+                    <li><span class="dot-status"></span> <span>Внутренняя опора и спокойное принятие решений</span></li>
+                    <li><span class="dot-status"></span> <span>Расслабленное тело, глубокий сон и живая энергия</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slider-wrapper">
+            <img src="https://sun9-55.userapi.com/s/v1/ig2/k_es4jtk_o9LBi1BTY3MQD1I756AH-xdxVTn4jwUGicOksCqtSXTMYPNiDaIahM8Hnme4sD09MATzBo4Xai9er35.jpg?quality=96&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1620x2160&from=bu&cs=640x0" class="slider-img img-before">
+            <img id="sliderAfter" src="https://coffmanvision.com/wp-content/uploads/2023/09/persol-eyewear-sunglass-sydney-1.jpg" class="slider-img img-after">
+            
+            <div id="sliderBtn" class="slider-btn">◂▸</div>
+            
+            <div class="slider-labels">
+                <div class="slider-label label-before">ДО</div>
+                <div class="slider-label label-after">ПОСЛЕ</div>
+            </div>
+
+            <input type="range" min="0" max="100" value="0" class="slider-input" id="sliderRange">
+        </div>
+    </div>
+</section>
+
+<section id="about" style="padding-top: 60px;">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <h2 style="font-size: clamp(28px, 4vw, 40px); font-weight: 200; margin-bottom: 30px; letter-spacing: 1px;">Три уровня воздействия</h2>
+        <p style="font-weight: 200; opacity: 0.8; font-size: 20px;">Методики ИNOE ДЫХАНИЕ позволяют воздействовать сразу на три уровня вашей жизни: энергия и тело, сознание и мышление, эмоции и реакции.</p>
+    </div>
+</section>
+
+<section id="programs">
+    <div class="products-grid">
+        <div class="product-card">
+            <span style="font-size: 10px; letter-spacing: 3px; font-weight: 700; color: var(--accent);">БАЛАНС</span>
+            <h3>Анти-стресс</h3>
+            <p>Моментальный выход из тревоги и стабилизация эмоционального фона через работу с нервной системой.</p>
+            <a href="https://usefully-academic-brookite.tilda.ws/1" class="btn-main" style="text-decoration: none; display: inline-block; text-align: center;">Узнать больше</a>
+        </div>
+
+        <div class="product-card">
+            <span style="font-size: 10px; letter-spacing: 3px; font-weight: 700; color: var(--accent);">ЭНЕРГИЯ И ТЕЛО</span>
+            <h3>Восстановление</h3>
+            <p>Насыщение клеток кислородом, мгновенный подъем уровня энергии и стабилизация нервной системы.</p>
+            <button class="btn-main" onclick="openModal('base')">Узнать больше</button>
+        </div>
+
+        <div class="product-card">
+            <span style="font-size: 10px; letter-spacing: 3px; font-weight: 700; color: var(--accent);">СОЗНАНИЕ</span>
+            <h3>Перепрошивка</h3>
+            <p>Снятие ограничивающих паттернов и формирование новой модели действий через изменение восприятия.</p>
+            <button class="btn-main" style="border-color:rgba(255,255,255,0.4)" onclick="openModal('energy')">Узнать больше</button>
+        </div>
+    </div>
+
+    <div class="vip-block">
+        <span style="font-size: 10px; letter-spacing: 3px; font-weight: 700; color: var(--accent);">ЭМОЦИИ И ТЕЛО</span>
+        <h3 style="font-size: 28px; font-weight: 300; margin: 15px 0;">Освобождение</h3>
+        <p style="font-size: 15px; color: var(--text-main); opacity: 0.8; margin-bottom: 25px; max-width: 600px; margin-inline: auto; line-height: 1.5;">Снятие хронического напряжения и подавленных эмоций. Возвращение легкости, чувствительности и живости тела.</p>
+        <a href="https://t.me/vika_breathe" target="_blank" class="btn-main" style="border-color: var(--accent); text-decoration: none;">Оставить заявку</a>
+    </div>
+</section>
+
+<section id="author">
+    <div class="author-box">
+        <img src="https://i.postimg.cc/mgrLTs7q/564896917-17966813276970498-6846623746338872353-n.jpg" class="author-img" alt="Victory">
+        <div class="author-text">
+            <h2>Виктория</h2>
+            <p style="color: var(--accent); font-weight: 600; font-size: 12px; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase;">Международный тренер</p>
+            <p style="font-weight: 200; opacity: 0.8;">Преподаватель дыхательных практик (GPBA/IBF) и сертифицированный энерго-практик. Автор метода управления состоянием на клеточном уровне.</p>
+        </div>
+    </div>
+</section>
+
+<div id="courseModal" class="modal">
+    <div class="modal-content">
+        <div style="cursor: pointer; font-size: 50px; font-weight: 100; margin-bottom: 30px; opacity: 0.5;" onclick="closeModal()">×</div>
+        <div id="slideContainer" class="slide-box"></div>
+        <div class="modal-nav">
+            <button id="prevBtn" class="btn-main" style="padding: 10px 25px; font-size: 10px;" onclick="prevSlide()">Назад</button>
+            <div class="dot-nav" id="dotNav"></div>
+            <button id="nextBtn" class="btn-main" style="padding: 10px 25px; font-size: 10px;" onclick="nextSlide()">Далее</button>
+        </div>
+    </div>
+</div>
+
+<div id="ai-trigger" onclick="toggleChat()">✧</div>
+
+<div id="ai-window">
+    <div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div>
+    <div id="chat-messages">
+        <div class="msg msg-ai">Приветствую. Я помогу вам сориентироваться в практиках. Какой у вас запрос?</div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); padding: 10px 15px; color: #fff; border-radius: 30px; outline: none; font-size: 13px;">
+        <button onclick="sendChat()" style="background: var(--accent); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer;">→</button>
+    </div>
+</div>
+
+<script>
+    // Управление меню
+    function toggleMenu(s) {
+        document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
+        document.body.style.overflow = s ? 'hidden' : 'auto';
+    }
+
+    // Данные модальных окон
+const courseData = {
+    'antistress': [
+        {h:'Снятие тревоги', p:'Моментальный выход из стресса и тревоги. Эффект ощущается сразу, с регулярной практикой закрепляется на долго.'},
+        {h:'Естественность', p:'Норма, а не усилие. Тебе больше не нужно себя успокаивать или контролировать — спокойствие и баланс становятся естественными.'},
+        {h:'Доступность', p:'Инструмент, который всегда под рукой. Дыхание всегда с тобой, нервная система восстанавливается, эмоциональный и гормональный фон стабилизируется.'},
+        {h:'Фокус внимания', p:'Ясность мышления, эмоциональная стабильность и точечная концентрация. Без внутреннего шума. Ты выбираешь свои мысли, состояние и направление внимания — и легко удерживаешь фокус на любой задаче.'},
+        {h:'Ресурс', p:'Мощная энергия и ресурс без стимуляторов. Ты наполняешься энергией на клеточном уровне за счёт дополнительного кислорода и грамотного газообмена — это естественно, безопасно и полезно для организма.'}
+    ],
+    'base': [
+        {h:'Базовый уровень', p:'Проработка основ дыхания для восстановления базового жизненного ресурса.'}
+    ],
+    'energy': [
+        {h:'Энергия', p:'Практики для работы с внутренним состоянием и паттернами подсознания.'}
+    ],
+    'vip': [
+        {h:'Глубокое погружение', p:'Индивидуальная работа по снятию глубоких психосоматических блоков.'}
+    ]
+};
+
+    let current = 0; 
+    let active = [];
+
+    function openModal(key) {
+        active = courseData[key]; 
+        current = 0;
+        document.getElementById('courseModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        showSlide();
+    }
+
+    function showSlide() {
+        const s = active[current];
+        document.getElementById('slideContainer').innerHTML = `<div class="slide"><h2>${s.h}</h2><p>${s.p}</p></div>`;
+        const dotNav = document.getElementById('dotNav');
+        dotNav.innerHTML = active.map((_, i) => `<div class="dot ${i===current?'active':''}"></div>`).join('');
+        document.getElementById('prevBtn').style.opacity = current === 0 ? '0.3' : '1';
+        document.getElementById('nextBtn').innerText = current === active.length - 1 ? 'ЗАКРЫТЬ' : 'ДАЛЕЕ';
+    }
+
+    function nextSlide() { 
+        if(current < active.length - 1) { current++; showSlide(); } 
+        else closeModal(); 
+    }
+
+    function prevSlide() { if(current > 0) { current--; showSlide(); } }
+
+    function closeModal() { 
+        document.getElementById('courseModal').style.display = 'none'; 
+        document.body.style.overflow = 'auto';
+    }
+
+    // Слайдер ДО/ПОСЛЕ
+    const sliderRange = document.getElementById('sliderRange');
+    if (sliderRange) {
+        sliderRange.addEventListener('input', (e) => {
+            const val = e.target.value;
+            document.getElementById('sliderAfter').style.width = val + '%';
+            document.getElementById('sliderBtn').style.left = val + '%';
+        });
+    }
+
+    // Плавный скролл к якорям (исправлено)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                toggleMenu(false);
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
+
+    // Чат (заглушка)
+    function toggleChat() {
+        const win = document.getElementById('ai-window');
+        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function sendChat() {
+        const input = document.getElementById('chat-input');
+        const box = document.getElementById('chat-messages');
+        if (!input.value.trim()) return;
+        box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
+        input.value = '';
+        box.scrollTop = box.scrollHeight;
+        setTimeout(() => {
+            box.innerHTML += `<div class="msg msg-ai">Дыхание — это ваш мост к новому состоянию.</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 600);
+    }
+    // Добавь это в конец скрипта
+document.getElementById('chat-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        sendChat();
+    }
+});
+// Обновленный скрипт: 6 секунд, плавная анимация, без смещения блоков
+const slogans = [
+    "Простые практики дыхания 5-10 минут в день для ощутимого результата с первого занятия",
+    "Избавься от тревоги и верни ясность ума за считанные минуты",
+    "Активируй скрытые ресурсы организма через природные ритмы дыхания"
+];
+
+let currentSloganIndex = 0;
+const sloganElement = document.getElementById('hero-slogan');
+
+function changeSlogan() {
+    sloganElement.style.opacity = 0;
+    
+    setTimeout(() => {
+        sloganElement.textContent = slogans[currentSloganIndex];
+        sloganElement.style.opacity = 0.8;
+        currentSloganIndex = (currentSloganIndex + 1) % slogans.length;
+    }, 1500); 
+}
+
+// Запускаем сразу при загрузке
+changeSlogan(); 
+
+// И ставим на интервал
+setInterval(changeSlogan, 6000);
+  async function sendOrder(event) {
+        event.preventDefault(); // Чтобы страница не перезагружалась
+        const email = document.getElementById('customerEmail').value;
+        const btn = event.target.querySelector('button[type="submit"]');
+        
+        btn.innerText = 'Оформление...';
+        btn.disabled = true;
+
+        try {
+            // Стучимся в твой новый бэкенд на Vercel
+            const response = await fetch('/api/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Выводим данные, которые сгенерировал Vercel
+                alert(`Заявка принята!\n\nЛогин: ${data.login}\nПароль: ${data.password}\n\nЗапишите данные для входа в кабинет!`);
+                closePaymentModal();
+            } else {
+                throw new Error();
+            }
+        } catch (err) {
+            alert('Ошибка связи с сервером. Проверь папку /api/ и деплой на Vercel.');
+        } finally {
+            btn.innerText = 'Я оплатил, отправить чек';
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
