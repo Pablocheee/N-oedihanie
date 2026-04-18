@@ -18,7 +18,8 @@
             gap: 60px;
             max-width: 1200px;
             align-items: center;
-        }.product-image-wrap {
+        }
+        .product-image-wrap {
             position: relative;
             border-radius: 30px;
             overflow: hidden;
@@ -34,7 +35,149 @@
             width: 100%;
             height: 100%;
             object-fit: cover; /* Картинка заполнит блок без искажений */
-            display: block;
+        }
+
+        /* --- НОВЫЕ СТИЛИ ДЛЯ БЛОКА ОПЛАТЫ --- */
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #0d1b2a; 
+            color: white; 
+            margin: 0;
+        }
+        .payment-section { 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 40px; 
+            border-radius: 24px; 
+            max-width: 450px; 
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .instruction { 
+            font-size: 14px; 
+            margin-bottom: 25px; 
+            line-height: 1.6; 
+            color: #a8dadc; 
+            background: rgba(168, 218, 220, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+        }
+        .instruction b { color: #fff; }
+        .data-label {
+            font-size: 12px; 
+            opacity: 0.6; 
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .wallet-box { 
+            background: rgba(0,0,0,0.4); 
+            padding: 15px; 
+            border-radius: 12px; 
+            font-family: monospace; 
+            font-size: 13px;
+            word-break: break-all; 
+            margin-bottom: 20px; 
+            border: 1px solid #a8dadc; 
+            color: #fff;
+        }
+        .input-field { 
+            width: 100%; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            background: rgba(0,0,0,0.2); 
+            color: white; 
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+        }
+        .input-field:focus {
+            border-color: #a8dadc;
+        }
+        .pay-btn { 
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 12px; 
+            border: none; 
+            background: #a8dadc; 
+            color: #1d3557; 
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .pay-btn:hover { 
+            background: #fff; 
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="product-page">
+        <div class="payment-section">
+            <h2 style="margin-top: 0; font-weight: 200; font-size: 28px;">Оплата доступа</h2>
+            
+            <div class="instruction">
+                <b>Инструкция для Tonkeeper:</b><br><br>
+                1. Отправьте точную сумму в <b>USDT</b> (Сеть <b>TON</b>).<br>
+                2. В поле <b>Comment (Комментарий)</b> обязательно вставьте код ниже. Без него пароль не отправится.<br>
+                3. Введите Email и нажмите проверку.
+            </div>
+            
+            <div class="data-label">Кошелек (USDT TON):</div>
+            <div class="wallet-box" id="wallet-address">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</div>
+            
+            <div class="data-label">Ваш комментарий (Обязательно):</div>
+            <div class="wallet-box" id="memo-field" style="color: #a8dadc; font-weight: bold; font-size: 16px;">Загрузка...</div>
+
+            <input type="email" id="email-input" class="input-field" placeholder="Ваш Email для получения пароля" required>
+            
+            <button class="pay-btn" onclick="verifyAndSend()">Я отправил USDT. Проверить</button>
+            
+            <div id="status-message" style="margin-top: 20px; font-size: 13px; text-align: center; height: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Генерация уникального комментария (Memo) при загрузке
+        const uniqueMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('memo-field').innerText = uniqueMemo;
+
+        // 2. Функция проверки оплаты
+        async function verifyAndSend() {
+            const email = document.getElementById('email-input').value;
+            const statusEl = document.getElementById('status-message');
+            
+            if(!email || !email.includes('@')) {
+                statusEl.innerText = "Пожалуйста, введите корректный Email";
+                statusEl.style.color = "#ff6b6b";
+                return;
+            }
+
+            statusEl.innerText = "Ищем транзакцию в блокчейне TON...";
+            statusEl.style.color = "#a8dadc";
+
+            try {
+                // Здесь будет твой реальный fetch запрос к API на Vercel
+                // Пример: await fetch('/api/verify-ton', { method: 'POST', body: JSON.stringify({ email, memo: uniqueMemo }) })
+                
+                // Симуляция задержки проверки блокчейна
+                setTimeout(() => {
+                    statusEl.innerHTML = "<b>Успешно!</b> Пароль отправлен на " + email;
+                    statusEl.style.color = "#a8dadc"; // Используем акцентный цвет проекта
+                }, 3000);
+
+            } catch (error) {
+                statusEl.innerText = "Платеж пока не найден. Подождите пару минут и попробуйте снова.";
+                statusEl.style.color = "#ff6b6b";
+            }
+        }
+    </script>
+</body>
+</html>            display: block;
             filter: grayscale(20%) contrast(1.1);
             transition: 0.5s;
         }
