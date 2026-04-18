@@ -2,7 +2,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ИNOE ДЫХАНИЕ — Чистый бланк</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
     /* Стили для страницы продукта */
         .product-page {
@@ -346,6 +345,7 @@
     <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
         <div style="margin-bottom: 25px;">
             <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
+            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
             <p style="font-size: 14px; opacity: 0.7;">Введите Email. На него придет пароль после подтверждения оплаты.</p>
         </div>
 
@@ -375,11 +375,6 @@
     // Уникальный Memo
     const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
     document.getElementById('memoDisplay').innerText = generatedMemo;
-
-    // Инициализация EmailJS (Вставь свой Public Key здесь)
-    (function(){
-        emailjs.init("YOUR_PUBLIC_KEY");
-    })();
 
     function toggleMenu(s) {
         document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
@@ -411,27 +406,37 @@
         btn.disabled = true;
         btn.style.opacity = '0.5';
         status.style.display = 'block';
-        status.innerText = "Инициализация отправки...";
+        status.innerText = "Связываемся с сервером...";
 
-        // Данные для уведомления
-        const templateParams = {
-            customer_email: email,
-            memo_code: generatedMemo,
-            project_name: "ИNOE ДЫХАНИЕ"
-        };
-
-        // Отправка через EmailJS
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
-            .then(function() {
+        // Отправка через Formspree
+        fetch("https://formspree.io/f/pablo.che.sunset@gmail.com", {
+            method: "POST",
+            body: JSON.stringify({
+                email: email,
+                memo: generatedMemo,
+                message: "Клиент сообщил об оплате 500 USDT (TON)",
+                project: "ИNOE ДЫХАНИЕ"
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
                 status.innerHTML = `Заявка принята! Мы проверим транзакцию по Memo <b>${generatedMemo}</b>. Пароль придет на <b>${email}</b>.`;
                 btn.style.display = 'none';
                 setTimeout(() => { closePaymentModal(); }, 6000);
-            }, function(error) {
+            } else {
                 status.innerText = "Ошибка отправки. Пожалуйста, напишите в поддержку.";
                 btn.disabled = false;
                 btn.style.opacity = '1';
-                console.error('EmailJS Error:', error);
-            });
+            }
+        }).catch(error => {
+            status.innerText = "Ошибка сети. Проверьте соединение.";
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            console.error('Formspree Error:', error);
+        });
     }
 
     function toggleChat() {
