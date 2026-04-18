@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
+<!DOCTYPE html><html lang="ru"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ИNOE ДЫХАНИЕ — Чистый бланк</title>
@@ -20,9 +18,7 @@
             gap: 60px;
             max-width: 1200px;
             align-items: center;
-        }
-
-.product-image-wrap {
+        }.product-image-wrap {
             position: relative;
             border-radius: 30px;
             overflow: hidden;
@@ -310,15 +306,7 @@
             .logo-thin { display: none; }
             #ai-window { width: calc(100% - 40px); right: 20px; bottom: 90px; height: 60vh; }
         }
-    </style>
-</head>
-<body>
-
-<body>
-
-<div id="breath-bg"></div>
-
-<header>
+    </style></head><body><div id="breath-bg"></div><header>
     <a href="/" class="logo">
         <span class="logo-composite">ИN</span>
         <span class="logo-bridge logo-o">O</span>
@@ -329,19 +317,13 @@
     <div class="nav-right">
         <a href="#" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
         <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
-    </div>
-</header>
-
-<div id="full-menu">
+    </div></header><div id="full-menu">
     <div class="close-menu" onclick="toggleMenu(false)">×</div>
     <a href="#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
     <a href="#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
     <a href="#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
     <a href="#author" onclick="toggleMenu(false)">ВИКТОРИЯ</a>
-    <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a>
-</div>
-
-<main class="product-page">
+    <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a></div><main class="product-page">
     <div class="product-grid">
         <div class="product-image-wrap">
             <img src="https://allwebs.ru/images/2026/04/15/d70eafae98a3b27a31e57a1de0ea2a76.jpg" alt="Victory">
@@ -378,10 +360,7 @@
                 </a>
             </div>
         </div>
-    </div>
-</main>
-
-<div id="paymentModal" class="modal">
+    </div></main><div id="paymentModal" class="modal">
     <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
         <div style="margin-bottom: 25px;">
             <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
@@ -408,43 +387,7 @@
             <button type="submit" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, отправить чек с аккаунтом</button>
             <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
         </form>
-    </div>
-</div>
-
-<script>
-    function openPaymentModal() {
-        document.getElementById('paymentModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closePaymentModal() {
-        document.getElementById('paymentModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    function copyWallet() {
-        const addr = document.getElementById('walletAddr').innerText;
-        navigator.clipboard.writeText(addr);
-        alert('Адрес скопирован!');
-    }
-
-    function sendOrder(event) {
-        event.preventDefault();
-        const email = document.getElementById('customerEmail').value;
-        alert('Заявка принята! Чек и инструкции отправлены на ' + email);
-        closePaymentModal();
-    }
-    
-    function toggleMenu(s) {
-        document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
-        document.body.style.overflow = s ? 'hidden' : 'auto';
-    }
-
-    function toggleChat() {
-        const win = document.getElementById('ai-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-    }
-<script>
+    </div></div><script>
     // Управление меню
     function toggleMenu(s) {
         document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
@@ -478,13 +421,15 @@
     // Чат AI
     function toggleChat() {
         const win = document.getElementById('ai-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        if (win) {
+            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        }
     }
 
     function sendChat() {
         const input = document.getElementById('chat-input');
         const box = document.getElementById('chat-messages');
-        if (!input.value.trim()) return;
+        if (!input || !input.value.trim()) return;
         box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
         input.value = '';
         box.scrollTop = box.scrollHeight;
@@ -494,94 +439,29 @@
         }, 600);
     }
 
-    // Слушатель Enter для чата
-    document.getElementById('chat-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            sendChat();
+    // Инициализация событий
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendChat();
+                }
+            });
         }
-    });
 
-    // Плавный скролл
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if(href === "#") return;
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                toggleMenu(false);
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+        // Плавный скролл
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if(href === "#") return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    toggleMenu(false);
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
         });
     });
-</script>
-</body>
-<div id="paymentModal" class="modal">
-    <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent);">
-        <div style="margin-bottom: 25px;">
-            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
-            <p style="font-size: 14px; opacity: 0.7;">Введите ваш Email, на него придет чек и доступ к курсу после оплаты.</p>
-        </div>
-
-        <form id="orderForm" onsubmit="sendOrder(event)">
-            <input type="email" id="customerEmail" placeholder="Ваш Email" required 
-                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none;">
-            
-            <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 20px;">
-                <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
-                <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
-                    Переведите <b>50 USDT</b> на адрес ниже.<br>
-                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON</span> (не ERC-20, не TRC-20!)
-                </p>
-                
-                <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-                    <code id="walletAddr" style="font-size: 11px; word-break: break-all; color: var(--accent);">UQC...твой_адрес_кошелька</code>
-                    <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 16px;">📋</button>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-main" style="width: 100%;">Я оплатил, отправить чек</button>
-            <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    function openPaymentModal() {
-        document.getElementById('paymentModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closePaymentModal() {
-        document.getElementById('paymentModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    function copyWallet() {
-        const addr = document.getElementById('walletAddr').innerText;
-        navigator.clipboard.writeText(addr);
-        alert('Адрес скопирован!');
-    }
-
-    function sendOrder(event) {
-        event.preventDefault();
-        const email = document.getElementById('customerEmail').value;
-        
-        // Здесь логика отправки на твою почту (через EmailJS или твой бэкенд)
-        alert('Заявка принята! Чек и инструкции отправлены на ' + email + '. Доступ откроется после подтверждения транзакции.');
-        closePaymentModal();
-    }
-
-    // Привязываем кнопку "Оставить заявку" к открытию окна
-    document.addEventListener('DOMContentLoaded', () => {
-        const orderBtn = document.querySelector('.btn-main');
-        if (orderBtn && orderBtn.innerText === 'ОСТАВИТЬ ЗАЯВКУ') {
-            orderBtn.onclick = (e) => {
-                e.preventDefault();
-                openPaymentModal();
-            };
-        }
-    });
-</script>
-</body>
-</html>
+</script></body></html>```
