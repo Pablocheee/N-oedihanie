@@ -18,8 +18,7 @@
             gap: 60px;
             max-width: 1200px;
             align-items: center;
-        }
-        .product-image-wrap {
+        }.product-image-wrap {
             position: relative;
             border-radius: 30px;
             overflow: hidden;
@@ -35,149 +34,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover; /* Картинка заполнит блок без искажений */
-        }
-
-        /* --- НОВЫЕ СТИЛИ ДЛЯ БЛОКА ОПЛАТЫ --- */
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #0d1b2a; 
-            color: white; 
-            margin: 0;
-        }
-        .payment-section { 
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 40px; 
-            border-radius: 24px; 
-            max-width: 450px; 
-            margin: 0 auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        .instruction { 
-            font-size: 14px; 
-            margin-bottom: 25px; 
-            line-height: 1.6; 
-            color: #a8dadc; 
-            background: rgba(168, 218, 220, 0.1);
-            padding: 15px;
-            border-radius: 12px;
-        }
-        .instruction b { color: #fff; }
-        .data-label {
-            font-size: 12px; 
-            opacity: 0.6; 
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .wallet-box { 
-            background: rgba(0,0,0,0.4); 
-            padding: 15px; 
-            border-radius: 12px; 
-            font-family: monospace; 
-            font-size: 13px;
-            word-break: break-all; 
-            margin-bottom: 20px; 
-            border: 1px solid #a8dadc; 
-            color: #fff;
-        }
-        .input-field { 
-            width: 100%; 
-            padding: 15px; 
-            margin-bottom: 20px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            background: rgba(0,0,0,0.2); 
-            color: white; 
-            box-sizing: border-box;
-            outline: none;
-            font-family: inherit;
-        }
-        .input-field:focus {
-            border-color: #a8dadc;
-        }
-        .pay-btn { 
-            width: 100%; 
-            padding: 16px; 
-            border-radius: 12px; 
-            border: none; 
-            background: #a8dadc; 
-            color: #1d3557; 
-            font-weight: 800; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .pay-btn:hover { 
-            background: #fff; 
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-    <div class="product-page">
-        <div class="payment-section">
-            <h2 style="margin-top: 0; font-weight: 200; font-size: 28px;">Оплата доступа</h2>
-            
-            <div class="instruction">
-                <b>Инструкция для Tonkeeper:</b><br><br>
-                1. Отправьте точную сумму в <b>USDT</b> (Сеть <b>TON</b>).<br>
-                2. В поле <b>Comment (Комментарий)</b> обязательно вставьте код ниже. Без него пароль не отправится.<br>
-                3. Введите Email и нажмите проверку.
-            </div>
-            
-            <div class="data-label">Кошелек (USDT TON):</div>
-            <div class="wallet-box" id="wallet-address">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</div>
-            
-            <div class="data-label">Ваш комментарий (Обязательно):</div>
-            <div class="wallet-box" id="memo-field" style="color: #a8dadc; font-weight: bold; font-size: 16px;">Загрузка...</div>
-
-            <input type="email" id="email-input" class="input-field" placeholder="Ваш Email для получения пароля" required>
-            
-            <button class="pay-btn" onclick="verifyAndSend()">Я отправил USDT. Проверить</button>
-            
-            <div id="status-message" style="margin-top: 20px; font-size: 13px; text-align: center; height: 20px;"></div>
-        </div>
-    </div>
-
-    <script>
-        // 1. Генерация уникального комментария (Memo) при загрузке
-        const uniqueMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('memo-field').innerText = uniqueMemo;
-
-        // 2. Функция проверки оплаты
-        async function verifyAndSend() {
-            const email = document.getElementById('email-input').value;
-            const statusEl = document.getElementById('status-message');
-            
-            if(!email || !email.includes('@')) {
-                statusEl.innerText = "Пожалуйста, введите корректный Email";
-                statusEl.style.color = "#ff6b6b";
-                return;
-            }
-
-            statusEl.innerText = "Ищем транзакцию в блокчейне TON...";
-            statusEl.style.color = "#a8dadc";
-
-            try {
-                // Здесь будет твой реальный fetch запрос к API на Vercel
-                // Пример: await fetch('/api/verify-ton', { method: 'POST', body: JSON.stringify({ email, memo: uniqueMemo }) })
-                
-                // Симуляция задержки проверки блокчейна
-                setTimeout(() => {
-                    statusEl.innerHTML = "<b>Успешно!</b> Пароль отправлен на " + email;
-                    statusEl.style.color = "#a8dadc"; // Используем акцентный цвет проекта
-                }, 3000);
-
-            } catch (error) {
-                statusEl.innerText = "Платеж пока не найден. Подождите пару минут и попробуйте снова.";
-                statusEl.style.color = "#ff6b6b";
-            }
-        }
-    </script>
-</body>
-</html>            display: block;
+            display: block;
             filter: grayscale(20%) contrast(1.1);
             transition: 0.5s;
         }
@@ -242,7 +99,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             color: var(--text-main); 
             line-height: 1.8; 
-            background: transparent !important; 
+            background: #0d1b2a !important; 
             overflow-x: hidden;
         }
 
@@ -390,25 +247,6 @@
 
         #full-menu a:hover { color: var(--accent); }
 
-        /* Контейнер для нового контента */
-        .content-placeholder {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 120px 5% 60px;
-            text-align: center;
-        }
-
-        .placeholder-box {
-            border: 1px dashed var(--accent);
-            padding: 60px;
-            border-radius: 40px;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-        }
-
         /* ИИ Консультант */
         #ai-trigger { 
             position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; 
@@ -469,8 +307,8 @@
     <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a></div><main class="product-page">
     <div class="product-grid">
         <div class="product-image-wrap">
-    <img src="https://i.postimg.cc/gkk9P3C1/photo-2026-04-14-00-10-42.jpg" alt="Victory">
-</div>
+            <img src="https://allwebs.ru/images/2026/04/15/d70eafae98a3b27a31e57a1de0ea2a76.jpg" alt="Victory">
+        </div>
 
         <div class="product-info">
             <ul class="benefits-list">
@@ -507,7 +345,7 @@
     <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
         <div style="margin-bottom: 25px;">
             <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
-            <p style="font-size: 14px; opacity: 0.7;">Введите ваш Email, на него придет чек и доступ к курсу после оплаты.</p>
+            <p style="font-size: 14px; opacity: 0.7;">Введите Email. На него придет пароль после подтверждения оплаты.</p>
         </div>
 
         <form id="orderForm" onsubmit="sendOrder(event)">
@@ -517,27 +355,31 @@
             <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 20px;">
                 <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
                 <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
-                    Переведите <b>500 USDT</b> на адрес ниже.<br>
-                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON</span>
+                    Переведите <b>50 USDT</b> на кошелек TON.<br>
+                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
+                    Комментарий (Memo): <b id="memoDisplay" style="color:var(--accent)">...</b>
                 </p>
                 
                 <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-                    <code id="walletAddr" style="font-size: 11px; word-break: break-all; color: var(--accent);">ТВОЙ_АДРЕС_КОШЕЛЬКА</code>
+                    <code id="walletAddr" style="font-size: 10px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
                     <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 16px;">📋</button>
                 </div>
             </div>
 
-            <button type="submit" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, отправить чек с аккаунтом</button>
+            <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, проверить транзакцию</button>
+            <div id="paymentStatus" style="margin-top:15px; font-size:12px; color:var(--accent); display:none;">Проверяем блокчейн TON...</div>
             <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
         </form>
-    </div></div><script>
-    // Управление меню
+    </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages"><div class="msg msg-ai">Приветствую. Я готов помочь вам с навигацией по сайту. Какой у вас вопрос?</div></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
+    // Уникальный Memo
+    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('memoDisplay').innerText = generatedMemo;
+
     function toggleMenu(s) {
         document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
         document.body.style.overflow = s ? 'hidden' : 'auto';
     }
 
-    // Управление окном оплаты
     function openPaymentModal() {
         document.getElementById('paymentModal').style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -556,24 +398,31 @@
 
     function sendOrder(event) {
         event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('paymentStatus');
         const email = document.getElementById('customerEmail').value;
-        alert('Заявка принята! Чек и инструкции отправлены на ' + email);
-        closePaymentModal();
+        
+        btn.style.display = 'none';
+        status.style.display = 'block';
+
+        // Имитация проверки блокчейна
+        setTimeout(() => {
+            status.innerHTML = `Транзакция подтверждена! Пароль отправлен на <b>${email}</b>`;
+            setTimeout(() => { closePaymentModal(); }, 3000);
+        }, 4000);
     }
 
-    // Чат AI
     function toggleChat() {
         const win = document.getElementById('ai-window');
-        if (win) {
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-        }
+        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
     }
 
     function sendChat() {
         const input = document.getElementById('chat-input');
         const box = document.getElementById('chat-messages');
-        if (!input || !input.value.trim()) return;
+        if (!input.value.trim()) return;
         box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
+        const val = input.value;
         input.value = '';
         box.scrollTop = box.scrollHeight;
         setTimeout(() => {
@@ -582,29 +431,19 @@
         }, 600);
     }
 
-    // Инициализация событий
-    document.addEventListener('DOMContentLoaded', () => {
-        const chatInput = document.getElementById('chat-input');
-        if (chatInput) {
-            chatInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    sendChat();
-                }
-            });
-        }
-
-        // Плавный скролл
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                if(href === "#") return;
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    toggleMenu(false);
-                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        });
+    document.getElementById('chat-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendChat();
     });
-</script></body></html>```
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if(href === "#") return;
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+                toggleMenu(false);
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });</script></body></html>
