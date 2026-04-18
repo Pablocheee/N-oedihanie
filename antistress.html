@@ -2,6 +2,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ИNOE ДЫХАНИЕ — Чистый бланк</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
     /* Стили для страницы продукта */
         .product-page {
@@ -375,6 +376,11 @@
     const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
     document.getElementById('memoDisplay').innerText = generatedMemo;
 
+    // Инициализация EmailJS (Вставь свой Public Key здесь)
+    (function(){
+        emailjs.init("YOUR_PUBLIC_KEY");
+    })();
+
     function toggleMenu(s) {
         document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
         document.body.style.overflow = s ? 'hidden' : 'auto';
@@ -402,14 +408,30 @@
         const status = document.getElementById('paymentStatus');
         const email = document.getElementById('customerEmail').value;
         
-        btn.style.display = 'none';
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
         status.style.display = 'block';
+        status.innerText = "Инициализация отправки...";
 
-        // Имитация проверки блокчейна
-        setTimeout(() => {
-            status.innerHTML = `Транзакция подтверждена! Пароль отправлен на <b>${email}</b>`;
-            setTimeout(() => { closePaymentModal(); }, 3000);
-        }, 4000);
+        // Данные для уведомления
+        const templateParams = {
+            customer_email: email,
+            memo_code: generatedMemo,
+            project_name: "ИNOE ДЫХАНИЕ"
+        };
+
+        // Отправка через EmailJS
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+            .then(function() {
+                status.innerHTML = `Заявка принята! Мы проверим транзакцию по Memo <b>${generatedMemo}</b>. Пароль придет на <b>${email}</b>.`;
+                btn.style.display = 'none';
+                setTimeout(() => { closePaymentModal(); }, 6000);
+            }, function(error) {
+                status.innerText = "Ошибка отправки. Пожалуйста, напишите в поддержку.";
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                console.error('EmailJS Error:', error);
+            });
     }
 
     function toggleChat() {
