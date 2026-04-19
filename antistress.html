@@ -345,49 +345,139 @@
         </div>
     </div></main><div id="paymentModal" class="modal">
     <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
-        <div style="margin-bottom: 25px;">
-            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
-            <p style="font-size: 14px; opacity: 0.7;">Введите Email. На него придет пароль после подтверждения оплаты.</p>
-        </div>
-
-        <form id="orderForm" action="https://formspree.io/f/xpqkrqng" method="POST">
-            <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
-                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none;">
-            
-            <input type="hidden" name="memo_id" id="hiddenMemo">
-            <input type="hidden" name="_subject" value="Новая оплата: ИNOE ДЫХАНИЕ">
-            
-            <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 20px;">
-                <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
-                <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
-                    Переведите <b>500 USDT</b>
-                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
-                    Комментарий (Memo): <b id="memoDisplay" style="color:var(--accent)">...</b>
-                </p>
-                
-                <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-                    <code id="walletAddr" style="font-size: 10px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
-                    <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 16px;">📋</button>
-                </div>
+        
+        <div id="step-selection">
+            <div style="margin-bottom: 25px;">
+                <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Выберите способ оплаты</h2>
+                <p style="font-size: 14px; opacity: 0.7;">Карты РФ или криптовалюта (USDT)</p>
             </div>
 
-            <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил</button>
+            <button onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                💳 Оплатить картой РФ
+            </button>
+
+            <button onclick="showCryptoStep()" style="width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
+                ₮ Оплатить USDT (TON)
+            </button>
+            
             <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
-        </form>
+        </div>
+
+        <div id="step-crypto" style="display: none;">
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; color: var(--accent); font-weight: 300; margin-bottom: 5px;">Оплата USDT</h2>
+                <p style="font-size: 13px; opacity: 0.7;">Введите Email для получения доступа</p>
+            </div>
+
+            <form id="orderForm" onsubmit="sendToTelegram(event)">
+                <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
+                       style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none;">
+                
+                <input type="hidden" name="memo_id" id="hiddenMemo">
+                
+                <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 15px;">
+                    <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
+                    <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
+                        Переведите <b>500 USDT</b><br>
+                        Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 4px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
+                        Memo: <b id="memoDisplay" style="color:var(--accent)">...</b>
+                    </p>
+                    
+                    <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
+                        <code id="walletAddr" style="font-size: 9px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
+                        <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px;">📋</button>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил</button>
+                
+                <button type="button" onclick="showSelectionStep()" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">← Назад к выбору</button>
+            </form>
+        </div>
     </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages"><div class="msg msg-ai">Приветствую. Я готов помочь вам с навигацией по сайту. Какой у вас вопрос?</div></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
+    // Настройки Telegram
+    const BOT_TOKEN = '8725038655:AAE1XcawO716rO26ElZmQRtx7eDgYXyE-ao';
+    const CHAT_ID = '7318415778';
+
     // Уникальный Memo
     const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
     document.getElementById('memoDisplay').innerText = generatedMemo;
     document.getElementById('hiddenMemo').value = generatedMemo;
 
+    // Навигация модального окна
+    function showCryptoStep() {
+        document.getElementById('step-selection').style.display = 'none';
+        document.getElementById('step-crypto').style.display = 'block';
+    }
+
+    function showSelectionStep() {
+        document.getElementById('step-crypto').style.display = 'none';
+        document.getElementById('step-selection').style.display = 'block';
+    }
+
+    // Робокасса (заглушка/переход)
+    async function payWithRobokassa() {
+        // Уведомление в ТГ о намерении оплатить через Робокассу
+        const pageTitle = document.title;
+        const text = `💳 *Переход к оплате*\nПродукт: ${pageTitle}\nСпособ: Робокасса (Карты РФ)`;
+        
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
+        });
+
+        // Здесь должен быть твой URL для оплаты в Робокассе
+        window.location.href = "https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=YOUR_LOGIN&OutSum=50000"; 
+    }
+
+    async function sendToTelegram(event) {
+        event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const email = document.getElementById('customerEmail').value;
+        const memo = document.getElementById('hiddenMemo').value;
+        const pageTitle = document.title;
+
+        btn.innerText = 'ОТПРАВКА...';
+        btn.disabled = true;
+
+        const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: 500 USDT (TON)`;
+
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: text,
+                    parse_mode: 'Markdown'
+                })
+            });
+
+            if (response.ok) {
+                btn.innerText = 'ОТПРАВЛЕНО!';
+                btn.style.background = '#4CAF50';
+                setTimeout(() => {
+                    closePaymentModal();
+                    alert('Данные успешно отправлены. После подтверждения оплаты на ваш Email придет доступ.');
+                    btn.innerText = 'Я ОПЛАТИЛ';
+                    btn.style.background = 'var(--accent)';
+                    btn.disabled = false;
+                    showSelectionStep(); // Сбрасываем для следующего раза
+                }, 2000);
+            } else {
+                throw new Error('Ошибка сети');
+            }
+        } catch (error) {
+            alert('Ошибка при отправке. Попробуйте еще раз.');
+            btn.innerText = 'Я ОПЛАТИЛ';
+            btn.disabled = false;
+        }
+    }
+
     function logout() {
-        // 1. Удаляем куки сессии (если используем их)
         document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        
-        // 2. Очищаем LocalStorage (на случай, если там хранятся токены)
         localStorage.clear();
-        
-        // 3. Перенаправляем на главную или страницу логина
         window.location.href = "https://aio-core-blank.vercel.app/";
     }
 
@@ -404,6 +494,7 @@
     function closePaymentModal() {
         document.getElementById('paymentModal').style.display = 'none';
         document.body.style.overflow = 'auto';
+        showSelectionStep();
     }
 
     function copyWallet() {
