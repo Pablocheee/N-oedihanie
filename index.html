@@ -835,7 +835,7 @@ async function sendChat() {
         const data = await response.json();
         let reply = data.reply;
 
-        // Пауза 2-3 секунды для реализма
+        // Пауза 3 секунды для реализма
         setTimeout(() => {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
@@ -849,7 +849,7 @@ async function sendChat() {
 
             box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
             box.scrollTop = box.scrollHeight;
-        }, 2500); 
+        }, 1800); 
 
     } catch (e) {
         document.getElementById(typingId)?.remove();
