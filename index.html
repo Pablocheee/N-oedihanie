@@ -833,27 +833,22 @@ async function sendChat() {
         });
         
         const data = await response.json();
-        let reply = data.reply; // Это текст от ИИ: "Попробуйте [BUTTON_STRESS]"
+        let reply = data.reply;
 
         // Пауза 3 секунды для реализма
         setTimeout(() => {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
 
-            // ПРЕЦИЗИОННАЯ ЗАМЕНА МЕТОК НА КНОПКИ
-let formattedText = reply
-    .replace('[BUTTON_STRESS]', createChatBtn('Узнать больше: Анти-стресс', 'https://n-oedihanie.vercel.app/antistress.html'))
-    .replace('[BUTTON_VOST]', createChatBtn('Узнать больше: Код восстановления', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
-    .replace('[BUTTON_PRANA]', createChatBtn('Узнать больше: Код Прана дыхание', 'https://n-oedihanie.vercel.app/prana.html'))
-    .replace('[BUTTON_VIKA]', createChatBtn('Связаться с Викторией', 'https://t.me/vika_breathe', '#fff'));
+            let formattedReply = `
+                <div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
+                <div>${reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
+                            .replace('[BUTTON_PRANA]', createChatBtn('Программа: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'))
+                            .replace('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://n-oedihanie.vercel.app/antistress.html'))
+                            .replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'))}</div>
+            `;
 
-// Теперь вставляем уже обработанный текст с кнопками
-let formattedReply = `
-    <div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
-    <div>${formattedText}</div>
-`;
-
-box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
+            box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
             box.scrollTop = box.scrollHeight;
         }, 1800); 
 
