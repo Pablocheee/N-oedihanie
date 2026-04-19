@@ -415,15 +415,14 @@
         document.getElementById('step-selection').style.display = 'block';
     }
 
-    // Робокасса — исправленная функция
+    // Робокасса
     async function payWithRobokassa() {
-        // ВАЖНО: Вместо 'YOUR_LOGIN' впиши свой логин из личного кабинета Робокассы
-        const merchantLogin = 'YOUR_LOGIN'; 
-        const price = 50000; // Сумма заказа
+        const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН ИЗ ЛК РОБОКАССЫ
+        const price = 50000; // Сумма в рублях
         const pageTitle = document.title;
         
-        // Отправка уведомления в Telegram о клике
-        const text = `💳 *Попытка оплаты картой*\nПродукт: ${pageTitle}\nСумма: ${price} RUB`;
+        // Уведомление в ТГ
+        const text = `💳 *Клик по Робокассе*\nПродукт: ${pageTitle}\nСумма: ${price} руб.`;
         
         fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -431,9 +430,8 @@
             body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
         });
 
-        // Если логин не изменен, выводим предупреждение, а не ошибку 26
         if (merchantLogin === 'YOUR_LOGIN') {
-            alert('Настройка оплаты в процессе. Пожалуйста, выберите USDT или обратитесь в поддержку.');
+            alert('Ошибка конфигурации: Не указан Merchant Login в коде. Оплата временно недоступна.');
             return;
         }
 
