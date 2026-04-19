@@ -816,14 +816,13 @@ async function sendChat() {
     
     if (!userText) return;
 
-    // Сообщение пользователя
     box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
     input.value = '';
     box.scrollTop = box.scrollHeight;
 
-    // Показываем индикатор печати (опционально)
+    // Индикатор печати
     const typingId = 'typing-' + Date.now();
-    box.innerHTML += `<div id="${typingId}" class="msg msg-ai" style="opacity: 0.5;">Victory AI печатает...</div>`;
+    box.innerHTML += `<div id="${typingId}" class="msg msg-ai" style="opacity: 0.6; font-size: 11px;">Victory AI печатает...</div>`;
     box.scrollTop = box.scrollHeight;
 
     try {
@@ -836,14 +835,13 @@ async function sendChat() {
         const data = await response.json();
         let reply = data.reply;
 
-        // Имитируем раздумья ИИ (4 секунды)
+        // Пауза 2-3 секунды для реализма
         setTimeout(() => {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
 
-            // Формируем ответ: Имя СВЕРХУ, потом текст
             let formattedReply = `
-                <div style="font-size: 10px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
+                <div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
                 <div>${reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
                             .replace('[BUTTON_PRANA]', createChatBtn('Программа: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'))
                             .replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'))}</div>
@@ -851,11 +849,11 @@ async function sendChat() {
 
             box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
             box.scrollTop = box.scrollHeight;
-        }, 3000); // Задержка 3 секунды (плюс время запроса ~1 сек = итого около 4)
+        }, 2500); 
 
     } catch (e) {
         document.getElementById(typingId)?.remove();
-        box.innerHTML += `<div class="msg msg-ai">Victory AI: Связь прервалась. Попробуй еще раз.</div>`;
+        box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
     }
 }
 
