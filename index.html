@@ -800,24 +800,42 @@ const courseData = {
         win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
     }
 
-    function sendChat() {
-        const input = document.getElementById('chat-input');
-        const box = document.getElementById('chat-messages');
-        if (!input.value.trim()) return;
-        box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
-        input.value = '';
+    function createBtn(text, link, color = 'var(--accent)') {
+    return `<a href="${link}" class="btn-main" style="display:block; margin-top:10px; padding:10px; text-decoration:none; text-align:center; font-size:12px; border-color:${color}">${text}</a>`;
+}
+
+async function sendChat() {
+    const input = document.getElementById('chat-input');
+    const box = document.getElementById('chat-messages');
+    const userText = input.value.trim();
+    
+    if (!userText) return;
+
+    // Отображаем сообщение пользователя
+    box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+    input.value = '';
+    box.scrollTop = box.scrollHeight;
+
+    try {
+        const response = await fetch('ТВОЙ_URL_BACKEND/ask-doctor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userText })
+        });
+        const data = await response.json();
+        let reply = data.reply;
+
+        // Превращаем метки в кнопки
+        reply = reply.replace('[BUTTON_VOST]', createBtn('Программа: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'));
+        reply = reply.replace('[BUTTON_PRANA]', createBtn('Программа: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'));
+        reply = reply.replace('[BUTTON_VIKA]', createBtn('Связаться с Викторией', 'https://t.me/vika_breathe', '#fff'));
+
+        box.innerHTML += `<div class="msg msg-ai">${reply}</div>`;
         box.scrollTop = box.scrollHeight;
-        setTimeout(() => {
-            box.innerHTML += `<div class="msg msg-ai">Дыхание — это ваш мост к новому состоянию.</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 600);
+    } catch (e) {
+        box.innerHTML += `<div class="msg msg-ai">Извините, я на мгновение потерял связь с космосом. Повторите?</div>`;
     }
-    // Добавь это в конец скрипта
-document.getElementById('chat-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        sendChat();
-    }
-});
+}
 // Обновленный скрипт: 6 секунд, плавная анимация, без смещения блоков
 const slogans = [
     "Простые практики дыхания 5-10 минут в день для ощутимого результата с первого занятия",
