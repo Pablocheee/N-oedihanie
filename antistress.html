@@ -147,6 +147,7 @@
         }
 
         .lk-link {
+            display: block;
             color: var(--text-main);
             text-decoration: none;
             font-size: 11px;
@@ -202,7 +203,7 @@
             content: "ИN"; 
             position: absolute;
             left: 0;
-            top: 52%; 
+            top: 50%; 
             transform: scaleY(-1); 
             color: var(--accent);
             opacity: 0.12; 
@@ -212,8 +213,8 @@
             pointer-events: none;
         }
 
-        .logo-o { margin-left: -2px; } 
-        .logo-e { margin-left: -2px; }
+        .logo-o { margin-left: 0px; } 
+        .logo-e { margin-left: 0px; }
 
         .logo-bridge {
             font-weight: 600;
@@ -224,7 +225,7 @@
         .logo-thin { 
             font-weight: 200;
             color: var(--text-main);
-            margin-left: 10px;
+            margin-left: 15px;
             letter-spacing: 6px;
             opacity: 0.5;
         }
@@ -295,7 +296,7 @@
         <span class="logo-thin">ДЫХАНИЕ</span>
     </a>
 
-    <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+    <div class="nav-right" style="display: flex; align-items: center; gap: 30px;">
         <a href="https://classroom.google.com" target="_blank" class="lk-link" onclick="window.open(this.href, '_blank'); return false;">ЛИЧНЫЙ КАБИНЕТ</a>
         
         <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
