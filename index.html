@@ -806,7 +806,7 @@ const courseData = {
 
 // Вспомогательная функция для создания кнопок прямо в чате
 function createChatBtn(text, link, color = 'var(--accent)') {
-    return `<a href="${link}" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff;">${text}</a>`;
+    return `<a href="${link}" target="_blank" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff;">${text}</a>`;
 }
 
 async function sendChat() {
@@ -816,14 +816,14 @@ async function sendChat() {
     
     if (!userText) return;
 
-    // 1. Показываем сообщение пользователя
+    // Показываем сообщение пользователя
     box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
     input.value = '';
     box.scrollTop = box.scrollHeight;
 
     try {
-        // 2. Запрос к твоему бэкенду (замени URL на свой, если деплоил)
-        const response = await fetch('http://localhost:3000/ask-doctor', { 
+        // СТУЧИМСЯ НА ТВОЙ НОВЫЙ URL
+        const response = await fetch('https://tantra-ai.vercel.app/ask-doctor', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: userText })
@@ -832,18 +832,18 @@ async function sendChat() {
         const data = await response.json();
         let reply = data.reply;
 
-        // 3. Заменяем метки из ИИ на реальные кнопки
-        reply = reply.replace('[BUTTON_VOST]', createChatBtn('Открыть: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'));
-        reply = reply.replace('[BUTTON_PRANA]', createChatBtn('Открыть: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'));
+        // Превращаем метки из ИИ в кнопки
+        reply = reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'));
+        reply = reply.replace('[BUTTON_PRANA]', createChatBtn('Программа: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'));
         reply = reply.replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
 
-        // 4. Показываем ответ ИИ
+        // Показываем ответ ИИ
         box.innerHTML += `<div class="msg msg-ai">${reply}</div>`;
         box.scrollTop = box.scrollHeight;
 
     } catch (e) {
         console.error(e);
-        box.innerHTML += `<div class="msg msg-ai">Прошу прощения, возникла техническая заминка. Попробуйте еще раз.</div>`;
+        box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Попробуйте отправить сообщение еще раз.</div>`;
     }
 }
 // Обновленный скрипт: 6 секунд, плавная анимация, без смещения блоков
