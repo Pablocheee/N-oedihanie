@@ -1,446 +1,449 @@
 <!DOCTYPE html><html lang="ru"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ИNOE ДЫХАНИЕ — Чистый бланк</title>
-    <style>
-    /* Стили для страницы продукта */
-        .product-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 120px 5% 60px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ИNOE ДЫХАНИЕ — Чистый бланк</title>
+    <style>
+    /* Стили для страницы продукта */
+        .product-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 60px;
+        }
 
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 60px;
-            max-width: 1200px;
-            align-items: center;
-        }.product-image-wrap {
-            position: relative;
-            border-radius: 30px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-            max-width: 320px; /* Здесь регулируй размер: меньше число — меньше фото */
-            width: 100%;
-            aspect-ratio: 4 / 5; /* Сохраняет пропорции прямоугольника */
-            background: rgba(255, 255, 255, 0.05);
-        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            max-width: 1200px;
+            align-items: center;
+        }.product-image-wrap {
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            max-width: 320px; /* Здесь регулируй размер: меньше число — меньше фото */
+            width: 100%;
+            aspect-ratio: 4 / 5; /* Сохраняет пропорции прямоугольника */
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-        .product-image-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Картинка заполнит блок без искажений */
-            display: block;
-            filter: grayscale(20%) contrast(1.1);
-            transition: 0.5s;
-        }
+        .product-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Картинка заполнит блок без искажений */
+            display: block;
+            filter: grayscale(20%) contrast(1.1);
+            transition: 0.5s;
+        }
 
-        .product-image-wrap:hover img {
-            transform: scale(1.05);
-            filter: grayscale(0%) contrast(1.1);
-        }
+        .product-image-wrap:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0%) contrast(1.1);
+        }
 
-        .benefits-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
+        .benefits-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
 
-        .benefits-list li {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
+        .benefits-list li {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
 
-        .benefits-list li .bullet {
-            color: var(--accent);
-            font-size: 20px;
-            line-height: 1.2;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
+        .benefits-list li .bullet {
+            color: var(--accent);
+            font-size: 20px;
+            line-height: 1.2;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
 
-        .benefits-list li p {
-            font-size: 16px;
-            font-weight: 300;
-            line-height: 1.6;
-            color: var(--text-muted);
-        }
+        .benefits-list li p {
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
 
-        @media (max-width: 900px) {
-            .product-grid { grid-template-columns: 1fr; gap: 40px; }
-            .product-page { padding-top: 100px; }
-            .product-info { order: 2; }
-            .product-image-wrap { order: 1; max-width: 400px; margin: 0 auto; }
-        }
-        /* Обнуление фона Тильды */
-        #allrecords, .t-records, .r, .t123, .t123__container, [id^="rec"] {
-            background-color: transparent !important;
-        }
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;500;700&display=swap');
+        @media (max-width: 900px) {
+            .product-grid { grid-template-columns: 1fr; gap: 40px; }
+            .product-page { padding-top: 100px; }
+            .product-info { order: 2; }
+            .product-image-wrap { order: 1; max-width: 400px; margin: 0 auto; }
+        }
+        /* Обнуление фона Тильды */
+        #allrecords, .t-records, .r, .t123, .t123__container, [id^="rec"] {
+            background-color: transparent !important;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;500;700&display=swap');
 
-        :root {
-            --accent: #a8dadc;
-            --accent-glow: rgba(168, 218, 220, 0.4);
-            --deep: #1d3557;
-            --text-main: #f1faee;
-            --text-muted: rgba(241, 250, 238, 0.8);
-            --glass: rgba(255, 255, 255, 0.12);
-            --border: rgba(255, 255, 255, 0.2);
-        }
+        :root {
+            --accent: #a8dadc;
+            --accent-glow: rgba(168, 218, 220, 0.4);
+            --deep: #1d3557;
+            --text-main: #f1faee;
+            --text-muted: rgba(241, 250, 238, 0.8);
+            --glass: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.2);
+        }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            color: var(--text-main); 
-            line-height: 1.8; 
-            background: #0d1b2a !important; 
-            overflow-x: hidden;
-        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: var(--text-main); 
+            line-height: 1.8; 
+            background: #0d1b2a !important; 
+            overflow-x: hidden;
+        }
 
-        #breath-bg { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            z-index: -1; 
-            background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%),
-                        radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%),
-                        radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%),
-                        #0d1b2a;
-            background-size: 200% 200%;
-            animation: elementFlow 20s ease-in-out infinite alternate;
-            filter: saturate(1.2);
-        }
+        #breath-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            z-index: -1; 
+            background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%),
+                        #0d1b2a;
+            background-size: 200% 200%;
+            animation: elementFlow 20s ease-in-out infinite alternate;
+            filter: saturate(1.2);
+        }
 
-        @keyframes elementFlow {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 100%; }
-        }
+        @keyframes elementFlow {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 100%; }
+        }
 
-        header { 
-            position: fixed; 
-            top: 0; 
-            width: 100%; 
-            padding: 20px 5%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            z-index: 1000; 
-            background: rgba(9, 21, 34, 0.7); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
+        header { 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            padding: 20px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            z-index: 1000; 
+            background: rgba(9, 21, 34, 0.7); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
 
-        .nav-right { 
-            display: flex; 
-            align-items: center; 
-            gap: 30px; 
-        }
+        .nav-right { 
+            display: flex; 
+            align-items: center; 
+            gap: 30px; 
+        }
 
-        .lk-link {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 11px;
-            letter-spacing: 2px;
-            font-weight: 500;
-            opacity: 0.8;
-            transition: 0.3s;
-            border-bottom: 1px solid transparent;
-            text-transform: uppercase;
-        }
+        .lk-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 500;
+            opacity: 0.8;
+            transition: 0.3s;
+            border-bottom: 1px solid transparent;
+            text-transform: uppercase;
+        }
 
-        .lk-link:hover {
-            opacity: 1;
-            color: var(--accent);
-            border-color: var(--accent);
-        }
+        .lk-link:hover {
+            opacity: 1;
+            color: var(--accent);
+            border-color: var(--accent);
+        }
 
-        .menu-toggle {
-            color: var(--text-main);
-            font-size: 11px;
-            letter-spacing: 2px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.3s;
-            opacity: 0.8;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
+        .menu-toggle {
+            color: var(--text-main);
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            opacity: 0.8;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
 
-        .menu-toggle:hover {
-            opacity: 1;
-            color: var(--accent);
-        }
+        .menu-toggle:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
 
-        .logo { 
-            font-family: 'Manrope', sans-serif;
-            font-size: 26px; 
-            display: flex;
-            align-items: center;
-            position: relative;
-            text-decoration: none;
-        }
+        .logo { 
+            font-family: 'Manrope', sans-serif;
+            font-size: 26px; 
+            display: flex;
+            align-items: center;
+            position: relative;
+            text-decoration: none;
+        }
 
-        .logo-composite {
-            font-weight: 800;
-            color: var(--accent);
-            text-shadow: 0 0 15px var(--accent-glow);
-            letter-spacing: 2px;
-            position: relative;
-        }
+        .logo-composite {
+            font-weight: 800;
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--accent-glow);
+            letter-spacing: 2px;
+            position: relative;
+        }
 
-        .logo-composite::after {
-            content: "ИN"; 
-            position: absolute;
-            left: 0;
-            top: 52%; 
-            transform: scaleY(-1); 
-            color: var(--accent);
-            opacity: 0.12; 
-            filter: blur(1.5px); 
-            -webkit-mask-image: linear-gradient(to top, transparent 10%, black 90%);
-            mask-image: linear-gradient(to top, transparent 10%, black 90%);
-            pointer-events: none;
-        }
+        .logo-composite::after {
+            content: "ИN"; 
+            position: absolute;
+            left: 0;
+            top: 52%; 
+            transform: scaleY(-1); 
+            color: var(--accent);
+            opacity: 0.12; 
+            filter: blur(1.5px); 
+            -webkit-mask-image: linear-gradient(to top, transparent 10%, black 90%);
+            mask-image: linear-gradient(to top, transparent 10%, black 90%);
+            pointer-events: none;
+        }
 
-        .logo-o { margin-left: -2px; } 
-        .logo-e { margin-left: -2px; }
+        .logo-o { margin-left: -2px; } 
+        .logo-e { margin-left: -2px; }
 
-        .logo-bridge {
-            font-weight: 600;
-            color: rgba(168, 218, 220, 0.7);
-            letter-spacing: 1px;
-        }
+        .logo-bridge {
+            font-weight: 600;
+            color: rgba(168, 218, 220, 0.7);
+            letter-spacing: 1px;
+        }
 
-        .logo-thin { 
-            font-weight: 200;
-            color: var(--text-main);
-            margin-left: 10px;
-            letter-spacing: 6px;
-            opacity: 0.5;
-        }
+        .logo-thin { 
+            font-weight: 200;
+            color: var(--text-main);
+            margin-left: 10px;
+            letter-spacing: 6px;
+            opacity: 0.5;
+        }
 
-        #full-menu {
-            position: fixed; inset: 0; background: rgba(9, 21, 34, 0.98); z-index: 2000;
-            display: none; flex-direction: column; justify-content: center; 
-            align-items: center; gap: 40px; text-align: center;
-        }
+        #full-menu {
+            position: fixed; inset: 0; background: rgba(9, 21, 34, 0.98); z-index: 2000;
+            display: none; flex-direction: column; justify-content: center; 
+            align-items: center; gap: 40px; text-align: center;
+        }
 
-        #full-menu .close-menu {
-            position: absolute; top: 20px; right: 30px; font-size: 50px; 
-            line-height: 1; cursor: pointer; font-weight: 100; transition: 0.3s; z-index: 2001;
-        }
+        #full-menu .close-menu {
+            position: absolute; top: 20px; right: 30px; font-size: 50px; 
+            line-height: 1; cursor: pointer; font-weight: 100; transition: 0.3s; z-index: 2001;
+        }
 
-        #full-menu a { 
-            display: inline-block; font-size: 36px; color: var(--text-main); 
-            text-decoration: none; font-weight: 200; transition: 0.4s; letter-spacing: 3px; 
-        }
+        #full-menu a { 
+            display: inline-block; font-size: 36px; color: var(--text-main); 
+            text-decoration: none; font-weight: 200; transition: 0.4s; letter-spacing: 3px; 
+        }
 
-        #full-menu a:hover { color: var(--accent); }
+        #full-menu a:hover { color: var(--accent); }
 
-        /* ИИ Консультант */
-        #ai-trigger { 
-            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; 
-            background: rgba(255,255,255,0.05); border: 1px solid var(--accent); 
-            color: var(--accent); border-radius: 50%; display: flex; align-items: center; 
-            justify-content: center; cursor: pointer; z-index: 2000; font-size: 24px; 
-            transition: 0.4s; backdrop-filter: blur(10px); 
-        }
-        #ai-trigger:hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 20px var(--accent-glow); }
-        
-        #ai-window {
-            position: fixed; bottom: 100px; right: 30px; width: 350px; height: 480px; 
-            background: rgba(13, 20, 29, 0.95); backdrop-filter: blur(50px); border-radius: 25px; 
-            z-index: 2000; display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border);
-        }
+        /* ИИ Консультант */
+        #ai-trigger { 
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--accent); 
+            color: var(--accent); border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; cursor: pointer; z-index: 2000; font-size: 24px; 
+            transition: 0.4s; backdrop-filter: blur(10px); 
+        }
+        #ai-trigger:hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 20px var(--accent-glow); }
+        
+        #ai-window {
+            position: fixed; bottom: 100px; right: 30px; width: 350px; height: 480px; 
+            background: rgba(13, 20, 29, 0.95); backdrop-filter: blur(50px); border-radius: 25px; 
+            z-index: 2000; display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border);
+        }
 
-        #chat-messages {
-            flex: 1; overflow-y: auto; padding: 20px;
-            display: flex; flex-direction: column; gap: 15px; padding-bottom: 80px;
-        }
+        #chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 15px; padding-bottom: 80px;
+        }
 
-        .msg { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
-        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
-        .msg-user { align-self: flex-end; background: var(--accent); color: var(--deep); border-bottom-right-radius: 4px; }
+        .msg { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
+        .msg-user { align-self: flex-end; background: var(--accent); color: var(--deep); border-bottom-right-radius: 4px; }
 
-        .chat-input-area {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 15px; display: flex; gap: 10px; 
-            background: rgba(13, 20, 29, 0.98); border-top: 1px solid var(--border);
-        }
+        .chat-input-area {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 15px; display: flex; gap: 10px; 
+            background: rgba(13, 20, 29, 0.98); border-top: 1px solid var(--border);
+        }
 
-        .modal {
-            position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(30px);
-            z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px;
-        }
+        .modal {
+            position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(30px);
+            z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px;
+        }
 
-        @media screen and (max-width: 768px) {
-            .logo-thin { display: none; }
-            #ai-window { width: calc(100% - 40px); right: 20px; bottom: 90px; height: 60vh; }
-        }
-    </style></head><body><div id="breath-bg"></div><header>
-    <a href="/" class="logo">
-        <span class="logo-composite">ИN</span>
-        <span class="logo-bridge logo-o">O</span>
-        <span class="logo-bridge logo-e">E</span>
-        <span class="logo-thin">ДЫХАНИЕ</span>
-    </a>
-        
-        <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
-    </div>
+        @media screen and (max-width: 768px) {
+            .logo-thin { display: none; }
+            #ai-window { width: calc(100% - 40px); right: 20px; bottom: 90px; height: 60vh; }
+        }
+    </style></head><body><div id="breath-bg"></div><header>
+    <a href="/" class="logo">
+        <span class="logo-composite">ИN</span>
+        <span class="logo-bridge logo-o">O</span>
+        <span class="logo-bridge logo-e">E</span>
+        <span class="logo-thin">ДЫХАНИЕ</span>
+    </a>
+
+    <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+        <a href="https://aio-core-blank.vercel.app/" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
+        
+        <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
+    </div>
 </header> <div id="full-menu">
-    <div class="close-menu" onclick="toggleMenu(false)">×</div>
-    <a href="#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
-    <a href="#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
-    <a href="#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
-    <a href="#author" onclick="toggleMenu(false)">ВИКТОРИЯ</a>
-    <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a></div><main class="product-page">
-    <div class="product-grid">
-        <div class="product-image-wrap">
-            <img src="https://i.postimg.cc/gkk9P3C1/photo-2026-04-14-00-10-42.jpg" alt="Victory">
-        </div>
+    <div class="close-menu" onclick="toggleMenu(false)">×</div>
+    <a href="#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
+    <a href="#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
+    <a href="#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
+    <a href="#author" onclick="toggleMenu(false)">ВИКТОРИЯ</a>
+    <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a></div><main class="product-page">
+    <div class="product-grid">
+        <div class="product-image-wrap">
+            <img src="https://i.postimg.cc/gkk9P3C1/photo-2026-04-14-00-10-42.jpg" alt="Victory">
+        </div>
 
-        <div class="product-info">
-            <ul class="benefits-list">
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Моментальный выход из стресса и тревоги. Эффект ощущается сразу, с регулярной практикой закрепляется на долго.</p>
-                </li>
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Норма, а не усилие. Тебе больше не нужно себя успокаивать или контролировать — спокойствие и баланс становятся естественными.</p>
-                </li>
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Инструмент, который всегда под рукой. Дыхание всегда с тобой, нервная система восстанавливается, эмоциональный и гормональный фон стабилизируется.</p>
-                </li>
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Ясность мышления, эмоциональная стабильность и точечная концентрация. Без внутреннего шума. Ты выбираешь свои мысли, состояние и направление внимания — и легко удерживаешь фокус на любой задаче.</p>
-                </li>
-                <li>
-                    <span class="bullet">✧</span>
-                    <p>Мощная энергия и ресурс без стимуляторов. Ты наполняешься энергией на клеточном уровне за счёт дополнительного кислорода и грамотного газообмена — это естественно, безопасно и полезно для организма.</p>
-                </li>
-            </ul>
+        <div class="product-info">
+            <ul class="benefits-list">
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Моментальный выход из стресса и тревоги. Эффект ощущается сразу, с регулярной практикой закрепляется на долго.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Норма, а не усилие. Тебе больше не нужно себя успокаивать или контролировать — спокойствие и баланс становятся естественными.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Инструмент, который всегда под рукой. Дыхание всегда с тобой, нервная система восстанавливается, эмоциональный и гормональный фон стабилизируется.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Ясность мышления, эмоциональная стабильность и точечная концентрация. Без внутреннего шума. Ты выбираешь свои мысли, состояние и направление внимания — и легко удерживаешь фокус на любой задаче.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Мощная энергия и ресурс без стимуляторов. Ты наполняешься энергией на клеточном уровне за счёт дополнительного кислорода и грамотного газообмена — это естественно, безопасно и полезно для организма.</p>
+                </li>
+            </ul>
 
-            <div style="margin-top: 50px;">
-                <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" 
-                   style="border: 1px solid var(--accent); color: var(--text-main); padding: 18px 40px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; display: inline-block; background: rgba(168, 218, 220, 0.05);">
-                    Получить доступ
-                </a>
-            </div>
-        </div>
-    </div></main><div id="paymentModal" class="modal">
-    <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
-        <div style="margin-bottom: 25px;">
-            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
-            <p style="font-size: 14px; opacity: 0.7;">Введите Email. На него придет пароль после подтверждения оплаты.</p>
-        </div>
+            <div style="margin-top: 50px;">
+                <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" 
+                   style="border: 1px solid var(--accent); color: var(--text-main); padding: 18px 40px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; display: inline-block; background: rgba(168, 218, 220, 0.05);">
+                    Получить доступ
+                </a>
+            </div>
+        </div>
+    </div></main><div id="paymentModal" class="modal">
+    <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
+        <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление заказа</h2>
+            <p style="font-size: 14px; opacity: 0.7;">Введите Email. На него придет пароль после подтверждения оплаты.</p>
+        </div>
 
-        <form id="orderForm" action="https://formspree.io/f/xpqkrqng" method="POST">
-            <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
-                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none;">
-            
-            <input type="hidden" name="memo_id" id="hiddenMemo">
-            <input type="hidden" name="_subject" value="Новая оплата: ИNOE ДЫХАНИЕ">
-            
-            <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 20px;">
-                <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
-                <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
-                    Переведите <b>500 USDT</b>
-                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
-                    Комментарий (Memo): <b id="memoDisplay" style="color:var(--accent)">...</b>
-                </p>
-                
-                <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-                    <code id="walletAddr" style="font-size: 10px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
-                    <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 16px;">📋</button>
-                </div>
-            </div>
+        <form id="orderForm" action="https://formspree.io/f/xpqkrqng" method="POST">
+            <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
+                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none;">
+            
+            <input type="hidden" name="memo_id" id="hiddenMemo">
+            <input type="hidden" name="_subject" value="Новая оплата: ИNOE ДЫХАНИЕ">
+            
+            <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 20px;">
+                <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
+                <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
+                    Переведите <b>500 USDT</b>
+                    Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 6px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
+                    Комментарий (Memo): <b id="memoDisplay" style="color:var(--accent)">...</b>
+                </p>
+                
+                <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+                    <code id="walletAddr" style="font-size: 10px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
+                    <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 16px;">📋</button>
+                </div>
+            </div>
 
-            <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, отправить заявку</button>
-            <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
-        </form>
-    </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages"><div class="msg msg-ai">Приветствую. Я готов помочь вам с навигацией по сайту. Какой у вас вопрос?</div></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
-    // Уникальный Memo
-    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('memoDisplay').innerText = generatedMemo;
-    document.getElementById('hiddenMemo').value = generatedMemo;
+            <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил, отправить заявку</button>
+            <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
+        </form>
+    </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages"><div class="msg msg-ai">Приветствую. Я готов помочь вам с навигацией по сайту. Какой у вас вопрос?</div></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
+    // Уникальный Memo
+    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('memoDisplay').innerText = generatedMemo;
+    document.getElementById('hiddenMemo').value = generatedMemo;
 
-    function logout() {
-        // 1. Удаляем куки сессии (если используем их)
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        
-        // 2. Очищаем LocalStorage (на случай, если там хранятся токены)
-        localStorage.clear();
-        
-        // 3. Перенаправляем на главную или страницу логина
-        window.location.href = "https://aio-core-blank.vercel.app/";
-    }
+    function logout() {
+        // 1. Удаляем куки сессии (если используем их)
+        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
+        // 2. Очищаем LocalStorage (на случай, если там хранятся токены)
+        localStorage.clear();
+        
+        // 3. Перенаправляем на главную или страницу логина
+        window.location.href = "https://aio-core-blank.vercel.app/";
+    }
 
-    function toggleMenu(s) {
-        document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
-        document.body.style.overflow = s ? 'hidden' : 'auto';
-    }
+    function toggleMenu(s) {
+        document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
+        document.body.style.overflow = s ? 'hidden' : 'auto';
+    }
 
-    function openPaymentModal() {
-        document.getElementById('paymentModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
+    function openPaymentModal() {
+        document.getElementById('paymentModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
 
-    function closePaymentModal() {
-        document.getElementById('paymentModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 
-    function copyWallet() {
-        const addr = document.getElementById('walletAddr').innerText;
-        navigator.clipboard.writeText(addr);
-        alert('Адрес скопирован!');
-    }
+    function copyWallet() {
+        const addr = document.getElementById('walletAddr').innerText;
+        navigator.clipboard.writeText(addr);
+        alert('Адрес скопирован!');
+    }
 
-    function toggleChat() {
-        const win = document.getElementById('ai-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-    }
+    function toggleChat() {
+        const win = document.getElementById('ai-window');
+        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+    }
 
-    function sendChat() {
-        const input = document.getElementById('chat-input');
-        const box = document.getElementById('chat-messages');
-        if (!input.value.trim()) return;
-        box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
-        const val = input.value;
-        input.value = '';
-        box.scrollTop = box.scrollHeight;
-        setTimeout(() => {
-            box.innerHTML += `<div class="msg msg-ai">Дыхание — это ваш мост к новому состоянию. Я всегда на связи.</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 600);
-    }
+    function sendChat() {
+        const input = document.getElementById('chat-input');
+        const box = document.getElementById('chat-messages');
+        if (!input.value.trim()) return;
+        box.innerHTML += `<div class="msg msg-user">${input.value}</div>`;
+        const val = input.value;
+        input.value = '';
+        box.scrollTop = box.scrollHeight;
+        setTimeout(() => {
+            box.innerHTML += `<div class="msg msg-ai">Дыхание — это ваш мост к новому состоянию. Я всегда на связи.</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 600);
+    }
 
-    document.getElementById('chat-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') sendChat();
-    });
+    document.getElementById('chat-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendChat();
+    });
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if(href === "#") return;
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                toggleMenu(false);
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        });
-    });</script></body></html>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if(href === "#") return;
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+                toggleMenu(false);
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });</script></body></html>
