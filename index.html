@@ -816,13 +816,17 @@ async function sendChat() {
     
     if (!userText) return;
 
-    // Показываем сообщение пользователя
+    // Сообщение пользователя
     box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
     input.value = '';
     box.scrollTop = box.scrollHeight;
 
+    // Показываем индикатор печати (опционально)
+    const typingId = 'typing-' + Date.now();
+    box.innerHTML += `<div id="${typingId}" class="msg msg-ai" style="opacity: 0.5;">Victory AI печатает...</div>`;
+    box.scrollTop = box.scrollHeight;
+
     try {
-        // СТУЧИМСЯ НА ТВОЙ НОВЫЙ URL
         const response = await fetch('https://tantra-ai.vercel.app/ask-doctor', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -832,20 +836,35 @@ async function sendChat() {
         const data = await response.json();
         let reply = data.reply;
 
-        // Превращаем метки из ИИ в кнопки
-        reply = reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'));
-        reply = reply.replace('[BUTTON_PRANA]', createChatBtn('Программа: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'));
-        reply = reply.replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+        // Имитируем раздумья ИИ (4 секунды)
+        setTimeout(() => {
+            const typingElem = document.getElementById(typingId);
+            if (typingElem) typingElem.remove();
 
-        // Показываем ответ ИИ
-        box.innerHTML += `<div class="msg msg-ai">${reply}</div>`;
-        box.scrollTop = box.scrollHeight;
+            // Формируем ответ: Имя СВЕРХУ, потом текст
+            let formattedReply = `
+                <div style="font-size: 10px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
+                <div>${reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
+                            .replace('[BUTTON_PRANA]', createChatBtn('Программа: Перепрошивка', 'https://n-oedihanie.vercel.app/prana.html'))
+                            .replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'))}</div>
+            `;
+
+            box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 3000); // Задержка 3 секунды (плюс время запроса ~1 сек = итого около 4)
 
     } catch (e) {
-        console.error(e);
-        box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Попробуйте отправить сообщение еще раз.</div>`;
+        document.getElementById(typingId)?.remove();
+        box.innerHTML += `<div class="msg msg-ai">Victory AI: Связь прервалась. Попробуй еще раз.</div>`;
     }
 }
+
+// Добавляем отправку по Enter
+document.getElementById('chat-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        sendChat();
+    }
+});
 // Обновленный скрипт: 6 секунд, плавная анимация, без смещения блоков
 const slogans = [
     "Простые практики дыхания 5-10 минут в день для ощутимого результата с первого занятия",
