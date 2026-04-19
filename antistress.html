@@ -415,11 +415,15 @@
         document.getElementById('step-selection').style.display = 'block';
     }
 
-    // Робокасса (заглушка/переход)
+    // Робокасса — исправленная функция
     async function payWithRobokassa() {
-        // Уведомление в ТГ о намерении оплатить через Робокассу
+        // ВАЖНО: Вместо 'YOUR_LOGIN' впиши свой логин из личного кабинета Робокассы
+        const merchantLogin = 'YOUR_LOGIN'; 
+        const price = 50000; // Сумма заказа
         const pageTitle = document.title;
-        const text = `💳 *Переход к оплате*\nПродукт: ${pageTitle}\nСпособ: Робокасса (Карты РФ)`;
+        
+        // Отправка уведомления в Telegram о клике
+        const text = `💳 *Попытка оплаты картой*\nПродукт: ${pageTitle}\nСумма: ${price} RUB`;
         
         fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -427,8 +431,14 @@
             body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
         });
 
-        // Здесь должен быть твой URL для оплаты в Робокассе
-        window.location.href = "https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=YOUR_LOGIN&OutSum=50000"; 
+        // Если логин не изменен, выводим предупреждение, а не ошибку 26
+        if (merchantLogin === 'YOUR_LOGIN') {
+            alert('Настройка оплаты в процессе. Пожалуйста, выберите USDT или обратитесь в поддержку.');
+            return;
+        }
+
+        // Переход на оплату
+        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}&Culture=ru`; 
     }
 
     async function sendToTelegram(event) {
