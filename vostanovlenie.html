@@ -2,8 +2,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ИNOE ДЫХАНИЕ — Код восстановления нервной системы.</title>
+    
     <style>
-        /* [SETTINGS] */
+        /* // [SETTINGS] */
         :root {
             --accent: #a8dadc;
             --accent-glow: rgba(168, 218, 220, 0.4);
@@ -14,116 +15,292 @@
             --border: rgba(255, 255, 255, 0.2);
         }
 
-        /* === START: UI_STYLES === */
-        .product-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 5% 60px; }
-        .product-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; max-width: 1200px; align-items: center; }
-        .product-image-wrap { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.4); max-width: 320px; width: 100%; aspect-ratio: 4 / 5; background: rgba(255, 255, 255, 0.05); }
-        .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(20%) contrast(1.1); transition: 0.5s; }
-        .product-image-wrap:hover img { transform: scale(1.05); filter: grayscale(0%) contrast(1.1); }
-        .benefits-list { list-style: none; display: flex; flex-direction: column; gap: 30px; }
-        .benefits-list li { display: flex; gap: 20px; align-items: flex-start; }
-        .benefits-list li .bullet { color: var(--accent); font-size: 20px; line-height: 1.2; text-shadow: 0 0 10px var(--accent-glow); }
-        .benefits-list li p { font-size: 16px; font-weight: 300; line-height: 1.6; color: var(--text-muted); }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); line-height: 1.8; background: #0d1b2a !important; overflow-x: hidden; }
-        #breath-bg { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%), radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%), radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%), #0d1b2a; background-size: 200% 200%; animation: elementFlow 20s ease-in-out infinite alternate; filter: saturate(1.2); }
-        @keyframes elementFlow { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 100%; } }
-        header { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(9, 21, 34, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-        .nav-right { display: flex; align-items: center; gap: 30px; }
-        .lk-link { color: var(--text-main); text-decoration: none; font-size: 11px; letter-spacing: 2px; font-weight: 500; opacity: 0.8; transition: 0.3s; border-bottom: 1px solid transparent; text-transform: uppercase; }
-        .menu-toggle { color: var(--text-main); font-size: 11px; letter-spacing: 2px; font-weight: 500; cursor: pointer; transition: 0.3s; opacity: 0.8; text-transform: uppercase; }
-        .logo { font-family: 'Manrope', sans-serif; font-size: 26px; display: flex; align-items: center; position: relative; text-decoration: none; }
-        .logo-composite { font-weight: 800; color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); letter-spacing: 2px; position: relative; }
-        .logo-thin { font-weight: 200; color: var(--text-main); margin-left: 10px; letter-spacing: 6px; opacity: 0.5; }
-        .modal { position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(30px); z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        /* === END: UI_STYLES === */
+        /* === START: GLOBAL_STYLES === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: var(--text-main); 
+            line-height: 1.8; 
+            background: #0d1b2a !important; 
+            overflow-x: hidden;
+        }
+
+        #breath-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            z-index: -1; 
+            background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%),
+                        #0d1b2a;
+            background-size: 200% 200%;
+            animation: elementFlow 20s ease-in-out infinite alternate;
+            filter: saturate(1.2);
+        }
+
+        @keyframes elementFlow {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 100%; }
+        }
+        /* === END: GLOBAL_STYLES === */
+
+        /* === START: HEADER_STYLES === */
+        header { 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            padding: 20px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            z-index: 1000; 
+            background: rgba(9, 21, 34, 0.7); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { 
+            font-family: 'Manrope', sans-serif;
+            font-size: 26px; 
+            display: flex;
+            align-items: center;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .logo-composite {
+            font-weight: 800;
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--accent-glow);
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        /* ТА САМАЯ БРОВЬ (ОТРАЖЕНИЕ ЛОГО) */
+        .logo-composite::after {
+            content: "ИN"; 
+            position: absolute;
+            left: 0;
+            top: 52%; 
+            transform: scaleY(-1); 
+            color: var(--accent);
+            opacity: 0.12; 
+            filter: blur(1.5px); 
+            -webkit-mask-image: linear-gradient(to top, transparent 10%, black 90%);
+            mask-image: linear-gradient(to top, transparent 10%, black 90%);
+            pointer-events: none;
+        }
+
+        .logo-o { margin-left: -2px; } 
+        .logo-e { margin-left: -2px; }
+
+        .logo-bridge {
+            font-weight: 600;
+            color: rgba(168, 218, 220, 0.7);
+            letter-spacing: 1px;
+        }
+
+        .logo-thin { 
+            font-weight: 200;
+            color: var(--text-main);
+            margin-left: 10px;
+            letter-spacing: 6px;
+            opacity: 0.5;
+        }
+        /* === END: HEADER_STYLES === */
+
+        /* === START: PRODUCT_STYLES === */
+        .product-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 60px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            max-width: 1200px;
+            align-items: center;
+        }
+
+        .product-image-wrap {
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            max-width: 320px;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .benefits-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .benefits-list li {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .benefits-list li .bullet {
+            color: var(--accent);
+            font-size: 20px;
+            line-height: 1.2;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .benefits-list li p {
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .modal {
+            position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(30px);
+            z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .product-grid { grid-template-columns: 1fr; gap: 40px; }
+            .product-page { padding-top: 100px; }
+            .product-info { order: 2; }
+            .product-image-wrap { order: 1; max-width: 400px; margin: 0 auto; }
+            .logo-thin { display: none; }
+        }
+        /* === END: PRODUCT_STYLES === */
     </style>
 </head>
 <body>
-    <div id="breath-bg"></div>
-    <header>
-        <a href="/" class="logo">
-            <span class="logo-composite">ИN</span>
-            <span class="logo-thin">ДЫХАНИЕ</span>
-        </a>
-        <div class="nav-right">
-            <a href="https://classroom.google.com" target="_blank" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
-            <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
-        </div>
-    </header>
 
-    <main class="product-page">
-        <div class="product-grid">
-            <div class="product-image-wrap"></div>
-            <div class="product-info">
-                <ul class="benefits-list">
-                    <li><span class="bullet">✧</span><p>Программа дыхания антистресс + глубокое пробуждение осознанности.</p></li>
-                </ul>
-                <div style="margin-top: 50px;">
-                    <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" style="border: 1px solid var(--accent); color: var(--text-main); padding: 18px 40px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; display: inline-block; background: rgba(168, 218, 220, 0.05);">Получить доступ</a>
-                </div>
-            </div>
-        </div>
-    </main>
+<div id="breath-bg"></div>
 
-    <div id="paymentModal" class="modal">
-        <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
-            <div id="step-selection">
-                <h2 style="font-size: 24px; color: var(--accent); margin-bottom: 25px;">Выберите оплату</h2>
-                <button onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; padding: 18px; border-radius: 12px; margin-bottom: 15px; cursor: pointer;">💳 Карта РФ</button>
-                <button onclick="showCryptoStep()" style="width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; cursor: pointer;">₮ USDT (TON)</button>
+<header>
+    <a href="/" class="logo">
+        <span class="logo-composite">ИN</span>
+        <span class="logo-bridge logo-o">O</span>
+        <span class="logo-bridge logo-e">E</span>
+        <span class="logo-thin">ДЫХАНИЕ</span>
+    </a>
+
+    <div class="nav-right">
+        <a href="https://classroom.google.com" target="_blank" class="lk-link" style="color: var(--text-main); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">ЛИЧНЫЙ КАБИНЕТ</a>
+        <div class="menu-toggle" onclick="toggleMenu(true)" style="color: var(--text-main); font-size: 11px; letter-spacing: 2px; cursor: pointer; text-transform: uppercase;">МЕНЮ</div>
+    </div>
+</header>
+
+<main class="product-page">
+    <div class="product-grid">
+        <div class="product-image-wrap">
             </div>
-            <div id="step-crypto" style="display: none;">
-                <form onsubmit="handleSecureOrder(event)">
-                    <input type="email" id="customerEmail" placeholder="Ваш Email" required style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); border-radius: 12px;">
-                    <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer;">Я ОПЛАТИЛ</button>
-                </form>
+
+        <div class="product-info">
+            <ul class="benefits-list">
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Программа дыхания антистресс + глубокое пробуждение осознности. Код восстановления нервной системы — это не теория, а инструмент, который начинает работать сразу.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Без долгих теорий. Только практика с ощутимым результатом.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Вы получаете простую и рабочую систему дыхания, которая: снимает стресс сразу, возвращает ясность, и дает ощущение опоры с первых минут.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>При регулярном применении вы перенастраиваете нервную систему на спокойствие и устойчивость — и перестаете зависеть от внешних обстоятельств.</p>
+                </li>
+                <li>
+                    <span class="bullet">✧</span>
+                    <p>Это не «расслабление на время». Это навык, который остается с вами.</p>
+                </li>
+            </ul>
+
+            <div style="margin-top: 50px;">
+                <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" 
+                   style="border: 1px solid var(--accent); color: var(--text-main); padding: 18px 40px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; display: inline-block; background: rgba(168, 218, 220, 0.05);">
+                    Получить доступ
+                </a>
             </div>
         </div>
     </div>
+</main>
 
-    <script>
-        // [SETTINGS]
-        // === START: TELEGRAM_LOGIC ===
-        async function sendNotification(message) {
-            try {
-                const response = await fetch('/api/notify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: message })
-                });
-                return response.ok;
-            } catch (e) {
-                console.error('Notify error', e);
-                return false;
-            }
-        }
+<div id="paymentModal" class="modal">
+    <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
+        <div id="step-selection">
+            <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 25px;">Выберите способ оплаты</h2>
+            <button onclick="window.location.href='#'" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-bottom: 15px;">💳 Оплатить картой РФ</button>
+            <button onclick="showCryptoStep()" style="width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; cursor: pointer;">₮ Оплатить USDT (TON)</button>
+            <button onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">ОТМЕНА</button>
+        </div>
 
-        async function handleSecureOrder(event) {
-            event.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const email = document.getElementById('customerEmail').value;
-            const title = document.title;
-            
-            btn.innerText = 'ОТПРАВКА...';
-            btn.disabled = true;
+        <div id="step-crypto" style="display: none;">
+            <form onsubmit="handleSecureOrder(event)">
+                <input type="email" id="customerEmail" placeholder="Ваш Email" required style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none;">
+                <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer;">Я ОПЛАТИЛ</button>
+                <button type="button" onclick="showSelectionStep()" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; cursor: pointer; font-size: 11px;">← НАЗАД</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // === START: LOGIC ===
+    function toggleMenu(s) { /* Логика меню */ }
+    
+    function openPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; }
+    function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; }
+    function showCryptoStep() { document.getElementById('step-selection').style.display = 'none'; document.getElementById('step-crypto').style.display = 'block'; }
+    function showSelectionStep() { document.getElementById('step-crypto').style.display = 'none'; document.getElementById('step-selection').style.display = 'block'; }
 
-            const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${title}\nEmail: ${email}\nСумма: 500 USDT (TON)`;
-            
-            const success = await sendNotification(text);
-            if (success) {
-                alert('Данные отправлены!');
+    async function handleSecureOrder(event) {
+        event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const email = document.getElementById('customerEmail').value;
+        
+        btn.innerText = 'ОТПРАВКА...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    text: `🚀 *Новая оплата USDT!*\n\nПродукт: ${document.title}\nEmail: ${email}\nСумма: 500 USDT (TON)` 
+                })
+            });
+
+            if (response.ok) {
+                alert('Данные успешно отправлены.');
                 closePaymentModal();
             } else {
-                alert('Ошибка. Попробуйте позже.');
+                throw new Error();
             }
+        } catch (e) {
+            alert('Ошибка отправки. Попробуйте позже.');
+        } finally {
             btn.innerText = 'Я ОПЛАТИЛ';
             btn.disabled = false;
         }
-        // === END: TELEGRAM_LOGIC ===
+    }
+    // === END: LOGIC ===
+</script>
 
-        function toggleMenu(s) { document.getElementById('full-menu').style.display = s ? 'flex' : 'none'; }
-        function openPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; }
-        function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; }
-        function showCryptoStep() { document.getElementById('step-selection').style.display = 'none'; document.getElementById('step-crypto').style.display = 'block'; }
-    </script>
 </body></html>
