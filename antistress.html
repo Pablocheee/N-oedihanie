@@ -511,13 +511,19 @@
             const data = await response.json();
             let reply = data.reply;
 
-            setTimeout(() => {
-                document.getElementById(typingId)?.remove();
-                let formattedText = reply
-                    .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
-                    .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://n-oedihanie.vercel.app/prana.html'))
-                    .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://n-oedihanie.vercel.app/antistress.html'))
-                    .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+// // === START: CHAT_URL_UPDATE_ANTISTRESS ===
+        setTimeout(() => {
+            document.getElementById(typingId)?.remove();
+            let formattedText = reply
+                .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', 'https://inoedyhanie.vercel.app/vostanovlenie.html'))
+                .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://inoedyhanie.vercel.app/prana.html'))
+                .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://inoedyhanie.vercel.app/antistress.html'))
+                .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+
+            box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 1800);
+// // === END: CHAT_URL_UPDATE_ANTISTRESS ===
 
                 box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div><div>${formattedText}</div></div>`;
                 box.scrollTop = box.scrollHeight;
