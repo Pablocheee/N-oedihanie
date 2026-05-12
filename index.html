@@ -896,16 +896,23 @@ async function sendChat() {
         let reply = data.reply;
 
         // Пауза 3 секунды для реализма
+// // === START: CHAT_REPLY_BLOCK_UPDATE ===
         setTimeout(() => {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
 
             let formattedReply = `
                 <div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
-                <div>${reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления нервной системы', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
-                            .replace('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://n-oedihanie.vercel.app/prana.html'))
-                            .replace('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://n-oedihanie.vercel.app/antistress.html'))
+                <div>${reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://inoedyhanie.vercel.app/vostanovlenie.html'))
+                            .replace('[BUTTON_PRANA]', createChatBtn('Программа: Прана', 'https://inoedyhanie.vercel.app/prana.html'))
+                            .replace('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://inoedyhanie.vercel.app/antistress.html'))
                             .replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'))}</div>
+            `;
+
+            box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 1800); 
+// // === END: CHAT_REPLY_BLOCK_UPDATE ===
             `;
 
             box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
