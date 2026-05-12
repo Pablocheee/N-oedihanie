@@ -557,15 +557,16 @@
             const data = await response.json();
             let reply = data.reply;
 
+// // === START: CHAT_URL_UPDATE_VOSTANOVLENIE ===
             setTimeout(() => {
                 const typingElem = document.getElementById(typingId);
                 if (typingElem) typingElem.remove();
 
                 // Превращаем текстовые метки из ИИ в реальные кнопки
                 let formattedText = reply
-                    .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', 'https://n-oedihanie.vercel.app/vostanovlenie.html'))
-                    .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://n-oedihanie.vercel.app/prana.html'))
-                    .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://n-oedihanie.vercel.app/antistress.html'))
+                    .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', 'https://inoedyhanie.vercel.app/vostanovlenie.html'))
+                    .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://inoedyhanie.vercel.app/prana.html'))
+                    .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://inoedyhanie.vercel.app/antistress.html'))
                     .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
 
                 let formattedReply = `
@@ -582,7 +583,7 @@
             if (typingElem) typingElem.remove();
             box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
         }
-    }
+// // === END: CHAT_URL_UPDATE_VOSTANOVLENIE ===
 
     document.getElementById('chat-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') sendChat();
