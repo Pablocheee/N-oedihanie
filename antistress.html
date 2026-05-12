@@ -333,21 +333,24 @@
     <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
         
         <div id="step-selection">
-            <div style="margin-bottom: 25px;">
-                <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Выберите способ оплаты</h2>
-                <p style="font-size: 14px; opacity: 0.7;">Карты РФ или криптовалюта (USDT)</p>
-            </div>
+    <div style="margin-bottom: 25px;">
+        <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление доступа</h2>
+        <p style="font-size: 13px; opacity: 0.7; color: var(--accent);">⚠️ Важно: используйте вашу почту @gmail.com</p>
+    </div>
 
-            <button onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                💳 Оплатить картой РФ
-            </button>
+    <input type="email" id="robokassaEmail" placeholder="Ваш Gmail для доступа" required 
+           style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none; text-align: center;">
 
-            <button onclick="showCryptoStep()" style="width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
-                ₮ Оплатить USDT (TON)
-            </button>
-            
-            <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
-        </div>
+    <button onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        💳 Оплатить картой РФ
+    </button>
+
+    <button onclick="showCryptoStep()" style="width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
+        ₮ Оплатить USDT (TON)
+    </button>
+    
+    <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
+</div>
 
         <div id="step-crypto" style="display: none;">
             <div style="margin-bottom: 20px;">
@@ -384,14 +387,15 @@
     <div class="msg msg-ai">Приветствую. Я помогу вам сориентироваться в практиках. Какой у вас запрос?</div>
 </div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
     // === START: SCRIPTS ===
-    // [SETTINGS]
     const CONFIG = {
         notifyUrl: '/api/notify'
     };
 
     const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('memoDisplay').innerText = generatedMemo;
-    document.getElementById('hiddenMemo').value = generatedMemo;
+    const memoElem = document.getElementById('memoDisplay');
+    const hiddenMemoElem = document.getElementById('hiddenMemo');
+    if(memoElem) memoElem.innerText = generatedMemo;
+    if(hiddenMemoElem) hiddenMemoElem.value = generatedMemo;
 
     function showCryptoStep() {
         document.getElementById('step-selection').style.display = 'none';
@@ -403,11 +407,22 @@
         document.getElementById('step-selection').style.display = 'block';
     }
 
+    // Логика Робокассы с обязательным Email
     async function payWithRobokassa() {
-        const merchantLogin = 'YOUR_LOGIN';
-        const price = 50000;
+        const emailInput = document.getElementById('robokassaEmail');
+        const email = emailInput.value.trim();
+
+        if (!email || !email.includes('@')) {
+            alert('Пожалуйста, введите корректный Email (Gmail) для получения доступа.');
+            emailInput.style.borderColor = 'var(--accent)';
+            return;
+        }
+
+        const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН
+        const price = 5000; // Проверь сумму!
         const pageTitle = document.title;
-        const text = `💳 *Клик по Робокассе*\nПродукт: ${pageTitle}\nСумма: ${price} руб.`;
+        
+        const text = `💳 *Попытка оплаты Робокасса*\nПродукт: ${pageTitle}\nEmail: ${email}\nСумма: ${price} руб.`;
         
         fetch(CONFIG.notifyUrl, {
             method: 'POST',
@@ -416,10 +431,12 @@
         });
 
         if (merchantLogin === 'YOUR_LOGIN') {
-            alert('Ошибка конфигурации: Оплата временно недоступна.');
+            alert('Система оплаты настраивается. Попробуйте через 15 минут или напишите куратору.');
             return;
         }
-        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}&Culture=ru`; 
+
+        const robokassaUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}&Email=${encodeURIComponent(email)}&Culture=ru`;
+        window.location.href = robokassaUrl;
     }
 
     async function handleSecurePayment(event) {
@@ -449,9 +466,7 @@
                     btn.innerText = 'Я ОПЛАТИЛ';
                     btn.disabled = false;
                 }, 2000);
-            } else {
-                throw new Error('API error');
-            }
+            } else { throw new Error('API error'); }
         } catch (error) {
             alert('Ошибка при отправке. Попробуйте еще раз.');
             btn.innerText = 'Я ОПЛАТИЛ';
@@ -511,25 +526,23 @@
             const data = await response.json();
             let reply = data.reply;
 
-// // === START: CHAT_URL_UPDATE_ANTISTRESS ===
-        setTimeout(() => {
-            document.getElementById(typingId)?.remove();
-            let formattedText = reply
-                .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', 'https://inoedyhanie.vercel.app/vostanovlenie.html'))
-                .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://inoedyhanie.vercel.app/prana.html'))
-                .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://inoedyhanie.vercel.app/antistress.html'))
-                .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+            setTimeout(() => {
+                const typingElem = document.getElementById(typingId);
+                if (typingElem) typingElem.remove();
 
-            box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 1800);
-// // === END: CHAT_URL_UPDATE_ANTISTRESS ===
+                let formattedText = reply
+                    .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', 'https://inoedyhanie.vercel.app/vostanovlenie.html'))
+                    .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', 'https://inoedyhanie.vercel.app/prana.html'))
+                    .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://inoedyhanie.vercel.app/antistress.html'))
+                    .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
 
-                box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div><div>${formattedText}</div></div>`;
+                box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
                 box.scrollTop = box.scrollHeight;
-            }, 1800); 
+            }, 1800);
+
         } catch (e) {
-            document.getElementById(typingId)?.remove();
+            const typingElem = document.getElementById(typingId);
+            if (typingElem) typingElem.remove();
             box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
         }
     }
