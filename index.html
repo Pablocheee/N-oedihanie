@@ -683,18 +683,19 @@ header {
         </div>
 
         <div class="slider-wrapper">
-            <img src="https://i.postimg.cc/ZYDncc3s/before.png?quality=96&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1620x2160&from=bu&cs=640x0" class="slider-img img-before">
-            <img id="sliderAfter" src="https://coffmanvision.com/wp-content/uploads/2023/09/persol-eyewear-sunglass-sydney-1.jpg" class="slider-img img-after">
-            
-            <div id="sliderBtn" class="slider-btn">◂▸</div>
-            
-            <div class="slider-labels">
-                <div class="slider-label label-before">ДО</div>
-                <div class="slider-label label-after">ПОСЛЕ</div>
-            </div>
+            <div class="slider-wrapper">
+    <img src="https://i.postimg.cc/ZYDncc3s/before.png" class="slider-img img-before">
+    <img id="sliderAfter" src="https://coffmanvision.com/wp-content/uploads/2023/09/persol-eyewear-sunglass-sydney-1.jpg" class="slider-img img-after">
+    
+    <div id="sliderBtn" class="slider-btn">◂▸</div>
+    
+    <div class="slider-labels">
+        <div class="slider-label label-before">ДО</div>
+        <div class="slider-label label-after">ПОСЛЕ</div>
+    </div>
 
-            <input type="range" min="0" max="100" value="0" class="slider-input" id="sliderRange">
-        </div>
+    <input type="range" min="0" max="100" value="0" class="slider-input" id="sliderRange">
+</div>
     </div>
 </section>
 
@@ -869,6 +870,7 @@ function createChatBtn(text, link, color = 'var(--accent)') {
     return `<a href="${link}" target="_blank" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff;">${text}</a>`;
 }
 
+// === START: SEND_CHAT_FIX ===
 async function sendChat() {
     const input = document.getElementById('chat-input');
     const box = document.getElementById('chat-messages');
@@ -895,8 +897,7 @@ async function sendChat() {
         const data = await response.json();
         let reply = data.reply;
 
-        // Пауза 3 секунды для реализма
-// // === START: CHAT_REPLY_BLOCK_UPDATE ===
+        // Пауза 1.8 секунды для реализма
         setTimeout(() => {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
@@ -912,18 +913,13 @@ async function sendChat() {
             box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
             box.scrollTop = box.scrollHeight;
         }, 1800); 
-// // === END: CHAT_REPLY_BLOCK_UPDATE ===
-            `;
-
-            box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 1800); 
 
     } catch (e) {
         document.getElementById(typingId)?.remove();
         box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
     }
 }
+// === END: SEND_CHAT_FIX ===
 
 // Добавляем отправку по Enter
 document.getElementById('chat-input').addEventListener('keypress', function (e) {
