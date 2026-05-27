@@ -382,7 +382,7 @@
                 // 5. Safety Pipeline: Если ИИ хочет изменить данные, выводим кнопки
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     // Кодируем объект действия, чтобы передать его в кнопку
-                    const actionPayload = encodeURIComponent(JSON.stringify(aiData));
+                    const actionPayload = encodeURIComponent(JSON.stringify(aiData)).replace(/'/g, "%27");
                     aiMessageHtml += `
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
                             <button onclick="confirmAction('${logId}', '${actionPayload}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
