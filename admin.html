@@ -288,14 +288,54 @@
     </div>
 
     <script>
-        // ГЛОБАЛЬНОЕ ХРАНИЛИЩЕ КОМАНД (чтобы не передавать JSON через HTML)
+        // ГЛОБАЛЬНОЕ ХРАНИЛИЩЕ КОМАНД
         window.pendingCommands = {};
+
+        // === НОВЫЙ БЛОК: СОХРАНЕНИЕ И ЗАГРУЗКА СОСТОЯНИЯ ===
+        function saveAdminState() {
+            const chatBox = document.getElementById('chat-messages');
+            const historyBox = document.getElementById('history-logs');
+
+            // 1. Ограничение в 50 сообщений (чистим старые)
+            while (chatBox.children.length > 50) {
+                chatBox.removeChild(chatBox.firstElementChild);
+            }
+            // Логи добавляются сверху (afterbegin), поэтому старые удаляем снизу (lastElementChild)
+            while (historyBox.children.length > 50) {
+                historyBox.removeChild(historyBox.lastElementChild); 
+            }
+
+            // 2. Создаем "слепок" чата и обезвреживаем старые кнопки
+            const chatClone = chatBox.cloneNode(true);
+            const actionButtons = chatClone.querySelectorAll('div[style*="margin-top: 15px; display: flex"]');
+            actionButtons.forEach(btnDiv => {
+                btnDiv.innerHTML = '<div style="margin-top: 10px; color: var(--text-muted); font-size: 11px; font-style: italic;">[Действие из прошлой сессии]</div>';
+            });
+
+            // 3. Сохраняем в память браузера
+            localStorage.setItem('ordo_chat_history', chatClone.innerHTML);
+            localStorage.setItem('ordo_log_history', historyBox.innerHTML);
+        }
+
+        function loadAdminState() {
+            const savedChat = localStorage.getItem('ordo_chat_history');
+            const savedLogs = localStorage.getItem('ordo_log_history');
+
+            if (savedChat) document.getElementById('chat-messages').innerHTML = savedChat;
+            if (savedLogs) document.getElementById('history-logs').innerHTML = savedLogs;
+
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        // ===================================================
 
         function checkLogin() {
             const pass = document.getElementById('admin-pass').value;
             if(pass.length > 0) { 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'flex';
+                // Загружаем историю сразу после входа
+                loadAdminState();
             }
         }
 
@@ -324,6 +364,7 @@
                 </div>
             `;
             historyBox.insertAdjacentHTML('afterbegin', pendingLog);
+            saveAdminState(); // Сохраняем шаг
 
             try {
                 const response = await fetch('/api/admin-chat', {
@@ -344,10 +385,8 @@
                 `;
 
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
-                    // СОХРАНЯЕМ ДАННЫЕ В ПАМЯТЬ БРАУЗЕРА
                     window.pendingCommands[logId] = aiData;
                     
-                    // Передаем в кнопки только короткий ID
                     aiMessageHtml += `
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
                             <button onclick="confirmAction('${logId}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
@@ -364,6 +403,8 @@
                     updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
                 }
 
+                saveAdminState(); // Сохраняем шаг
+
             } catch (error) {
                 console.error(error);
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', text);
@@ -372,11 +413,11 @@
                         <strong style="color: #f44336; display: block; margin-bottom: 5px; font-size: 11px;">СИСТЕМНАЯ ОШИБКА</strong>
                         Произошла ошибка связи с сервером: ${error.message}
                     </div>`;
+                saveAdminState(); // Сохраняем шаг
             }
         }
 
         async function confirmAction(logId) {
-            // ДОСТАЕМ ДАННЫЕ ИЗ ПАМЯТИ
             const payload = window.pendingCommands[logId];
             if (!payload) return;
 
@@ -387,9 +428,9 @@
                 msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
             }
 
-            // Безопасное чтение имени продукта
             const prodName = payload.product_name || 'Неизвестный товар';
             updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Ищем товар: ${prodName}`);
+            saveAdminState();
 
             try {
                 let targetRow = null;
@@ -440,7 +481,7 @@
                             action: 'update',
                             sheetName: 'Products',
                             range: updateRange,
-                            values: [newValue] // <--- Теперь это правильный массив!
+                            values: newValue 
                         })
                     });
                     const updateData = await updateRes.json();
@@ -467,10 +508,12 @@
                     </div>
                 `;
                 chatBox.scrollTop = chatBox.scrollHeight;
+                saveAdminState();
 
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА БАЗЫ', error.message);
                 chatBox.innerHTML += `<div class="msg msg-ai" style="color:#f44336;">Ошибка: ${error.message}</div>`;
+                saveAdminState();
             }
         }
 
@@ -480,6 +523,7 @@
                 msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
             }
             updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил действие');
+            saveAdminState();
         }
 
         function updateLogStatus(logId, status, statusText, descText) {
