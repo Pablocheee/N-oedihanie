@@ -6,278 +6,66 @@
     <title>OrdoAxio — Панель управления</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;500;700&display=swap');
-
-        :root {
-            --accent: #a8dadc;
-            --accent-glow: rgba(168, 218, 220, 0.4);
-            --deep: #1d3557;
-            --text-main: #f1faee;
-            --text-muted: rgba(241, 250, 238, 0.8);
-            --glass: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.15);
-        }
-
+        :root { --accent: #a8dadc; --accent-glow: rgba(168, 218, 220, 0.4); --deep: #1d3557; --text-main: #f1faee; --text-muted: rgba(241, 250, 238, 0.8); --glass: rgba(255, 255, 255, 0.08); --border: rgba(255, 255, 255, 0.15); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            color: var(--text-main); 
-            background: #0d1b2a; 
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #breath-bg { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; 
-            background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%),
-                        radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%),
-                        radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%), #0d1b2a;
-            background-size: 200% 200%;
-            animation: elementFlow 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes elementFlow {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 100%; }
-        }
-
-        #login-screen {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            padding: 50px;
-            border-radius: 30px;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-            transition: opacity 0.5s;
-        }
-
-        #login-screen h2 {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 300;
-            color: var(--accent);
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-        }
-
-        .auth-input {
-            width: 100%;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border);
-            padding: 15px 20px;
-            border-radius: 15px;
-            color: #fff;
-            margin-bottom: 20px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .btn-main {
-            width: 100%;
-            background: transparent;
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 15px;
-            border-radius: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.3s;
-        }
-
-        .btn-main:hover {
-            background: var(--accent);
-            color: var(--deep);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        #admin-dashboard {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            padding: 30px;
-            gap: 30px;
-            max-width: 1400px;
-        }
-
-        .panel {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-
-        .panel-header {
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--border);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--accent);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); background: #0d1b2a; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        #breath-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%), radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%), radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%), #0d1b2a; background-size: 200% 200%; animation: elementFlow 20s ease-in-out infinite alternate; }
+        @keyframes elementFlow { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 100%; } }
+        #login-screen { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); padding: 50px; border-radius: 30px; text-align: center; width: 100%; max-width: 400px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); transition: opacity 0.5s; }
+        #login-screen h2 { font-family: 'Manrope', sans-serif; font-weight: 300; color: var(--accent); margin-bottom: 30px; letter-spacing: 2px; }
+        .auth-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 15px 20px; border-radius: 15px; color: #fff; margin-bottom: 20px; outline: none; font-size: 14px; }
+        .btn-main { width: 100%; background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 15px; border-radius: 15px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .btn-main:hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 20px var(--accent-glow); }
+        #admin-dashboard { display: none; width: 100%; height: 100vh; padding: 30px; gap: 30px; max-width: 1400px; }
+        .panel { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 30px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .panel-header { padding: 20px 30px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; letter-spacing: 3px; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
         .chat-section { flex: 2; }
-
-        #chat-messages {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
+        #chat-messages { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         .msg { max-width: 80%; padding: 15px 20px; border-radius: 20px; font-size: 14px; line-height: 1.5; }
         .msg-ai { align-self: flex-start; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
         .msg-user { align-self: flex-end; background: rgba(168, 218, 220, 0.1); border: 1px solid var(--accent); color: var(--accent); border-bottom-right-radius: 4px; }
-
-        .chat-input-area {
-            padding: 20px 30px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            background: rgba(0,0,0,0.1);
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 15px 25px;
-            color: #fff;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .chat-input-area button {
-            background: var(--accent);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: var(--deep);
-            font-size: 20px;
-            transition: 0.3s;
-        }
-
-        .chat-input-area button:hover {
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: scale(1.05);
-        }
-
+        .chat-input-area { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; gap: 15px; background: rgba(0,0,0,0.1); }
+        .chat-input-area input { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 30px; padding: 15px 25px; color: #fff; outline: none; font-size: 14px; }
+        .chat-input-area button { background: var(--accent); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; color: var(--deep); font-size: 20px; transition: 0.3s; }
+        .chat-input-area button:hover { box-shadow: 0 0 20px var(--accent-glow); transform: scale(1.05); }
         .history-section { flex: 1; min-width: 350px; }
         .history-controls { display: flex; gap: 10px; }
-
-        .ctrl-btn {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-
-        .ctrl-btn.disabled {
-            border-color: var(--border);
-            color: var(--text-muted);
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .ctrl-btn:not(.disabled):hover {
-            background: var(--accent);
-            color: var(--deep);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        #history-logs {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .log-item {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 12px;
-            transition: 0.4s;
-        }
-
+        .ctrl-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); width: 35px; height: 35px; border-radius: 10px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .ctrl-btn.disabled { border-color: var(--border); color: var(--text-muted); opacity: 0.3; cursor: not-allowed; }
+        .ctrl-btn:not(.disabled):hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 15px var(--accent-glow); }
+        #history-logs { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .log-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 15px; border-radius: 15px; font-size: 12px; transition: 0.4s; }
         .log-item.pending { border-color: rgba(255, 255, 255, 0.4); animation: pulse 1.5s infinite; }
         .log-item.success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.05); }
         .log-item.error { border-color: #f44336; background: rgba(244, 67, 54, 0.05); }
-
         .log-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 10px; opacity: 0.6; }
         .log-status { font-weight: 700; }
         .log-success-text { color: #4CAF50; }
         .log-pending-text { color: #FFC107; }
         .log-error-text { color: #f44336; }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); } 70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
     </style>
 </head>
 <body>
-
     <div id="breath-bg"></div>
-
     <div id="login-screen">
         <h2>ORDO AXIO</h2>
         <input type="password" id="admin-pass" class="auth-input" placeholder="Пароль доступа">
         <button class="btn-main" onclick="checkLogin()">Войти в систему</button>
     </div>
-
     <div id="admin-dashboard">
         <div class="panel chat-section">
-            <div class="panel-header">
-                <span>ИИ АДМИНИСТРАТОР</span>
-                <span style="opacity: 0.5;">v.1.0</span>
-            </div>
+            <div class="panel-header"><span>ИИ АДМИНИСТРАТОР</span><span style="opacity: 0.5;">v.1.0</span></div>
             <div id="chat-messages">
-                <div class="msg msg-ai">
-                    <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
-                    Система инициализирована. База данных подключена. Что будем менять?
-                </div>
+                <div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Система инициализирована. База данных подключена. Что будем менять?</div>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй описание для Анти-стресс')...">
+                <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй описание')...">
                 <button onclick="sendAdminCommand()">→</button>
             </div>
         </div>
-
         <div class="panel history-section">
-            <div class="panel-header">
-                <span>ЖУРНАЛ ДЕЙСТВИЙ</span>
+            <div class="panel-header"><span>ЖУРНАЛ ДЕЙСТВИЙ</span>
                 <div class="history-controls">
                     <button id="btn-undo" class="ctrl-btn disabled" title="Шаг назад (Отменить)" onclick="undoLast()">↺</button>
                     <button id="btn-redo" class="ctrl-btn disabled" title="Шаг вперед (Вернуть)">↻</button>
@@ -288,31 +76,19 @@
     </div>
 
     <script>
-        // ГЛОБАЛЬНОЕ ХРАНИЛИЩЕ КОМАНД
         window.pendingCommands = {};
+        window.lastUpdate = null; // Для кнопки "Вернуть"
 
-        // === НОВЫЙ БЛОК: СОХРАНЕНИЕ И ЗАГРУЗКА СОСТОЯНИЯ ===
         function saveAdminState() {
             const chatBox = document.getElementById('chat-messages');
             const historyBox = document.getElementById('history-logs');
-
-            // 1. Ограничение в 50 сообщений (чистим старые)
-            while (chatBox.children.length > 50) {
-                chatBox.removeChild(chatBox.firstElementChild);
-            }
-            // Логи добавляются сверху (afterbegin), поэтому старые удаляем снизу (lastElementChild)
-            while (historyBox.children.length > 50) {
-                historyBox.removeChild(historyBox.lastElementChild); 
-            }
-
-            // 2. Создаем "слепок" чата и обезвреживаем старые кнопки
+            while (chatBox.children.length > 50) chatBox.removeChild(chatBox.firstElementChild);
+            while (historyBox.children.length > 50) historyBox.removeChild(historyBox.lastElementChild); 
             const chatClone = chatBox.cloneNode(true);
             const actionButtons = chatClone.querySelectorAll('div[style*="margin-top: 15px; display: flex"]');
             actionButtons.forEach(btnDiv => {
                 btnDiv.innerHTML = '<div style="margin-top: 10px; color: var(--text-muted); font-size: 11px; font-style: italic;">[Действие из прошлой сессии]</div>';
             });
-
-            // 3. Сохраняем в память браузера
             localStorage.setItem('ordo_chat_history', chatClone.innerHTML);
             localStorage.setItem('ordo_log_history', historyBox.innerHTML);
         }
@@ -320,21 +96,17 @@
         function loadAdminState() {
             const savedChat = localStorage.getItem('ordo_chat_history');
             const savedLogs = localStorage.getItem('ordo_log_history');
-
             if (savedChat) document.getElementById('chat-messages').innerHTML = savedChat;
             if (savedLogs) document.getElementById('history-logs').innerHTML = savedLogs;
-
             const chatBox = document.getElementById('chat-messages');
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-        // ===================================================
 
         function checkLogin() {
             const pass = document.getElementById('admin-pass').value;
             if(pass.length > 0) { 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'flex';
-                // Загружаем историю сразу после входа
                 loadAdminState();
             }
         }
@@ -344,261 +116,129 @@
             const chatBox = document.getElementById('chat-messages');
             const historyBox = document.getElementById('history-logs');
             const text = input.value.trim();
-
             if(!text) return;
-
             chatBox.innerHTML += `<div class="msg msg-user">${text}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
-
             const logId = 'log-' + Date.now();
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-            
-            const pendingLog = `
-                <div id="${logId}" class="log-item pending">
-                    <div class="log-header">
-                        <span>${timeStr}</span>
-                        <span class="log-status log-pending-text">⏳ ОБРАБОТКА ИИ...</span>
-                    </div>
-                    <div>${text}</div>
-                </div>
-            `;
+            const pendingLog = `<div id="${logId}" class="log-item pending"><div class="log-header"><span>${timeStr}</span><span class="log-status log-pending-text">⏳ ОБРАБОТКА ИИ...</span></div><div>${text}</div></div>`;
             historyBox.insertAdjacentHTML('afterbegin', pendingLog);
-            saveAdminState(); // Сохраняем шаг
+            saveAdminState();
 
             try {
-                const response = await fetch('/api/admin-chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-                
+                const response = await fetch('/api/admin-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
                 const result = await response.json();
                 if (!result.success) throw new Error(result.error);
-
                 const aiData = result.data;
-
-                let aiMessageHtml = `
-                    <div class="msg msg-ai" id="ai-msg-${logId}">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
-                        ${aiData.reply}
-                `;
-
+                let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     window.pendingCommands[logId] = aiData;
-                    
-                    aiMessageHtml += `
-                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    aiMessageHtml += `<div style="margin-top: 15px; display: flex; gap: 10px;">
                             <button onclick="confirmAction('${logId}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
                             <button onclick="cancelAction('${logId}')" style="background: transparent; color: #f44336; border: 1px solid #f44336; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Отмена</button>
-                        </div>
-                    `;
+                        </div>`;
                 }
-                
                 aiMessageHtml += `</div>`;
                 chatBox.innerHTML += aiMessageHtml;
                 chatBox.scrollTop = chatBox.scrollHeight;
-
-                if (aiData.action === 'unknown') {
-                    updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
-                }
-
-                saveAdminState(); // Сохраняем шаг
-
+                if (aiData.action === 'unknown') updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
+                saveAdminState();
             } catch (error) {
-                console.error(error);
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', text);
-                chatBox.innerHTML += `
-                    <div class="msg msg-ai">
-                        <strong style="color: #f44336; display: block; margin-bottom: 5px; font-size: 11px;">СИСТЕМНАЯ ОШИБКА</strong>
-                        Произошла ошибка связи с сервером: ${error.message}
-                    </div>`;
-                saveAdminState(); // Сохраняем шаг
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: #f44336; display: block; margin-bottom: 5px; font-size: 11px;">СИСТЕМНАЯ ОШИБКА</strong>${error.message}</div>`;
+                saveAdminState();
             }
         }
 
         async function confirmAction(logId) {
             const payload = window.pendingCommands[logId];
             if (!payload) return;
-
             const msgDiv = document.getElementById(`ai-msg-${logId}`);
             const chatBox = document.getElementById('chat-messages');
-            
-            if(msgDiv) {
-                msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
-            }
-
+            if(msgDiv) msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
             const prodName = payload.product_name || 'Неизвестный товар';
             updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Ищем товар: ${prodName}`);
             saveAdminState();
 
             try {
-                let targetRow = null;
-                let oldText = "";
-
+                let targetRow = null; let oldText = "";
                 if (payload.action === 'update_price' || payload.action === 'update_text') {
-                    const readRes = await fetch('/api/sheets', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' })
-                    });
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' }) });
                     const readData = await readRes.json();
-                    
-                    if (!readData.success) throw new Error("Ошибка чтения базы данных: " + readData.error);
-
-                    const rows = readData.data;
-                    const targetName = prodName.toLowerCase();
-                    
+                    if (!readData.success) throw new Error(readData.error);
+                    const rows = readData.data; const targetName = prodName.toLowerCase();
                     for (let i = 0; i < rows.length; i++) {
                         if (rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
-                            targetRow = i + 1; 
-                            oldText = payload.action === 'update_price' ? rows[i][2] : rows[i][3]; 
-                            break;
+                            targetRow = i + 1; oldText = payload.action === 'update_price' ? rows[i][2] : rows[i][3]; break;
                         }
                     }
-
-                    if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
+                    if (!targetRow) throw new Error(`Товар "${prodName}" не найден.`);
                 }
 
-                updateLogStatus(logId, 'pending', '⏳ ОБНОВЛЕНИЕ...', `Запись новых данных...`);
-                
-                let updateRange = '';
-                let newValue = '';
-                
-                if (payload.action === 'update_price') {
-                    updateRange = `C${targetRow}`;
-                    newValue = payload.new_price;
-                } else if (payload.action === 'update_text') {
-                    updateRange = `D${targetRow}`;
-                    newValue = payload.new_text;
-                }
+                updateLogStatus(logId, 'pending', '⏳ ОБНОВЛЕНИЕ...', `Запись...`);
+                let updateRange = ''; let newValue = '';
+                if (payload.action === 'update_price') { updateRange = `C${targetRow}`; newValue = payload.new_price; } 
+                else if (payload.action === 'update_text') { updateRange = `D${targetRow}`; newValue = payload.new_text; }
 
                 if (updateRange) {
-                    const updateRes = await fetch('/api/sheets', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'update',
-                            sheetName: 'Products',
-                            range: updateRange,
-                            values: newValue 
-                        })
-                    });
+                    const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: [newValue] }) });
                     const updateData = await updateRes.json();
-                    if (!updateData.success) throw new Error("Ошибка записи: " + updateData.error);
+                    if (!updateData.success) throw new Error(updateData.error);
                 }
 
-                await fetch('/api/sheets', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'append',
-                        sheetName: 'History',
-                        values: [new Date().toISOString(), logId, payload.action, "Products", `row_${targetRow}`, updateRange, oldText, newValue]
-                    })
-                });
+                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'append', sheetName: 'History', values: [new Date().toISOString(), logId, payload.action, "Products", `row_${targetRow}`, updateRange, oldText, newValue] }) });
 
-                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен товар: ${prodName}`);
+                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен: ${prodName}`);
                 document.getElementById('btn-undo').classList.remove('disabled');
-                // СОХРАНЯЕМ ДАННЫЕ ДЛЯ КНОПКИ "ШАГ НАЗАД"
+                
+                // СОХРАНЯЕМ ДЛЯ ОТКАТА
                 window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText };
 
-                chatBox.innerHTML += `
-                    <div class="msg msg-ai">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
-                        Таблица успешно обновлена!
-                    </div>
-                `;
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Таблица успешно обновлена!</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 saveAdminState();
-
             } catch (error) {
-                updateLogStatus(logId, 'error', '❌ ОШИБКА БАЗЫ', error.message);
+                updateLogStatus(logId, 'error', '❌ ОШИБКА', error.message);
                 chatBox.innerHTML += `<div class="msg msg-ai" style="color:#f44336;">Ошибка: ${error.message}</div>`;
+                saveAdminState();
+            }
+        }
+
+        async function undoLast() {
+            if (!window.lastUpdate) return;
+            const { logId, range, oldText } = window.lastUpdate;
+            document.getElementById('btn-undo').classList.add('disabled');
+            updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возврат старых данных...');
+            saveAdminState();
+            try {
+                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [oldText] }) });
+                updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращен старый текст');
+                const chatBox = document.getElementById('chat-messages');
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг назад выполнен. Старый текст возвращен!</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+                window.lastUpdate = null; saveAdminState();
+            } catch (error) {
+                updateLogStatus(logId, 'error', '❌ ОШИБКА ОТМЕНЫ', error.message);
                 saveAdminState();
             }
         }
 
         function cancelAction(logId) {
             const msgDiv = document.getElementById(`ai-msg-${logId}`);
-            if(msgDiv) {
-                msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
-            }
-            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил действие');
+            if(msgDiv) msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
+            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил');
             saveAdminState();
         }
 
         function updateLogStatus(logId, status, statusText, descText) {
-            const logItem = document.getElementById(logId);
-            if(!logItem) return;
-            
+            const logItem = document.getElementById(logId); if(!logItem) return;
             logItem.className = `log-item ${status}`;
-            
-            let colorClass = 'log-pending-text';
-            if (status === 'success') colorClass = 'log-success-text';
-            if (status === 'error') colorClass = 'log-error-text';
-
-            logItem.innerHTML = `
-                <div class="log-header">
-                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
-                    <span class="log-status ${colorClass}">${statusText}</span>
-                </div>
-                <div>${descText}</div>
-            `;
+            let colorClass = 'log-pending-text'; if (status === 'success') colorClass = 'log-success-text'; if (status === 'error') colorClass = 'log-error-text';
+            logItem.innerHTML = `<div class="log-header"><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span><span class="log-status ${colorClass}">${statusText}</span></div><div>${descText}</div>`;
         }
 
-        document.getElementById('admin-chat-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendAdminCommand();
-        });
-        
-        async function undoLast() {
-            // Если отменять нечего - выходим
-            if (!window.lastUpdate) return;
-            
-            const { logId, range, oldText } = window.lastUpdate;
-            
-            // Выключаем кнопку, чтобы не нажали дважды
-            const btn = document.getElementById('btn-undo');
-            btn.classList.add('disabled');
-            
-            updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возвращаем старые данные...');
-            saveAdminState();
-
-            try {
-                // Отправляем старый текст обратно в Google Sheets
-                await fetch('/api/sheets', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'update',
-                        sheetName: 'Products',
-                        range: range,
-                        values: [oldText] // Оборачиваем в массив, как того требует Google
-                    })
-                });
-
-                // Обновляем статус в логах
-                updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращен старый текст');
-                
-                // Пишем в чат
-                const chatBox = document.getElementById('chat-messages');
-                chatBox.innerHTML += `
-                    <div class="msg msg-ai">
-                        <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
-                        Шаг назад выполнен. Старый текст успешно возвращен в базу!
-                    </div>
-                `;
-                chatBox.scrollTop = chatBox.scrollHeight;
-                
-                // Очищаем память
-                window.lastUpdate = null; 
-                saveAdminState();
-
-            } catch (error) {
-                updateLogStatus(logId, 'error', '❌ ОШИБКА ОТМЕНЫ', error.message);
-                saveAdminState();
-            }
-        }
+        document.getElementById('admin-chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendAdminCommand(); });
     </script>
 </body>
 </html>
