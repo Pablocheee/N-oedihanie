@@ -41,7 +41,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'llama3-70b-8192', // Используем быструю и точную модель
+                model: 'llama-3.3-70b-versatile', // Используем быструю и точную модель
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: message }
