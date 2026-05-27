@@ -735,7 +735,7 @@
         <div class="product-card">
             <span style="font-size: 10px; letter-spacing: 3px; font-weight: 700; color: var(--accent);">БАЛАНС</span>
             <h3>Анти-стресс</h3>
-            <p>Моментальный выход из тревоги и стабилизация эмоционального фона через работу с нервной системой.</p>
+            <p id="dynamic-desc">Моментальный выход из тревоги и стабилизация эмоционального фона через работу с нервной системой.</p>
             <a href="https://n-oedihanie.vercel.app/antistress.html" class="btn-main" style="text-decoration: none; display: inline-block; text-align: center;">Узнать больше</a>
         </div>
 
@@ -976,6 +976,28 @@ changeSlogan();
 
 // И ставим на интервал
 setInterval(changeSlogan, 6000);
+// === ПОДГРУЗКА ДАННЫХ ИЗ GOOGLE ТАБЛИЦЫ ===
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/api/sheets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' })
+        });
+        const result = await response.json();
+        if (result.success && result.data) {
+            // Ищем строку Анти-стресс
+            const productRow = result.data.find(row => row[1] && row[1].toLowerCase().includes('анти-стресс'));
+            if (productRow && productRow[3]) {
+                // Если нашли новый текст, меняем его на сайте
+                const descElement = document.getElementById('dynamic-desc');
+                if (descElement) descElement.innerText = productRow[3];
+            }
+        }
+    } catch (e) {
+        console.error('Ошибка подгрузки из БД:', e);
+    }
+});
 </script>
 </body>
 </html>
