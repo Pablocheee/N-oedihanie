@@ -440,7 +440,7 @@
                             action: 'update',
                             sheetName: 'Products',
                             range: updateRange,
-                            values: newValue
+                            values: [newValue] // <-- Обернули в массив!
                         })
                     });
                     const updateData = await updateRes.json();
