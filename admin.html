@@ -411,7 +411,7 @@
             }
         }
 
-        // Функция подтверждения (запись в Google Sheets)
+        // Функция подтверждения (реальная запись в Google Sheets)
         async function confirmAction(logId, payloadEncoded) {
             const payload = JSON.parse(decodeURIComponent(payloadEncoded));
             const msgDiv = document.getElementById(`ai-msg-${logId}`);
@@ -422,74 +422,94 @@
                 msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
             }
 
-            updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Применение: ${payload.action}`);
+            updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Ищем товар: ${payload.product_name || '...'}`);
 
             try {
-                // Здесь мы будем формировать конкретный range и values на основе payload.action
-                // Пока отправляем тестовый запрос, чтобы проверить коннект с Sheets API
-                const res = await fetch('/api/sheets', {
+                let targetRow = null;
+                let oldText = "";
+
+                // ШАГ 1: Читаем таблицу Products, чтобы найти нужную строку
+                if (payload.action === 'update_price' || payload.action === 'update_text') {
+                    const readRes = await fetch('/api/sheets', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' })
+                    });
+                    const readData = await readRes.json();
+                    
+                    if (!readData.success) throw new Error("Ошибка чтения базы данных: " + readData.error);
+
+                    const rows = readData.data;
+                    const targetName = payload.product_name.toLowerCase();
+                    
+                    // Ищем товар по названию. 
+                    // Предполагаем структуру: A(ID), B(Название), C(Цена), D(Описание)
+                    for (let i = 0; i < rows.length; i++) {
+                        if (rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
+                            targetRow = i + 1; // +1 потому что нумерация строк в Google Sheets начинается с 1
+                            oldText = payload.action === 'update_price' ? rows[i][2] : rows[i][3]; 
+                            break;
+                        }
+                    }
+
+                    if (!targetRow) throw new Error(`Товар "${payload.product_name}" не найден в таблице.`);
+                }
+
+                // ШАГ 2: Обновляем конкретную ячейку
+                updateLogStatus(logId, 'pending', '⏳ ОБНОВЛЕНИЕ...', `Запись новых данных...`);
+                
+                let updateRange = '';
+                let newValue = '';
+                
+                if (payload.action === 'update_price') {
+                    updateRange = `C${targetRow}`; // Колонка C - Цена
+                    newValue = payload.new_price;
+                } else if (payload.action === 'update_text') {
+                    updateRange = `D${targetRow}`; // Колонка D - Описание
+                    newValue = payload.new_text;
+                }
+
+                if (updateRange) {
+                    const updateRes = await fetch('/api/sheets', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'update',
+                            sheetName: 'Products',
+                            range: updateRange,
+                            values: newValue
+                        })
+                    });
+                    const updateData = await updateRes.json();
+                    if (!updateData.success) throw new Error("Ошибка записи: " + updateData.error);
+                }
+
+                // ШАГ 3: Записываем лог в History
+                await fetch('/api/sheets', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'append',
                         sheetName: 'History',
-                        values: [new Date().toISOString(), logId, payload.action, "Products", "row_x", "column_x", "old", "new"]
+                        values: [new Date().toISOString(), logId, payload.action, "Products", `row_${targetRow}`, updateRange, oldText, newValue]
                     })
                 });
 
-                const dbResult = await res.json();
-                if (!dbResult.success) throw new Error(dbResult.error);
-
-                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Выполнено: ${payload.action}`);
+                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен товар: ${payload.product_name}`);
                 document.getElementById('btn-undo').classList.remove('disabled');
 
                 chatBox.innerHTML += `
                     <div class="msg msg-ai">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
-                        База данных успешно обновлена.
+                        Таблица успешно обновлена!
                     </div>
                 `;
                 chatBox.scrollTop = chatBox.scrollHeight;
 
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА БАЗЫ', error.message);
-                chatBox.innerHTML += `<div class="msg msg-ai" style="color:#f44336;">Ошибка записи в таблицу: ${error.message}</div>`;
+                chatBox.innerHTML += `<div class="msg msg-ai" style="color:#f44336;">Ошибка: ${error.message}</div>`;
             }
-        }
-
-        // Функция отмены действия
-        function cancelAction(logId) {
-            const msgDiv = document.getElementById(`ai-msg-${logId}`);
-            if(msgDiv) {
-                msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
-            }
-            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил действие');
-        }
-
-        // Вспомогательная функция для обновления визуального лога справа
-        function updateLogStatus(logId, status, statusText, descText) {
-            const logItem = document.getElementById(logId);
-            if(!logItem) return;
-            
-            logItem.className = `log-item ${status}`;
-            
-            let colorClass = 'log-pending-text';
-            if (status === 'success') colorClass = 'log-success-text';
-            if (status === 'error') {
-                colorClass = 'log-error-text';
-                // Динамически добавляем стиль для ошибок, если его еще нет
-                if (!document.getElementById('error-styles')) {
-                    document.head.insertAdjacentHTML('beforeend', '<style id="error-styles">.log-error-text { color: #f44336; } .log-item.error { border-color: #f44336; background: rgba(244, 67, 54, 0.05); }</style>');
-                }
-            }
-
-            logItem.innerHTML = `
-                <div class="log-header">
-                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
-                    <span class="log-status ${colorClass}">${statusText}</span>
-                </div>
-                <div>${descText}</div>
-            `;
         }
 
         // Обработка клавиши Enter
