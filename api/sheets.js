@@ -78,26 +78,32 @@ export default async function handler(req, res) {
             resultData = data.values || [];
         } 
         else if (action === 'append') {
+            // БРОНЯ: Гарантируем правильный массив для Google
+            const safeValues = Array.isArray(values) ? values : [values];
+            
             const response = await fetch(`${baseUrl}/${sheetName}!A:A:append?valueInputOption=USER_ENTERED`, {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ values: [values] })
+                body: JSON.stringify({ values: [safeValues] })
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error.message);
             resultData = data;
         }
         else if (action === 'update') {
+            // БРОНЯ: Гарантируем правильный массив для Google
+            const safeValues = Array.isArray(values) ? values : [values];
+            
             const response = await fetch(`${baseUrl}/${sheetName}!${range}?valueInputOption=USER_ENTERED`, {
                 method: 'PUT',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ values: [values] })
+                body: JSON.stringify({ values: [safeValues] })
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error.message);
