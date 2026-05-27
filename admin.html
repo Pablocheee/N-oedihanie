@@ -279,7 +279,7 @@
             <div class="panel-header">
                 <span>ЖУРНАЛ ДЕЙСТВИЙ</span>
                 <div class="history-controls">
-                    <button id="btn-undo" class="ctrl-btn disabled" title="Шаг назад (Отменить)">↺</button>
+                    <button id="btn-undo" class="ctrl-btn disabled" title="Шаг назад (Отменить)" onclick="undoLast()">↺</button>
                     <button id="btn-redo" class="ctrl-btn disabled" title="Шаг вперед (Вернуть)">↻</button>
                 </div>
             </div>
@@ -500,6 +500,8 @@
 
                 updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен товар: ${prodName}`);
                 document.getElementById('btn-undo').classList.remove('disabled');
+                // СОХРАНЯЕМ ДАННЫЕ ДЛЯ КНОПКИ "ШАГ НАЗАД"
+                window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText };
 
                 chatBox.innerHTML += `
                     <div class="msg msg-ai">
@@ -548,6 +550,55 @@
         document.getElementById('admin-chat-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sendAdminCommand();
         });
+        
+        async function undoLast() {
+            // Если отменять нечего - выходим
+            if (!window.lastUpdate) return;
+            
+            const { logId, range, oldText } = window.lastUpdate;
+            
+            // Выключаем кнопку, чтобы не нажали дважды
+            const btn = document.getElementById('btn-undo');
+            btn.classList.add('disabled');
+            
+            updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возвращаем старые данные...');
+            saveAdminState();
+
+            try {
+                // Отправляем старый текст обратно в Google Sheets
+                await fetch('/api/sheets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'update',
+                        sheetName: 'Products',
+                        range: range,
+                        values: [oldText] // Оборачиваем в массив, как того требует Google
+                    })
+                });
+
+                // Обновляем статус в логах
+                updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращен старый текст');
+                
+                // Пишем в чат
+                const chatBox = document.getElementById('chat-messages');
+                chatBox.innerHTML += `
+                    <div class="msg msg-ai">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
+                        Шаг назад выполнен. Старый текст успешно возвращен в базу!
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                // Очищаем память
+                window.lastUpdate = null; 
+                saveAdminState();
+
+            } catch (error) {
+                updateLogStatus(logId, 'error', '❌ ОШИБКА ОТМЕНЫ', error.message);
+                saveAdminState();
+            }
+        }
     </script>
 </body>
 </html>
