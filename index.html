@@ -996,8 +996,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (productRow && productRow[3]) {
                 const descElement = document.getElementById('dynamic-desc');
                 if (descElement) {
-                    descElement.innerText = productRow[3];
-                    console.log('3. УСПЕХ: Текст на сайте заменен на:', productRow[3]);
+                        descElement.innerText = productRow[3];
+                        // ВОТ ЭТИ ДВЕ СТРОЧКИ СДЕЛАЮТ ТЕКСТ ЯРКИМ И БОЛЬШИМ:
+                        descElement.style.opacity = '1';
+                        descElement.style.fontSize = '15px';
+                        console.log('3. УСПЕХ: Текст на сайте заменен на:', productRow[3]);
+                    }
                 } else {
                     console.error('🚨 ОШИБКА: На странице не найден элемент с id="dynamic-desc"!');
                 }
