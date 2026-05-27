@@ -1,11 +1,18 @@
 // api/sheets.js
 import crypto from 'crypto';
 
-// [SETTINGS] Переменные окружения (задаются в панели Vercel)
+// [ОБНОВЛЕННЫЙ БЛОК НАСТРОЕК]
+let rawKey = process.env.GOOGLE_PRIVATE_KEY || '';
+// 1. Убираем случайные кавычки в начале и конце (если они скопировались из JSON)
+if (rawKey.startsWith('"') && rawKey.endsWith('"')) {
+    rawKey = rawKey.slice(1, -1);
+}
+// 2. Жестко чиним символы переноса строк, чтобы Node.js понял формат ключа
+rawKey = rawKey.replace(/\\n/g, '\n');
+
 const CONFIG = {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    // Обрабатываем переносы строк для ключа из .env
-    private_key: process.env.GOOGLE_PRIVATE_KEY ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
+    private_key: rawKey,
     spreadsheet_id: process.env.GOOGLE_SPREADSHEET_ID
 };
 
