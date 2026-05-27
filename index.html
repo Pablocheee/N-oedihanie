@@ -976,8 +976,9 @@ changeSlogan();
 
 // И ставим на интервал
 setInterval(changeSlogan, 6000);
-// === ПОДГРУЗКА ДАННЫХ ИЗ GOOGLE ТАБЛИЦЫ ===
+// === ПОДГРУЗКА ДАННЫХ ИЗ GOOGLE ТАБЛИЦЫ (С ДИАГНОСТИКОЙ) ===
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('=== ОРДО АКСИО: Скрипт подгрузки запущен ===');
     try {
         const response = await fetch('/api/sheets', {
             method: 'POST',
@@ -985,17 +986,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' })
         });
         const result = await response.json();
+        console.log('1. Ответ от сервера получен:', result);
+
         if (result.success && result.data) {
             // Ищем строку Анти-стресс
             const productRow = result.data.find(row => row[1] && row[1].toLowerCase().includes('анти-стресс'));
+            console.log('2. Найденная строка в таблице:', productRow);
+
             if (productRow && productRow[3]) {
-                // Если нашли новый текст, меняем его на сайте
                 const descElement = document.getElementById('dynamic-desc');
-                if (descElement) descElement.innerText = productRow[3];
+                if (descElement) {
+                    descElement.innerText = productRow[3];
+                    console.log('3. УСПЕХ: Текст на сайте заменен на:', productRow[3]);
+                } else {
+                    console.error('🚨 ОШИБКА: На странице не найден элемент с id="dynamic-desc"!');
+                }
+            } else {
+                console.warn('⚠️ ПРЕДУПРЕЖДЕНИЕ: Строка "Анти-стресс" найдена, но колонка с описанием (D) пуста.');
             }
+        } else {
+            console.error('🚨 ОШИБКА: Сервер вернул неудачный статус или пустые данные:', result);
         }
     } catch (e) {
-        console.error('Ошибка подгрузки из БД:', e);
+        console.error('🚨 КРИТИЧЕСКАЯ ОШИБКА FETCH-запроса:', e);
     }
 });
 </script>
