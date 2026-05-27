@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrdoAxio — Панель управления</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;500;700&display=swap');
+
+        :root {
+            --accent: #a8dadc;
+            --accent-glow: rgba(168, 218, 220, 0.4);
+            --deep: #1d3557;
+            --text-main: #f1faee;
+            --text-muted: rgba(241, 250, 238, 0.8);
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: var(--text-main); 
+            background: #0d1b2a; 
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #breath-bg { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; 
+            background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%), #0d1b2a;
+            background-size: 200% 200%;
+            animation: elementFlow 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes elementFlow {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        /* Экран авторизации */
+        #login-screen {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            transition: opacity 0.5s;
+        }
+
+        #login-screen h2 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 300;
+            color: var(--accent);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 15px;
+            color: #fff;
+            margin-bottom: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .btn-main {
+            width: 100%;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-main:hover {
+            background: var(--accent);
+            color: var(--deep);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Главный интерфейс Админки */
+        #admin-dashboard {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            padding: 30px;
+            gap: 30px;
+            max-width: 1400px;
+        }
+
+        .panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .panel-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Левая часть: ЧАТ */
+        .chat-section {
+            flex: 2;
+        }
+
+        #chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .msg { max-width: 80%; padding: 15px 20px; border-radius: 20px; font-size: 14px; line-height: 1.5; }
+        .msg-ai { align-self: flex-start; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .msg-user { align-self: flex-end; background: rgba(168, 218, 220, 0.1); border: 1px solid var(--accent); color: var(--accent); border-bottom-right-radius: 4px; }
+
+        .chat-input-area {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 15px 25px;
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input-area button {
+            background: var(--accent);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--deep);
+            font-size: 20px;
+            transition: 0.3s;
+        }
+
+        .chat-input-area button:hover {
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        /* Правая часть: ЖУРНАЛ И КНОПКИ UNDO/REDO */
+        .history-section {
+            flex: 1;
+            min-width: 350px;
+        }
+
+        .history-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        /* Состояние неактивной кнопки отката */
+        .ctrl-btn.disabled {
+            border-color: var(--border);
+            color: var(--text-muted);
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .ctrl-btn:not(.disabled):hover {
+            background: var(--accent);
+            color: var(--deep);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        #history-logs {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .log-item {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            transition: 0.4s;
+        }
+
+        .log-item.pending {
+            border-color: rgba(255, 255, 255, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+
+        .log-item.success {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        .log-status {
+            font-weight: 700;
+        }
+
+        .log-success-text { color: #4CAF50; }
+        .log-pending-text { color: #FFC107; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="breath-bg"></div>
+
+    <div id="login-screen">
+        <h2>ORDO AXIO</h2>
+        <input type="password" id="admin-pass" class="auth-input" placeholder="Пароль доступа">
+        <button class="btn-main" onclick="checkLogin()">Войти в систему</button>
+    </div>
+
+    <div id="admin-dashboard">
+        
+        <div class="panel chat-section">
+            <div class="panel-header">
+                <span>ИИ АДМИНИСТРАТОР</span>
+                <span style="opacity: 0.5;">v.1.0</span>
+            </div>
+            <div id="chat-messages">
+                <div class="msg msg-ai">
+                    <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
+                    Система инициализирована. База данных подключена. Что будем менять?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй цену на Анти-стресс на 6000')...">
+                <button onclick="sendAdminCommand()">→</button>
+            </div>
+        </div>
+
+        <div class="panel history-section">
+            <div class="panel-header">
+                <span>ЖУРНАЛ ДЕЙСТВИЙ</span>
+                <div class="history-controls">
+                    <button id="btn-undo" class="ctrl-btn disabled" title="Шаг назад (Отменить)">↺</button>
+                    <button id="btn-redo" class="ctrl-btn disabled" title="Шаг вперед (Вернуть)">↻</button>
+                </div>
+            </div>
+            <div id="history-logs">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Простая заглушка для входа (потом привяжем к бэкенду)
+        function checkLogin() {
+            const pass = document.getElementById('admin-pass').value;
+            if(pass.length > 0) { // Пускает с любым паролем для теста
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'flex';
+            }
+        }
+
+        // Демонстрация работы чата и логов
+        function sendAdminCommand() {
+            const input = document.getElementById('admin-chat-input');
+            const chatBox = document.getElementById('chat-messages');
+            const historyBox = document.getElementById('history-logs');
+            const text = input.value.trim();
+
+            if(!text) return;
+
+            // 1. Отправляем сообщение пользователя
+            chatBox.innerHTML += `<div class="msg msg-user">${text}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Создаем лог "В обработке"
+            const logId = 'log-' + Date.now();
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            
+            const pendingLog = `
+                <div id="${logId}" class="log-item pending">
+                    <div class="log-header">
+                        <span>${timeStr}</span>
+                        <span class="log-status log-pending-text">⏳ ОБРАБОТКА...</span>
+                    </div>
+                    <div>${text}</div>
+                </div>
+            `;
+            // Добавляем лог наверх
+            historyBox.insertAdjacentHTML('afterbegin', pendingLog);
+
+            // Имитация ответа от бэкенда через 2 секунды
+            setTimeout(() => {
+                // Ответ в чат
+                chatBox.innerHTML += `
+                    <div class="msg msg-ai">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
+                        Команда выполнена. База данных обновлена.
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Обновление лога на "Успех"
+                const logItem = document.getElementById(logId);
+                if(logItem) {
+                    logItem.className = 'log-item success';
+                    logItem.querySelector('.log-status').className = 'log-status log-success-text';
+                    logItem.querySelector('.log-status').innerText = '✅ ГОТОВО';
+                }
+
+                // Включаем кнопку "Назад", так как появилось действие для отмены
+                document.getElementById('btn-undo').classList.remove('disabled');
+
+            }, 2000);
+        }
+
+        // Обработка клавиши Enter
+        document.getElementById('admin-chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendAdminCommand();
+        });
+    </script>
+</body>
+</html>
