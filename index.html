@@ -989,7 +989,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('1. Ответ от сервера получен:', result);
 
         if (result.success && result.data) {
-            // Ищем строку Анти-стресс
             const productRow = result.data.find(row => row[1] && row[1].toLowerCase().includes('анти-стресс'));
             console.log('2. Найденная строка в таблице:', productRow);
 
@@ -997,21 +996,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const descElement = document.getElementById('dynamic-desc');
                 if (descElement) {
                     descElement.innerText = productRow[3];
-                    // Делаем текст видимым:
                     descElement.style.opacity = '1';
                     descElement.style.fontSize = '15px';
                     console.log('3. УСПЕХ: Текст на сайте заменен на:', productRow[3]);
                 } else {
                     console.error('🚨 ОШИБКА: На странице не найден элемент с id="dynamic-desc"!');
                 }
-            } else {
-                console.warn('⚠️ ПРЕДУПРЕЖДЕНИЕ: Строка "Анти-стресс" найдена, но колонка с описанием (D) пуста.');
             }
-        } else {
-            console.error('🚨 ОШИБКА: Сервер вернул неудачный статус или пустые данные:', result);
         }
     } catch (e) {
-        console.error('🚨 КРИТИЧЕСКАЯ ОШИБКА FETCH-запроса:', e);
+        console.error('🚨 ОШИБКА FETCH-запроса:', e);
     }
 });
 </script>
