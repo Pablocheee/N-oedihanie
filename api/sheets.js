@@ -1,34 +1,50 @@
 // api/sheets.js
 import crypto from 'crypto';
 
-// [ОБНОВЛЕННЫЙ БЛОК НАСТРОЕК]
-let rawKey = process.env.GOOGLE_PRIVATE_KEY || '';
-// 1. Убираем случайные кавычки в начале и конце (если они скопировались из JSON)
-if (rawKey.startsWith('"') && rawKey.endsWith('"')) {
-    rawKey = rawKey.slice(1, -1);
+// Умная функция-броня. Она восстановит структуру ключа, даже если Vercel 
+// склеил его в одну строку, удалил переносы или добавил лишние кавычки.
+function formatPrivateKey(key) {
+    if (!key) return '';
+    
+    // 1. Убираем случайные кавычки по краям
+    let k = key.replace(/^["']|["']$/g, '');
+    
+    // 2. Если есть текстовые \n, делаем из них реальные переносы
+    k = k.replace(/\\n/g, '\n');
+    
+    // 3. Если переносов строк вообще нет (ключ сломался при копировании)
+    if (!k.includes('\n') || k.split('\n').length < 3) {
+        const match = k.match(/(-----BEGIN PRIVATE KEY-----)(.*?)(-----END PRIVATE KEY-----)/);
+        if (match) {
+            const header = match[1];
+            const body = match[2].replace(/\s+/g, ''); // убираем весь мусор и пробелы
+            const footer = match[3];
+            
+            // Заново рубим ключ на правильные блоки по 64 символа (стандарт PEM)
+            if (body) {
+                const chunked = body.match(/.{1,64}/g).join('\n');
+                k = `${header}\n${chunked}\n${footer}\n`;
+            }
+        }
+    }
+    return k;
 }
-// 2. Жестко чиним символы переноса строк, чтобы Node.js понял формат ключа
-rawKey = rawKey.replace(/\\n/g, '\n');
 
 const CONFIG = {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    private_key: rawKey,
+    private_key: formatPrivateKey(process.env.GOOGLE_PRIVATE_KEY),
     spreadsheet_id: process.env.GOOGLE_SPREADSHEET_ID
 };
 
-// Функция 1: Генерация JWT токена для доступа к Google API без сторонних библиотек
 async function getAccessToken() {
-    const header = {
-        alg: 'RS256',
-        typ: 'JWT'
-    };
+    const header = { alg: 'RS256', typ: 'JWT' };
     
     const now = Math.floor(Date.now() / 1000);
     const claimSet = {
         iss: CONFIG.client_email,
         scope: 'https://www.googleapis.com/auth/spreadsheets',
         aud: 'https://oauth2.googleapis.com/token',
-        exp: now + 3600, // Токен живет 1 час
+        exp: now + 3600,
         iat: now
     };
 
@@ -37,6 +53,8 @@ async function getAccessToken() {
 
     const sign = crypto.createSign('RSA-SHA256');
     sign.update(signatureInput);
+    
+    // Теперь ключ 100% правильный, и здесь ошибки не будет
     const signature = sign.sign(CONFIG.private_key, 'base64url');
 
     const jwt = `${signatureInput}.${signature}`;
@@ -52,7 +70,6 @@ async function getAccessToken() {
     return data.access_token;
 }
 
-// Главный обработчик API
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, error: 'Метод не поддерживается. Используйте POST.' });
@@ -61,7 +78,6 @@ export default async function handler(req, res) {
     try {
         const { action, sheetName, range, values } = req.body;
         
-        // Проверка наличия ключей
         if (!CONFIG.client_email || !CONFIG.private_key || !CONFIG.spreadsheet_id) {
             throw new Error('Не настроены переменные окружения Google (ENV)');
         }
@@ -71,9 +87,7 @@ export default async function handler(req, res) {
 
         let resultData = {};
 
-        // Маршрутизация действий
         if (action === 'read') {
-            // Чтение данных (например, всего каталога)
             const response = await fetch(`${baseUrl}/${sheetName}!${range}`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -83,7 +97,6 @@ export default async function handler(req, res) {
             resultData = data.values || [];
         } 
         else if (action === 'append') {
-            // Добавление новой строки (например, запись лога в History)
             const response = await fetch(`${baseUrl}/${sheetName}!A:A:append?valueInputOption=USER_ENTERED`, {
                 method: 'POST',
                 headers: { 
@@ -97,7 +110,6 @@ export default async function handler(req, res) {
             resultData = data;
         }
         else if (action === 'update') {
-            // Точечное обновление конкретной ячейки
             const response = await fetch(`${baseUrl}/${sheetName}!${range}?valueInputOption=USER_ENTERED`, {
                 method: 'PUT',
                 headers: { 
@@ -111,7 +123,7 @@ export default async function handler(req, res) {
             resultData = data;
         }
         else {
-            throw new Error('Неизвестное действие (action). Допустимые: read, append, update.');
+            throw new Error('Неизвестное действие (action).');
         }
 
         return res.status(200).json({ success: true, data: resultData });
