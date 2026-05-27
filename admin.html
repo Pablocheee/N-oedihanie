@@ -45,7 +45,6 @@
             100% { background-position: 0% 100%; }
         }
 
-        /* Экран авторизации */
         #login-screen {
             background: var(--glass);
             backdrop-filter: blur(20px);
@@ -99,7 +98,6 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        /* Главный интерфейс Админки */
         #admin-dashboard {
             display: none;
             width: 100%;
@@ -132,10 +130,7 @@
             align-items: center;
         }
 
-        /* Левая часть: ЧАТ */
-        .chat-section {
-            flex: 2;
-        }
+        .chat-section { flex: 2; }
 
         #chat-messages {
             flex: 1;
@@ -186,16 +181,8 @@
             transform: scale(1.05);
         }
 
-        /* Правая часть: ЖУРНАЛ И КНОПКИ UNDO/REDO */
-        .history-section {
-            flex: 1;
-            min-width: 350px;
-        }
-
-        .history-controls {
-            display: flex;
-            gap: 10px;
-        }
+        .history-section { flex: 1; min-width: 350px; }
+        .history-controls { display: flex; gap: 10px; }
 
         .ctrl-btn {
             background: transparent;
@@ -212,7 +199,6 @@
             transition: 0.3s;
         }
 
-        /* Состояние неактивной кнопки отката */
         .ctrl-btn.disabled {
             border-color: var(--border);
             color: var(--text-muted);
@@ -244,37 +230,21 @@
             transition: 0.4s;
         }
 
-        .log-item.pending {
-            border-color: rgba(255, 255, 255, 0.4);
-            animation: pulse 1.5s infinite;
-        }
+        .log-item.pending { border-color: rgba(255, 255, 255, 0.4); animation: pulse 1.5s infinite; }
+        .log-item.success { border-color: #4CAF50; background: rgba(76, 175, 80, 0.05); }
+        .log-item.error { border-color: #f44336; background: rgba(244, 67, 54, 0.05); }
 
-        .log-item.success {
-            border-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.05);
-        }
-
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 10px;
-            opacity: 0.6;
-        }
-
-        .log-status {
-            font-weight: 700;
-        }
-
+        .log-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 10px; opacity: 0.6; }
+        .log-status { font-weight: 700; }
         .log-success-text { color: #4CAF50; }
         .log-pending-text { color: #FFC107; }
+        .log-error-text { color: #f44336; }
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
             70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
-
     </style>
 </head>
 <body>
@@ -288,7 +258,6 @@
     </div>
 
     <div id="admin-dashboard">
-        
         <div class="panel chat-section">
             <div class="panel-header">
                 <span>ИИ АДМИНИСТРАТОР</span>
@@ -301,7 +270,7 @@
                 </div>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй цену на Анти-стресс на 6000')...">
+                <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй описание для Анти-стресс')...">
                 <button onclick="sendAdminCommand()">→</button>
             </div>
         </div>
@@ -314,23 +283,22 @@
                     <button id="btn-redo" class="ctrl-btn disabled" title="Шаг вперед (Вернуть)">↻</button>
                 </div>
             </div>
-            <div id="history-logs">
-                </div>
+            <div id="history-logs"></div>
         </div>
-
     </div>
 
     <script>
-        // Простая заглушка для входа (потом привяжем к бэкенду)
+        // ГЛОБАЛЬНОЕ ХРАНИЛИЩЕ КОМАНД (чтобы не передавать JSON через HTML)
+        window.pendingCommands = {};
+
         function checkLogin() {
             const pass = document.getElementById('admin-pass').value;
-            if(pass.length > 0) { // Пускает с любым паролем для теста
+            if(pass.length > 0) { 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'flex';
             }
         }
 
-        // Асинхронная отправка команды ИИ
         async function sendAdminCommand() {
             const input = document.getElementById('admin-chat-input');
             const chatBox = document.getElementById('chat-messages');
@@ -339,12 +307,10 @@
 
             if(!text) return;
 
-            // 1. Вывод сообщения пользователя
             chatBox.innerHTML += `<div class="msg msg-user">${text}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 2. Лог "ОБРАБОТКА ИИ"
             const logId = 'log-' + Date.now();
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
             
@@ -360,7 +326,6 @@
             historyBox.insertAdjacentHTML('afterbegin', pendingLog);
 
             try {
-                // 3. Запрос к Groq через наш бэкенд
                 const response = await fetch('/api/admin-chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -372,20 +337,20 @@
 
                 const aiData = result.data;
 
-                // 4. Формируем ответ ИИ
                 let aiMessageHtml = `
                     <div class="msg msg-ai" id="ai-msg-${logId}">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
                         ${aiData.reply}
                 `;
 
-                // 5. Safety Pipeline: Если ИИ хочет изменить данные, выводим кнопки
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
-                    // Кодируем объект действия, чтобы передать его в кнопку
-                    const actionPayload = encodeURIComponent(JSON.stringify(aiData)).replace(/'/g, "%27");
+                    // СОХРАНЯЕМ ДАННЫЕ В ПАМЯТЬ БРАУЗЕРА
+                    window.pendingCommands[logId] = aiData;
+                    
+                    // Передаем в кнопки только короткий ID
                     aiMessageHtml += `
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
-                            <button onclick="confirmAction('${logId}', '${actionPayload}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
+                            <button onclick="confirmAction('${logId}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
                             <button onclick="cancelAction('${logId}')" style="background: transparent; color: #f44336; border: 1px solid #f44336; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Отмена</button>
                         </div>
                     `;
@@ -395,7 +360,6 @@
                 chatBox.innerHTML += aiMessageHtml;
                 chatBox.scrollTop = chatBox.scrollHeight;
 
-                // Обновляем лог, если это был просто вопрос (без изменения БД)
                 if (aiData.action === 'unknown') {
                     updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
                 }
@@ -411,24 +375,26 @@
             }
         }
 
-        // Функция подтверждения (реальная запись в Google Sheets)
-        async function confirmAction(logId, payloadEncoded) {
-            const payload = JSON.parse(decodeURIComponent(payloadEncoded));
+        async function confirmAction(logId) {
+            // ДОСТАЕМ ДАННЫЕ ИЗ ПАМЯТИ
+            const payload = window.pendingCommands[logId];
+            if (!payload) return;
+
             const msgDiv = document.getElementById(`ai-msg-${logId}`);
             const chatBox = document.getElementById('chat-messages');
             
-            // Убираем кнопки из чата
             if(msgDiv) {
                 msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
             }
 
-            updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Ищем товар: ${payload.product_name || '...'}`);
+            // Безопасное чтение имени продукта
+            const prodName = payload.product_name || 'Неизвестный товар';
+            updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Ищем товар: ${prodName}`);
 
             try {
                 let targetRow = null;
                 let oldText = "";
 
-                // ШАГ 1: Читаем таблицу Products, чтобы найти нужную строку
                 if (payload.action === 'update_price' || payload.action === 'update_text') {
                     const readRes = await fetch('/api/sheets', {
                         method: 'POST',
@@ -440,32 +406,29 @@
                     if (!readData.success) throw new Error("Ошибка чтения базы данных: " + readData.error);
 
                     const rows = readData.data;
-                    const targetName = payload.product_name.toLowerCase();
+                    const targetName = prodName.toLowerCase();
                     
-                    // Ищем товар по названию. 
-                    // Предполагаем структуру: A(ID), B(Название), C(Цена), D(Описание)
                     for (let i = 0; i < rows.length; i++) {
                         if (rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
-                            targetRow = i + 1; // +1 потому что нумерация строк в Google Sheets начинается с 1
+                            targetRow = i + 1; 
                             oldText = payload.action === 'update_price' ? rows[i][2] : rows[i][3]; 
                             break;
                         }
                     }
 
-                    if (!targetRow) throw new Error(`Товар "${payload.product_name}" не найден в таблице.`);
+                    if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
                 }
 
-                // ШАГ 2: Обновляем конкретную ячейку
                 updateLogStatus(logId, 'pending', '⏳ ОБНОВЛЕНИЕ...', `Запись новых данных...`);
                 
                 let updateRange = '';
                 let newValue = '';
                 
                 if (payload.action === 'update_price') {
-                    updateRange = `C${targetRow}`; // Колонка C - Цена
+                    updateRange = `C${targetRow}`;
                     newValue = payload.new_price;
                 } else if (payload.action === 'update_text') {
-                    updateRange = `D${targetRow}`; // Колонка D - Описание
+                    updateRange = `D${targetRow}`;
                     newValue = payload.new_text;
                 }
 
@@ -484,7 +447,6 @@
                     if (!updateData.success) throw new Error("Ошибка записи: " + updateData.error);
                 }
 
-                // ШАГ 3: Записываем лог в History
                 await fetch('/api/sheets', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -495,7 +457,7 @@
                     })
                 });
 
-                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен товар: ${payload.product_name}`);
+                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен товар: ${prodName}`);
                 document.getElementById('btn-undo').classList.remove('disabled');
 
                 chatBox.innerHTML += `
@@ -512,7 +474,33 @@
             }
         }
 
-        // Обработка клавиши Enter
+        function cancelAction(logId) {
+            const msgDiv = document.getElementById(`ai-msg-${logId}`);
+            if(msgDiv) {
+                msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
+            }
+            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил действие');
+        }
+
+        function updateLogStatus(logId, status, statusText, descText) {
+            const logItem = document.getElementById(logId);
+            if(!logItem) return;
+            
+            logItem.className = `log-item ${status}`;
+            
+            let colorClass = 'log-pending-text';
+            if (status === 'success') colorClass = 'log-success-text';
+            if (status === 'error') colorClass = 'log-error-text';
+
+            logItem.innerHTML = `
+                <div class="log-header">
+                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
+                    <span class="log-status ${colorClass}">${statusText}</span>
+                </div>
+                <div>${descText}</div>
+            `;
+        }
+
         document.getElementById('admin-chat-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sendAdminCommand();
         });
