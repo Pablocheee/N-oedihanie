@@ -330,8 +330,8 @@
             }
         }
 
-        // Демонстрация работы чата и логов
-        function sendAdminCommand() {
+        // Асинхронная отправка команды ИИ
+        async function sendAdminCommand() {
             const input = document.getElementById('admin-chat-input');
             const chatBox = document.getElementById('chat-messages');
             const historyBox = document.getElementById('history-logs');
@@ -339,12 +339,12 @@
 
             if(!text) return;
 
-            // 1. Отправляем сообщение пользователя
+            // 1. Вывод сообщения пользователя
             chatBox.innerHTML += `<div class="msg msg-user">${text}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 2. Создаем лог "В обработке"
+            // 2. Лог "ОБРАБОТКА ИИ"
             const logId = 'log-' + Date.now();
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
             
@@ -352,37 +352,144 @@
                 <div id="${logId}" class="log-item pending">
                     <div class="log-header">
                         <span>${timeStr}</span>
-                        <span class="log-status log-pending-text">⏳ ОБРАБОТКА...</span>
+                        <span class="log-status log-pending-text">⏳ ОБРАБОТКА ИИ...</span>
                     </div>
                     <div>${text}</div>
                 </div>
             `;
-            // Добавляем лог наверх
             historyBox.insertAdjacentHTML('afterbegin', pendingLog);
 
-            // Имитация ответа от бэкенда через 2 секунды
-            setTimeout(() => {
-                // Ответ в чат
+            try {
+                // 3. Запрос к Groq через наш бэкенд
+                const response = await fetch('/api/admin-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                
+                const result = await response.json();
+                if (!result.success) throw new Error(result.error);
+
+                const aiData = result.data;
+
+                // 4. Формируем ответ ИИ
+                let aiMessageHtml = `
+                    <div class="msg msg-ai" id="ai-msg-${logId}">
+                        <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
+                        ${aiData.reply}
+                `;
+
+                // 5. Safety Pipeline: Если ИИ хочет изменить данные, выводим кнопки
+                if (aiData.action !== 'unknown' && aiData.action !== 'error') {
+                    // Кодируем объект действия, чтобы передать его в кнопку
+                    const actionPayload = encodeURIComponent(JSON.stringify(aiData));
+                    aiMessageHtml += `
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button onclick="confirmAction('${logId}', '${actionPayload}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
+                            <button onclick="cancelAction('${logId}')" style="background: transparent; color: #f44336; border: 1px solid #f44336; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Отмена</button>
+                        </div>
+                    `;
+                }
+                
+                aiMessageHtml += `</div>`;
+                chatBox.innerHTML += aiMessageHtml;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Обновляем лог, если это был просто вопрос (без изменения БД)
+                if (aiData.action === 'unknown') {
+                    updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
+                }
+
+            } catch (error) {
+                console.error(error);
+                updateLogStatus(logId, 'error', '❌ ОШИБКА', text);
+                chatBox.innerHTML += `
+                    <div class="msg msg-ai">
+                        <strong style="color: #f44336; display: block; margin-bottom: 5px; font-size: 11px;">СИСТЕМНАЯ ОШИБКА</strong>
+                        Произошла ошибка связи с сервером: ${error.message}
+                    </div>`;
+            }
+        }
+
+        // Функция подтверждения (запись в Google Sheets)
+        async function confirmAction(logId, payloadEncoded) {
+            const payload = JSON.parse(decodeURIComponent(payloadEncoded));
+            const msgDiv = document.getElementById(`ai-msg-${logId}`);
+            const chatBox = document.getElementById('chat-messages');
+            
+            // Убираем кнопки из чата
+            if(msgDiv) {
+                msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
+            }
+
+            updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Применение: ${payload.action}`);
+
+            try {
+                // Здесь мы будем формировать конкретный range и values на основе payload.action
+                // Пока отправляем тестовый запрос, чтобы проверить коннект с Sheets API
+                const res = await fetch('/api/sheets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'append',
+                        sheetName: 'History',
+                        values: [new Date().toISOString(), logId, payload.action, "Products", "row_x", "column_x", "old", "new"]
+                    })
+                });
+
+                const dbResult = await res.json();
+                if (!dbResult.success) throw new Error(dbResult.error);
+
+                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Выполнено: ${payload.action}`);
+                document.getElementById('btn-undo').classList.remove('disabled');
+
                 chatBox.innerHTML += `
                     <div class="msg msg-ai">
                         <strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>
-                        Команда выполнена. База данных обновлена.
+                        База данных успешно обновлена.
                     </div>
                 `;
                 chatBox.scrollTop = chatBox.scrollHeight;
 
-                // Обновление лога на "Успех"
-                const logItem = document.getElementById(logId);
-                if(logItem) {
-                    logItem.className = 'log-item success';
-                    logItem.querySelector('.log-status').className = 'log-status log-success-text';
-                    logItem.querySelector('.log-status').innerText = '✅ ГОТОВО';
+            } catch (error) {
+                updateLogStatus(logId, 'error', '❌ ОШИБКА БАЗЫ', error.message);
+                chatBox.innerHTML += `<div class="msg msg-ai" style="color:#f44336;">Ошибка записи в таблицу: ${error.message}</div>`;
+            }
+        }
+
+        // Функция отмены действия
+        function cancelAction(logId) {
+            const msgDiv = document.getElementById(`ai-msg-${logId}`);
+            if(msgDiv) {
+                msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
+            }
+            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил действие');
+        }
+
+        // Вспомогательная функция для обновления визуального лога справа
+        function updateLogStatus(logId, status, statusText, descText) {
+            const logItem = document.getElementById(logId);
+            if(!logItem) return;
+            
+            logItem.className = `log-item ${status}`;
+            
+            let colorClass = 'log-pending-text';
+            if (status === 'success') colorClass = 'log-success-text';
+            if (status === 'error') {
+                colorClass = 'log-error-text';
+                // Динамически добавляем стиль для ошибок, если его еще нет
+                if (!document.getElementById('error-styles')) {
+                    document.head.insertAdjacentHTML('beforeend', '<style id="error-styles">.log-error-text { color: #f44336; } .log-item.error { border-color: #f44336; background: rgba(244, 67, 54, 0.05); }</style>');
                 }
+            }
 
-                // Включаем кнопку "Назад", так как появилось действие для отмены
-                document.getElementById('btn-undo').classList.remove('disabled');
-
-            }, 2000);
+            logItem.innerHTML = `
+                <div class="log-header">
+                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span>
+                    <span class="log-status ${colorClass}">${statusText}</span>
+                </div>
+                <div>${descText}</div>
+            `;
         }
 
         // Обработка клавиши Enter
