@@ -302,7 +302,7 @@
             <ul class="benefits-list">
                 <li>
                     <span class="bullet">✧</span>
-                    <p>Моментальный выход из стресса и тревоги. Эффект ощущается сразу, с регулярной практикой закрепляется на долго.</p>
+                    <p id="dynamic-desc">Моментальный выход из стресса и тревоги. Эффект ощущается сразу, с регулярной практикой закрепляется на долго.</p>
                 </li>
                 <li>
                     <span class="bullet">✧</span>
@@ -386,7 +386,41 @@
     </div></div><div id="ai-trigger" onclick="toggleChat()">✧</div><div id="ai-window"><div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div><div id="chat-messages">
     <div class="msg msg-ai">Приветствую. Я помогу вам сориентироваться в практиках. Какой у вас запрос?</div>
 </div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;"><button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">→</button></div></div><script>
-    // === START: SCRIPTS ===
+    // === START: SCRIPTS ===// === START: SCRIPTS ===
+    
+    // Глобальная переменная для цены из БД (по умолчанию 5000, как страховка)
+    window.DYNAMIC_PRICE = 5000;
+
+    // Скрипт связи с Google Sheets (запускается автоматически при открытии сайта)
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/api/sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' })
+            });
+            
+            const result = await response.json();
+            if (result.success && result.data) {
+                // Ищем строку "Анти-стресс" в базе
+                const productRow = result.data.find(row => row[1] && row[1].toLowerCase().includes('анти-стресс'));
+                
+                if (productRow) {
+                    const newPrice = productRow[2]; // Колонка C (Цена)
+                    const newDesc = productRow[3];  // Колонка D (Описание)
+
+                    // 1. Динамически меняем текст на сайте
+                    const descElem = document.getElementById('dynamic-desc');
+                    if (descElem && newDesc) descElem.innerText = newDesc;
+
+                    // 2. Обновляем цену для платежной системы
+                    if (newPrice) window.DYNAMIC_PRICE = parseInt(newPrice);
+                }
+            }
+        } catch (e) {
+            console.error('Ошибка синхронизации с базой:', e);
+        }
+    });
     const CONFIG = {
         notifyUrl: '/api/notify'
     };
@@ -419,7 +453,7 @@
         }
 
         const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН
-        const price = 5000; // Проверь сумму!
+        const price = window.DYNAMIC_PRICE; // <--- ТЕПЕРЬ ЦЕНА БЕРЕТСЯ ИЗ БАЗЫ!
         const pageTitle = document.title;
         
         const text = `💳 *Попытка оплаты Робокасса*\nПродукт: ${pageTitle}\nEmail: ${email}\nСумма: ${price} руб.`;
