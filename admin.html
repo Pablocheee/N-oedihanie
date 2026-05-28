@@ -175,7 +175,6 @@
                 const aiData = result.data;
 
                 // === 🧠 УМНЫЙ ПЕРЕХВАТЧИК ===
-                // Принудительно включаем загрузку фото, если есть ключевые слова
                 const requestText = text.toLowerCase();
                 if (requestText.includes('фото') || requestText.includes('картинк') || requestText.includes('изображени')) {
                     if (aiData.action !== 'create_product') {
@@ -188,15 +187,17 @@
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     window.pendingCommands[logId] = aiData;
 
-                    // МАГИЯ: Автоматически добавляем окно загрузки фото
+                    // МАГИЯ: Железобетонная кнопка загрузки (без слоев, работает 100% везде)
                     if (aiData.action === 'update_image' || aiData.action === 'create_product') {
                         aiMessageHtml += `
                             <div id="upload-wrapper-${logId}" style="margin: 15px 0; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px dashed var(--accent);">
                                 <div style="font-size: 10px; margin-bottom: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Требуется медиафайл (до 4 МБ):</div>
-                                <label class="btn-main" style="display:inline-block; padding:8px 15px; font-size:10px; cursor:pointer; width: auto; margin: 0; position: relative; overflow: hidden;">
+                                
+                                <button onclick="document.getElementById('img-up-${logId}').click()" class="btn-main" style="display:inline-block; padding:8px 15px; font-size:10px; cursor:pointer; width: auto; margin: 0;">
                                     📸 ВЫБРАТЬ И ЗАГРУЗИТЬ
-                                    <input type="file" accept="image/*" style="position: absolute; top: 0; right: 0; min-width: 100%; min-height: 100%; font-size: 100px; text-align: right; opacity: 0; outline: none; background: white; cursor: inherit; display: block;" onchange="handleInlineUpload(this, '${logId}')">
-                                </label>
+                                </button>
+                                <input type="file" id="img-up-${logId}" accept="image/*" style="display:none;" onchange="handleInlineUpload(this, '${logId}')">
+                                
                                 <div id="up-status-${logId}" style="font-size:11px; margin-top:8px; color:var(--accent); font-weight: bold;"></div>
                             </div>
                         `;
@@ -230,14 +231,19 @@
                 const payload = window.pendingCommands[logId];
                 if (!payload) return;
 
-                // === ЗАЩИТА: ТРЕБУЕМ ФОТО ПЕРЕД ОТПРАВКОЙ ===
-                if (payload.action === 'update_image' && !payload.image_url) {
+                // === УМНАЯ ЗАЩИТА ОТ СПЕШКИ ===
+                if ((payload.action === 'update_image' || payload.action === 'create_product') && !payload.image_url) {
                     const status = document.getElementById(`up-status-${logId}`);
                     if (status) {
-                        status.style.color = "#f44336";
-                        status.innerText = "⚠️ Сначала выберите и загрузите фото!";
+                        if (status.innerText.includes('⏳')) {
+                            status.style.color = "#FFC107";
+                            status.innerText = "⏳ Подождите, фото еще загружается в облако...";
+                        } else {
+                            status.style.color = "#f44336";
+                            status.innerText = "⚠️ Сначала нажмите 'ВЫБРАТЬ И ЗАГРУЗИТЬ' и дождитесь зеленой галочки!";
+                        }
                     }
-                    return; // Блокируем отправку без картинки
+                    return; // Блокируем отправку
                 }
                 
                 // Безопасная замена кнопок на статус активации
@@ -266,22 +272,20 @@
                         if (rows[i][0] && rows[i][0].toLowerCase() === targetName || rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
                             targetRow = i + 1; 
                             if (payload.action === 'update_price') oldText = rows[i][6];
-                            else if (payload.action === 'update_image') oldText = rows[i][4]; // Колонка E для фото
+                            else if (payload.action === 'update_image') oldText = rows[i][4]; 
                             else oldText = rows[i][5];
                             break;
                         }
                     }
                     if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
 
-                    // Определяем диапазон для записи
                     let updateRange = 'F' + targetRow; 
                     if (payload.action === 'update_price') updateRange = `G${targetRow}:H${targetRow}`;
-                    if (payload.action === 'update_image') updateRange = `E${targetRow}`; // ВАЖНО: Фото пишем в колонку E
+                    if (payload.action === 'update_image') updateRange = `E${targetRow}`; 
                     
-                    // Формируем данные
                     let updateValues = [payload.new_text];
                     if (payload.action === 'update_price') updateValues = [payload.new_price, Math.round(payload.new_price / 100)];
-                    if (payload.action === 'update_image') updateValues = [payload.image_url]; // Вставляем ссылку
+                    if (payload.action === 'update_image') updateValues = [payload.image_url]; 
 
                     const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: updateValues }) });
                     const updateData = await updateRes.json();
