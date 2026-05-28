@@ -793,10 +793,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!id || !title) return;
 
 // ОБНОВЛЕННАЯ КАРТОЧКА (КАТЕГОРИЯ ПО ЦЕНТРУ)
+                // ОБНОВЛЕННАЯ КАРТОЧКА (ВЕСЬ ТЕКСТ ПО ЦЕНТРУ)
                 const cardHTML = `
                     <div class="program-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-                        <div>
-                            <div style="margin-bottom: 20px; width: 100%; text-align: center;">
+                        
+                        <!-- Мы добавили text-align: center; главному контейнеру текста -->
+                        <div style="text-align: center;">
+                            <div style="margin-bottom: 20px; width: 100%;">
                                 <span style="font-size: 10px; letter-spacing: 2px; color: var(--accent, #a8dadc); text-transform: uppercase; font-weight: 700;">${category || 'ПРАКТИКА'}</span>
                             </div>
                             
