@@ -915,71 +915,9 @@ const courseData = {
         });
     });
 
-    // Чат (заглушка)
-    function toggleChat() {
-        const win = document.getElementById('ai-window');
-        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-    }
-
     function createBtn(text, link, color = 'var(--accent)') {
     return `<a href="${link}" class="btn-main" style="display:block; margin-top:10px; padding:10px; text-decoration:none; text-align:center; font-size:12px; border-color:${color}">${text}</a>`;
 }
-
-// Вспомогательная функция для создания кнопок прямо в чате
-function createChatBtn(text, link, color = 'var(--accent)') {
-    return `<a href="${link}" target="_blank" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff;">${text}</a>`;
-}
-
-// === START: SEND_CHAT_FIX ===
-async function sendChat() {
-    const input = document.getElementById('chat-input');
-    const box = document.getElementById('chat-messages');
-    const userText = input.value.trim();
-    
-    if (!userText) return;
-
-    box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-    input.value = '';
-    box.scrollTop = box.scrollHeight;
-
-    // Индикатор печати
-    const typingId = 'typing-' + Date.now();
-    box.innerHTML += `<div id="${typingId}" class="msg msg-ai" style="opacity: 0.6; font-size: 11px;">Victory AI печатает...</div>`;
-    box.scrollTop = box.scrollHeight;
-
-    try {
-        const response = await fetch('https://tantra-ai.vercel.app/ask-doctor', { 
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: userText })
-        });
-        
-        const data = await response.json();
-        let reply = data.reply;
-
-        // Пауза 1.8 секунды для реализма
-        setTimeout(() => {
-            const typingElem = document.getElementById(typingId);
-            if (typingElem) typingElem.remove();
-
-            let formattedReply = `
-                <div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>
-                <div>${reply.replace('[BUTTON_VOST]', createChatBtn('Программа: Восстановление', 'https://inoedyhanie.vercel.app/vostanovlenie.html'))
-                            .replace('[BUTTON_PRANA]', createChatBtn('Программа: Прана', 'https://inoedyhanie.vercel.app/prana.html'))
-                            .replace('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', 'https://inoedyhanie.vercel.app/antistress.html'))
-                            .replace('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'))}</div>
-            `;
-
-            box.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 1800); 
-
-    } catch (e) {
-        document.getElementById(typingId)?.remove();
-        box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
-    }
-}
-// === END: SEND_CHAT_FIX ===
 
 // Добавляем отправку по Enter
 document.getElementById('chat-input').addEventListener('keypress', function (e) {
@@ -1014,6 +952,7 @@ changeSlogan();
 setInterval(changeSlogan, 6000);
 
 </script>
+<script src="/victory-chat.js"></script>
 </body>
 </html>
 
