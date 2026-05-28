@@ -67,7 +67,10 @@
 
 <div id="full-menu">
     <div class="close-menu" onclick="toggleMenu(false)">×</div>
-    <a href="/" onclick="toggleMenu(false)">НА ГЛАВНУЮ</a>
+    <a href="/#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
+    <a href="/#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
+    <a href="/#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
+    <a href="/#author" onclick="toggleMenu(false)">ВИКТОРИЯ</a>
     <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a>
 </div>
 
@@ -99,36 +102,55 @@
 
 <div id="paymentModal" class="modal">
     <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
+        
         <div id="step-selection">
             <div style="margin-bottom: 25px;">
-                <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Выберите способ оплаты</h2>
-                <p style="font-size: 14px; opacity: 0.7;" id="modal-course-name">Курс</p>
+                <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление доступа</h2>
+                <p style="font-size: 13px; opacity: 0.7; color: var(--accent);" id="modal-course-name">Курс</p>
             </div>
+
+            <input type="email" id="robokassaEmail" placeholder="Ваш Gmail для доступа" required 
+                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none; text-align: center;">
+
             <button onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
                 💳 Оплатить картой РФ
             </button>
+
             <button onclick="showCryptoStep()" style="width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
                 ₮ Оплатить USDT (TON)
             </button>
+            
             <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
         </div>
+
         <div id="step-crypto" style="display: none;">
             <div style="margin-bottom: 20px;">
                 <h2 style="font-size: 20px; color: var(--accent); font-weight: 300; margin-bottom: 5px;">Оплата USDT</h2>
                 <p style="font-size: 13px; opacity: 0.7;">Введите Email для получения доступа</p>
             </div>
+
             <form id="orderForm" onsubmit="sendToTelegram(event)">
-                <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none;">
+                <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
+                       style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none;">
+                
                 <input type="hidden" name="memo_id" id="hiddenMemo">
+                
                 <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 15px;">
                     <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
-                    <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">Переведите <b id="crypto-price">... USDT</b><br>Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 4px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>Memo: <b id="memoDisplay" style="color:var(--accent)">...</b></p>
+                    <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
+                        Переведите <b id="crypto-price">... USDT</b><br>
+                        Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 4px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
+                        Memo: <b id="memoDisplay" style="color:var(--accent)">...</b>
+                    </p>
+                    
                     <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
                         <code id="walletAddr" style="font-size: 9px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
                         <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px;">📋</button>
                     </div>
                 </div>
+
                 <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил</button>
+                
                 <button type="button" onclick="showSelectionStep()" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">← Назад к выбору</button>
             </form>
         </div>
@@ -242,8 +264,20 @@
     function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; document.body.style.overflow = 'auto'; showSelectionStep(); }
 
     async function payWithRobokassa() {
-        const merchantLogin = 'YOUR_LOGIN'; // Твой логин
-        // БЕРЕМ ЦЕНУ И НАЗВАНИЕ ИЗ НАШЕЙ ГЛОБАЛЬНОЙ ПЕРЕМЕННОЙ!
+        const emailInput = document.getElementById('robokassaEmail');
+        let emailParam = '';
+        
+        if (emailInput) {
+            const email = emailInput.value.trim();
+            if (!email || !email.includes('@')) {
+                alert('Пожалуйста, введите корректный Email для получения доступа.');
+                emailInput.style.borderColor = 'var(--accent)';
+                return;
+            }
+            emailParam = `&Email=${encodeURIComponent(email)}`;
+        }
+
+        const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН ИЗ ЛК РОБОКАССЫ
         const price = window.currentCourseData.priceRub; 
         const pageTitle = window.currentCourseData.title;
         
@@ -254,26 +288,49 @@
         });
 
         if (price === 0) {
-            alert('Ошибка: Цена не загружена.');
+            alert('Ошибка: Цена не загружена из базы данных.');
             return;
         }
 
-        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}&Culture=ru`; 
+        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}${emailParam}&Culture=ru`; 
     }
 
     async function sendToTelegram(event) {
         event.preventDefault();
         const btn = document.getElementById('submitBtn');
         const email = document.getElementById('customerEmail').value;
-        btn.innerText = 'ОТПРАВКА...'; btn.disabled = true;
+        const memo = document.getElementById('hiddenMemo').value;
+        const pageTitle = window.currentCourseData.title;
+        const usdtPrice = window.currentCourseData.priceUsdt;
 
-        const text = `🚀 *Новая оплата USDT!*\nПродукт: ${window.currentCourseData.title}\nEmail: ${email}\nMemo: ${generatedMemo}\nСумма: ${window.currentCourseData.priceUsdt} USDT (TON)`;
+        btn.innerText = 'ОТПРАВКА...';
+        btn.disabled = true;
+
+        const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: ${usdtPrice} USDT (TON)`;
+
         try {
-            await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: text }) });
-            btn.innerText = 'ОТПРАВЛЕНО!'; btn.style.background = '#4CAF50';
-            setTimeout(() => { closePaymentModal(); alert('Данные отправлены.'); btn.innerText = 'Я ОПЛАТИЛ'; btn.style.background = 'var(--accent)'; btn.disabled = false; }, 2000);
+            const response = await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            });
+
+            if (response.ok) {
+                btn.innerText = 'ОТПРАВЛЕНО!';
+                btn.style.background = '#4CAF50';
+                setTimeout(() => {
+                    closePaymentModal();
+                    alert('Данные успешно отправлены. Мы свяжемся с вами!');
+                    btn.innerText = 'Я ОПЛАТИЛ';
+                    btn.style.background = 'var(--accent)';
+                    btn.disabled = false;
+                    showSelectionStep();
+                }, 2000);
+            } else { throw new Error('Ошибка сети'); }
         } catch (error) {
-            alert('Ошибка отправки.'); btn.innerText = 'Я ОПЛАТИЛ'; btn.disabled = false;
+            alert('Ошибка при отправке. Попробуйте еще раз.');
+            btn.innerText = 'Я ОПЛАТИЛ';
+            btn.disabled = false;
         }
     }
 
