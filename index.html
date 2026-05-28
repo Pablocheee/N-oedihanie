@@ -756,7 +756,7 @@
                 <div class="slider-label label-after">ПОСЛЕ</div>
             </div>
 
-            <input type="range" min="0" max="100" value="50" class="slider-input" id="sliderRange">
+            <input type="range" min="0" max="100" value="0" class="slider-input" id="sliderRange">
         </div>
     </div>
 </section>
@@ -940,7 +940,11 @@ const courseData = {
     const sliderLine = document.getElementById('sliderLine');
 
     if (sliderRange && imgAfter && sliderLine) {
-        sliderRange.value = 50; // Ставим ровно по центру при старте
+        sliderRange.value = 0; // Ставим ползунок в самое начало (слева)
+        
+        // Сразу прячем картинку "ПОСЛЕ" и сдвигаем линию влево
+        imgAfter.style.clipPath = `polygon(0 0, 0% 0, 0% 100%, 0 100%)`;
+        sliderLine.style.left = `0%`;
         
         sliderRange.addEventListener('input', (e) => {
             const val = e.target.value;
