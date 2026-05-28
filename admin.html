@@ -94,8 +94,17 @@
     <div id="admin-dashboard">
         <div class="panel chat-section">
             <div class="panel-header"><span>ИИ АДМИНИСТРАТОР</span><span style="opacity: 0.5;">v.1.0</span></div>
+            
             <div id="chat-messages">
                 <div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Система инициализирована. База данных подключена. Что будем менять?</div>
+            </div>
+
+            <div style="padding: 10px 30px; background: rgba(0,0,0,0.15); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
+                <label for="image-upload" class="btn-main" style="width: auto; padding: 8px 15px; font-size: 10px; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    📸 ЗАГРУЗИТЬ ФОТО
+                </label>
+                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                <div id="upload-status" style="font-size: 11px; color: var(--accent); letter-spacing: 1px;"></div>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй описание')...">
