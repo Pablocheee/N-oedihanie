@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div id="ai-trigger" onclick="toggleChat()">✧</div>
         <div id="ai-window">
             <div style="padding: 20px; border-bottom: 1px solid var(--border); text-align: center; font-size: 11px; letter-spacing: 2px; font-weight: 700;">VICTORY AI</div>
-            <div id="chat-messages"><div class="msg msg-ai">Приветствую. Я помогу вам сориентироваться в практиках. Какой у вас запрос?</div></div>
+            <div id="chat-messages"><div class="msg msg-ai">Приветствую. Я помогу вам сориентироваться в практиках. Что вас беспокоит?</div></div>
             <div class="chat-input-area">
                 <input type="text" id="chat-input" placeholder="Ваш вопрос..." style="flex: 1; background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; color: white; outline: none; font-size: 13px;">
                 <button onclick="sendChat()" style="background: var(--accent); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; color: var(--deep); font-weight: 800;">→</button>
