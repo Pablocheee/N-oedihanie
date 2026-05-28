@@ -18,22 +18,33 @@ export default async function handler(req, res) {
             throw new Error('Не настроен ключ GROQ_API_KEY в переменных окружения');
         }
 
-        // Системный промпт, задающий жесткие рамки для ИИ
-        const systemPrompt = `Ты — ИИ-администратор проекта OrdoAxio. Твоя задача — переводить команды пользователя на естественном языке в строгий JSON формат для выполнения действий с базой данных.
+        // === ОБНОВЛЕННЫЙ СИСТЕМНЫЙ ПРОМПТ ДЛЯ ИИ ===
+        const systemPrompt = `Ты — ИИ-администратор проекта OrdoAxio (CMS движок). 
+Твоя задача — переводить команды пользователя на естественном языке в строгий JSON формат для выполнения действий с базой данных (Google Sheets).
         
-        Доступные действия (параметр action):
-        - "update_price": обновить цену (требуется 'product_name' и 'new_price').
-        - "update_text": обновить описание (требуется 'product_name' и 'new_text').
-        - "delete_product": удалить продукт (требуется 'product_name').
-        - "toggle_block": включить/выключить блок (требуется 'block_name' и 'status' как boolean).
-        - "unknown": если команда непонятна или это просто приветствие.
-        
-        ТВОЙ ОТВЕТ ДОЛЖЕН БЫТЬ ТОЛЬКО В ФОРМАТЕ JSON. Никакого маркдауна, никаких пояснений до или после.
-        
-        Пример 1: {"action": "update_price", "product_name": "Анти-стресс", "new_price": "6000", "reply": "Я готов изменить цену для курса Анти-стресс на 6000 руб. Подтверждаете?"}
-        Пример 2: {"action": "unknown", "reply": "Привет! Я ИИ-администратор. Напишите, что вы хотите изменить на сайте."}`;
+ОБЯЗАТЕЛЬНЫЕ ФОРМАТЫ ОТВЕТОВ (выбери один подходящий action):
 
-        // Запрос к Groq API (используем совместимость с OpenAI форматом)
+1. Обновить цену:
+{"action": "update_price", "product_name": "Имя или ID курса", "new_price": 5000, "reply": "Я готов изменить цену. Подтверждаете?"}
+
+2. Обновить описание:
+{"action": "update_text", "product_name": "Имя или ID курса", "new_text": "Новый текст", "reply": "Я готов изменить описание. Подтверждаете?"}
+
+3. Создать новый курс (СГЕНЕРИРУЙ все поля, даже если юзер дал только название. new_id - это одно слово на английском мелкими буквами. price_usdt = price_rub / 100):
+{"action": "create_product", "product_name": "Название", "new_id": "engid", "category": "Категория", "short_desc": "Краткое описание", "image_url": "URL картинки или пусто", "full_desc": "<p>Полное описание HTML</p>", "price_rub": 10000, "price_usdt": 100, "reply": "Продукт сформирован. Добавляем в базу?"}
+
+4. Удалить курс:
+{"action": "delete_product", "product_name": "ID или имя курса для удаления", "reply": "Вы уверены, что хотите полностью удалить этот курс?"}
+
+5. Поменять курсы местами:
+{"action": "swap_products", "id_first": "ID первого", "id_second": "ID второго", "reply": "Готов поменять курсы местами. Подтверждаете?"}
+
+6. Если команда непонятна:
+{"action": "unknown", "reply": "Привет! Я ИИ-администратор. Напишите, что вы хотите сделать с курсами."}
+        
+ТВОЙ ОТВЕТ ДОЛЖЕН БЫТЬ ТОЛЬКО В ФОРМАТЕ JSON. Никакого маркдауна, никаких пояснений до или после. Никаких символов \`\`\`json.`;
+
+        // Запрос к Groq API
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -41,12 +52,12 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile', // Используем быструю и точную модель
+                model: 'llama-3.3-70b-versatile', 
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: message }
                 ],
-                temperature: 0.1 // Минимальная креативность для стабильного JSON
+                temperature: 0.1 
             })
         });
 
@@ -58,18 +69,16 @@ export default async function handler(req, res) {
 
         const aiText = data.choices[0].message.content.trim();
         
-        // Пытаемся безопасно распарсить JSON, даже если модель случайно добавит markdown
+        // Пытаемся безопасно распарсить JSON
         let parsedResult;
         try {
-            // Очистка от возможных блоков ```json ... ```
             const cleanText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
             parsedResult = JSON.parse(cleanText);
         } catch (parseError) {
             console.error('[JSON PARSE ERROR]', aiText);
-            // Фолбэк, если ИИ выдал невалидный JSON
             parsedResult = { 
                 action: "error", 
-                reply: "Произошла ошибка при обработке команды. Пожалуйста, сформулируйте запрос иначе." 
+                reply: "Произошла ошибка при генерации ответа. ИИ выдал неверный формат. Попробуйте еще раз." 
             };
         }
 
