@@ -976,7 +976,7 @@ changeSlogan();
 
 // И ставим на интервал
 setInterval(changeSlogan, 6000);
-// === ПОДГРУЗКА ИЗ GOOGLE ТАБЛИЦ ===
+// === ПОДГРУЗКА ВСЕХ ПРОДУКТОВ ИЗ GOOGLE ТАБЛИЦ ===
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('/api/sheets', {
@@ -987,17 +987,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         const result = await response.json();
         
         if (result.success && result.data) {
-            // Ищем нужную строку
-            const productRow = result.data.find(row => row[1] && row[1].toLowerCase().includes('анти-стресс'));
             
-            if (productRow && productRow[3]) {
-                const descElement = document.getElementById('dynamic-desc');
-                if (descElement) {
-                    // Заменяем текст на тот, что пришел из таблицы
-                    descElement.innerText = productRow[3];
-                    descElement.style.opacity = '1'; 
+            // 1. НАШ СЛОВАРЬ (Связь таблицы и сайта)
+            const productMap = {
+                'анти-стресс': 'dynamic-desc',
+                'восстановления': 'desc-vostanovlenie',
+                'прана': 'desc-prana',
+                'освобождение': 'desc-osvobozhdenie',
+                'главный слоган': 'hero-slogan' // на будущее, если захочешь менять слоган
+            };
+
+            // 2. БЕЖИМ ПО ВСЕЙ ТАБЛИЦЕ
+            result.data.forEach(row => {
+                const nameInTable = row[1] ? row[1].toLowerCase() : '';
+                const description = row[3]; // Колонка D (Описание)
+
+                if (nameInTable && description) {
+                    // Ищем совпадения в словаре
+                    for (const [key, id] of Object.entries(productMap)) {
+                        if (nameInTable.includes(key)) {
+                            // Если нашли — вставляем текст на сайт
+                            const element = document.getElementById(id);
+                            if (element) {
+                                element.innerText = description;
+                                element.style.opacity = '1';
+                                element.style.fontSize = '15px';
+                            }
+                        }
+                    }
                 }
-            }
+            });
+            console.log('УСПЕХ: Все данные с БД загружены!');
         }
     } catch (e) {
         console.error('Ошибка связи с БД:', e);
