@@ -94,18 +94,10 @@
     <div id="admin-dashboard">
         <div class="panel chat-section">
             <div class="panel-header"><span>ИИ АДМИНИСТРАТОР</span><span style="opacity: 0.5;">v.1.0</span></div>
-            
             <div id="chat-messages">
                 <div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Система инициализирована. База данных подключена. Что будем менять?</div>
             </div>
-
-            <div style="padding: 10px 30px; background: rgba(0,0,0,0.15); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
-                <label for="image-upload" class="btn-main" style="width: auto; padding: 8px 15px; font-size: 10px; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-                    📸 ЗАГРУЗИТЬ ФОТО
-                </label>
-                <input type="file" id="image-upload" accept="image/*" style="display: none;">
-                <div id="upload-status" style="font-size: 11px; color: var(--accent); letter-spacing: 1px;"></div>
-            </div>
+            
             <div class="chat-input-area">
                 <input type="text" id="admin-chat-input" placeholder="Введите команду (например: 'Поменяй описание')...">
                 <button onclick="sendAdminCommand()">→</button>
@@ -185,6 +177,21 @@
                 
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     window.pendingCommands[logId] = aiData;
+
+                    // МАГИЯ: Автоматически добавляем окно загрузки фото прямо в сообщение, если это нужно
+                    if (aiData.action === 'update_image' || aiData.action === 'create_product') {
+                        aiMessageHtml += `
+                            <div id="upload-wrapper-${logId}" style="margin: 15px 0; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px dashed var(--accent);">
+                                <div style="font-size: 10px; margin-bottom: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Требуется медиафайл:</div>
+                                <label for="img-up-${logId}" class="btn-main" style="display:inline-block; padding:8px 15px; font-size:10px; cursor:pointer; width: auto; margin: 0;">
+                                    📸 ВЫБРАТЬ И ЗАГРУЗИТЬ
+                                </label>
+                                <input type="file" id="img-up-${logId}" accept="image/*" style="display:none;" onchange="handleInlineUpload(this, '${logId}')">
+                                <div id="up-status-${logId}" style="font-size:11px; margin-top:8px; color:var(--accent); font-weight: bold;"></div>
+                            </div>
+                        `;
+                    }
+
                     aiMessageHtml += `<div class="action-buttons" style="margin-top: 15px; display: flex; gap: 10px;">
                             <button onclick="confirmAction('${logId}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
                             <button onclick="cancelAction('${logId}')" style="background: transparent; color: #f44336; border: 1px solid #f44336; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Отмена</button>
