@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">ИNOE ДЫХАНИЕ — Курс</title>
+    <title id="page-title">ИNOE ДЫХАНИЕ — Загрузка...</title>
     <style>
         .product-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 5% 60px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; max-width: 1200px; align-items: center; }
@@ -166,242 +166,238 @@
 
 <script>
     // === 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ КУРСА ===
-    window.currentCourseData = {
-        id: '',
-        title: '',
-        priceRub: 0,
-        priceUsdt: 0
-    };
+window.currentCourseData = {
+    id: '',
+    title: '',
+    priceRub: 0,
+    priceUsdt: 0
+};
 
-    // === 2. ДИНАМИЧЕСКАЯ ПОДГРУЗКА ИЗ GOOGLE SHEETS ===
-    document.addEventListener('DOMContentLoaded', async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseId = urlParams.get('id');
+// === 2. ДИНАМИЧЕСКАЯ ПОДГРУЗКА ИЗ GOOGLE SHEETS ===
+document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseId = urlParams.get('id');
 
-        if (!courseId) {
-            showError('Курс не найден', 'Пожалуйста, перейдите на эту страницу через каталог на главной.');
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/sheets', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:G' })
-            });
-            const result = await response.json();
-
-            if (result.success && result.data) {
-                const row = result.data.find(r => r[0] && r[0].toLowerCase() === courseId.toLowerCase());
-
-                if (row) {
-                    const title = row[1] || 'Без названия';
-                    const imageSrc = row[4] || '';
-                    const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
-                    const price = parseInt(row[6]) || 0;
-
-                    window.currentCourseData.id = courseId;
-                    window.currentCourseData.title = title;
-                    window.currentCourseData.priceRub = price;
-                    window.currentCourseData.priceUsdt = Math.round(price / 100); 
-
-                    document.title = `ИNOE ДЫХАНИЕ — ${title}`;
-                    document.getElementById('page-title').innerText = `ИNOE ДЫХАНИЕ — ${title}`;
-                    document.getElementById('course-name').innerText = title;
-                    
-                    const modalName = document.getElementById('modal-course-name');
-                    if (modalName) modalName.innerText = title;
-                    
-                    const descContainer = document.getElementById('course-description');
-                    descContainer.innerHTML = fullDescHTML;
-                    descContainer.style.opacity = '1';
-
-                    if (imageSrc) {
-                        const loader = document.getElementById('img-loader');
-                        if (loader) loader.style.display = 'none';
-                        const img = document.getElementById('course-image');
-                        img.src = imageSrc;
-                        img.alt = title;
-                        img.style.display = 'block';
-                    }
-
-                    const priceBtn = document.getElementById('course-price-btn');
-                    const cryptoPrice = document.getElementById('crypto-price');
-                    
-                    if (price > 0) {
-                        if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
-                        if (cryptoPrice) cryptoPrice.innerText = `${window.currentCourseData.priceUsdt} USDT`;
-                    } else {
-                        // Если в таблице не указана цена, покажем это, чтобы кнопка не пропадала
-                        if (priceBtn) priceBtn.innerText = `(Цена не указана в таблице)`;
-                        if (cryptoPrice) cryptoPrice.innerText = `0 USDT`;
-                    }
-                    
-                    // Кнопка появляется в любом случае!
-                    document.getElementById('buy-section').style.display = 'block';
-
-                } else {
-                    showError('Курс не найден', `Продукт с ID "${courseId}" отсутствует в Google Таблице (Колонка А).`);
-                }
-            } else {
-                showError('Ошибка базы данных', result.error || 'Сервер вернул пустой ответ или доступ к таблице заблокирован.');
-            }
-        } catch (error) {
-            console.error(error);
-            showError('Системная ошибка кода', `Не удалось обработать скрипт. Причина: ${error.message}`);
-        }
-    });
-
-    function showError(title, desc) {
-        const nameElem = document.getElementById('course-name');
-        const descElem = document.getElementById('course-description');
-        const loaderElem = document.getElementById('img-loader');
-        
-        if (nameElem) nameElem.innerText = title;
-        if (descElem) {
-            descElem.innerText = desc;
-            descElem.style.opacity = '1';
-        }
-        if (loaderElem) loaderElem.style.display = 'none';
+    if (!courseId) {
+        showError('Курс не найден', 'Пожалуйста, перейдите на эту страницу через каталог на главной.');
+        return;
     }
 
-    // === 3. НАСТРОЙКА ОПЛАТЫ И МОДАЛЬНОГО ОКНА ===
-    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-    const memoDisplay = document.getElementById('memoDisplay');
-    const hiddenMemo = document.getElementById('hiddenMemo');
-    if (memoDisplay) memoDisplay.innerText = generatedMemo;
-    if (hiddenMemo) hiddenMemo.value = generatedMemo;
-
-    function showCryptoStep() { document.getElementById('step-selection').style.display = 'none'; document.getElementById('step-crypto').style.display = 'block'; }
-    function showSelectionStep() { document.getElementById('step-crypto').style.display = 'none'; document.getElementById('step-selection').style.display = 'block'; }
-    function openPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
-    function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; document.body.style.overflow = 'auto'; showSelectionStep(); }
-    function copyWallet() { navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); alert('Адрес скопирован!'); }
-
-    async function payWithRobokassa() {
-        const emailInput = document.getElementById('robokassaEmail');
-        let emailParam = '';
-        
-        if (emailInput) {
-            const email = emailInput.value.trim();
-            if (!email || !email.includes('@')) {
-                alert('Пожалуйста, введите корректный Email для получения доступа.');
-                emailInput.style.borderColor = 'var(--accent)';
-                return;
-            }
-            emailParam = `&Email=${encodeURIComponent(email)}`;
-        }
-
-        const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН ИЗ ЛК РОБОКАССЫ
-        const price = window.currentCourseData.priceRub; 
-        const pageTitle = window.currentCourseData.title;
-        
-        fetch('/api/notify', {
+    try {
+        const response = await fetch('/api/sheets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: `💳 *Клик по Робокассе*\nПродукт: ${pageTitle}\nСумма: ${price} руб.` })
+            body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:G' })
         });
+        const result = await response.json();
 
-        if (price === 0) {
-            alert('Внимание: В Google Таблице не указана цена для этого курса. Оплата невозможна.');
+        if (result.success && result.data) {
+            // Ищем строку, где Колонка A совпадает с нашим ID из ссылки
+            const row = result.data.find(r => r[0] && r[0].toLowerCase() === courseId.toLowerCase());
+
+            if (row) {
+                const title = row[1] || 'Без названия';
+                const imageSrc = row[4] || '';
+                const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
+                const price = parseInt(row[6]) || 0;
+
+                // Сохраняем в глобальную память
+                window.currentCourseData.id = courseId;
+                window.currentCourseData.title = title;
+                window.currentCourseData.priceRub = price;
+                window.currentCourseData.priceUsdt = Math.round(price / 100); 
+
+                // Вставляем данные в HTML
+                document.title = `ИNOE ДЫХАНИЕ — ${title}`;
+                document.getElementById('page-title').innerText = `ИNOE ДЫХАНИЕ — ${title}`;
+                document.getElementById('course-name').innerText = title;
+                
+                const modalName = document.getElementById('modal-course-name');
+                if (modalName) modalName.innerText = title;
+                
+                const descContainer = document.getElementById('course-description');
+                descContainer.innerHTML = fullDescHTML;
+                descContainer.style.opacity = '1';
+
+                if (imageSrc) {
+                    const loader = document.getElementById('img-loader');
+                    if (loader) loader.style.display = 'none';
+                    const img = document.getElementById('course-image');
+                    img.src = imageSrc;
+                    img.alt = title;
+                    img.style.display = 'block';
+                }
+
+                if (price > 0) {
+                    const priceBtn = document.getElementById('course-price-btn');
+                    const cryptoPrice = document.getElementById('crypto-price');
+                    if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
+                    if (cryptoPrice) cryptoPrice.innerText = `${window.currentCourseData.priceUsdt} USDT`;
+                    document.getElementById('buy-section').style.display = 'block';
+                }
+
+            } else {
+                showError('Курс не найден', `Продукт с ID "${courseId}" отсутствует в Google Таблице (Колонка А).`);
+            }
+        } else {
+            showError('Ошибка базы данных', result.error || 'Сервер вернул пустой ответ или доступ к таблице заблокирован.');
+        }
+    } catch (error) {
+        console.error(error);
+        showError('Системная ошибка кода', `Не удалось обработать скрипт. Причина: ${error.message}`);
+    }
+});
+
+function showError(title, desc) {
+    const nameElem = document.getElementById('course-name');
+    const descElem = document.getElementById('course-description');
+    const loaderElem = document.getElementById('img-loader');
+    
+    if (nameElem) nameElem.innerText = title;
+    if (descElem) {
+        descElem.innerText = desc;
+        descElem.style.opacity = '1';
+    }
+    if (loaderElem) loaderElem.style.display = 'none';
+}
+
+// === 3. НАСТРОЙКА ОПЛАТЫ И МОДАЛЬНОГО ОКНА ===
+const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+const memoDisplay = document.getElementById('memoDisplay');
+const hiddenMemo = document.getElementById('hiddenMemo');
+if (memoDisplay) memoDisplay.innerText = generatedMemo;
+if (hiddenMemo) hiddenMemo.value = generatedMemo;
+
+function showCryptoStep() { document.getElementById('step-selection').style.display = 'none'; document.getElementById('step-crypto').style.display = 'block'; }
+function showSelectionStep() { document.getElementById('step-crypto').style.display = 'none'; document.getElementById('step-selection').style.display = 'block'; }
+function openPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; document.body.style.overflow = 'auto'; showSelectionStep(); }
+function copyWallet() { navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); alert('Адрес скопирован!'); }
+
+async function payWithRobokassa() {
+    const emailInput = document.getElementById('robokassaEmail');
+    let emailParam = '';
+    
+    if (emailInput) {
+        const email = emailInput.value.trim();
+        if (!email || !email.includes('@')) {
+            alert('Пожалуйста, введите корректный Email для получения доступа.');
+            emailInput.style.borderColor = 'var(--accent)';
             return;
         }
-
-        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}${emailParam}&Culture=ru`; 
+        emailParam = `&Email=${encodeURIComponent(email)}`;
     }
 
-    async function sendToTelegram(event) {
-        event.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const email = document.getElementById('customerEmail').value;
-        const memo = document.getElementById('hiddenMemo').value;
-        const pageTitle = window.currentCourseData.title;
-        const usdtPrice = window.currentCourseData.priceUsdt;
+    const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН ИЗ ЛК РОБОКАССЫ
+    const price = window.currentCourseData.priceRub; 
+    const pageTitle = window.currentCourseData.title;
+    
+    fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: `💳 *Клик по Робокассе*\nПродукт: ${pageTitle}\nСумма: ${price} руб.` })
+    });
 
-        btn.innerText = 'ОТПРАВКА...';
-        btn.disabled = true;
-
-        const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: ${usdtPrice} USDT (TON)`;
-
-        try {
-            const response = await fetch('/api/notify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: text })
-            });
-
-            if (response.ok) {
-                btn.innerText = 'ОТПРАВЛЕНО!';
-                btn.style.background = '#4CAF50';
-                setTimeout(() => {
-                    closePaymentModal();
-                    alert('Данные успешно отправлены. Мы свяжемся с вами!');
-                    btn.innerText = 'Я ОПЛАТИЛ';
-                    btn.style.background = 'var(--accent)';
-                    btn.disabled = false;
-                    showSelectionStep();
-                }, 2000);
-            } else { throw new Error('Ошибка сети'); }
-        } catch (error) {
-            alert('Ошибка при отправке. Попробуйте еще раз.');
-            btn.innerText = 'Я ОПЛАТИЛ';
-            btn.disabled = false;
-        }
+    if (price === 0) {
+        alert('Ошибка: Цена не загружена из базы данных.');
+        return;
     }
 
-    // === 4. ЧАТ И МЕНЮ ===
-    function toggleMenu(s) { document.getElementById('full-menu').style.display = s ? 'flex' : 'none'; document.body.style.overflow = s ? 'hidden' : 'auto'; }
-    function toggleChat() { const win = document.getElementById('ai-window'); win.style.display = (win.style.display === 'flex') ? 'none' : 'flex'; }
+    window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}${emailParam}&Culture=ru`; 
+}
 
-    function createChatBtn(text, link, color = 'var(--accent)') {
-        return `<a href="${link}" target="_blank" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff; border-radius: 10px; border: 1px solid ${color};">${text}</a>`;
-    }
+async function sendToTelegram(event) {
+    event.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const email = document.getElementById('customerEmail').value;
+    const memo = document.getElementById('hiddenMemo').value;
+    const pageTitle = window.currentCourseData.title;
+    const usdtPrice = window.currentCourseData.priceUsdt;
 
-    async function sendChat() {
-        const input = document.getElementById('chat-input');
-        const box = document.getElementById('chat-messages');
-        const userText = input.value.trim();
-        if (!userText) return;
+    btn.innerText = 'ОТПРАВКА...';
+    btn.disabled = true;
 
-        box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-        input.value = '';
-        box.scrollTop = box.scrollHeight;
+    const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: ${usdtPrice} USDT (TON)`;
 
-        const typingId = 'typing-' + Date.now();
-        box.innerHTML += `<div id="${typingId}" class="msg msg-ai" style="opacity: 0.6; font-size: 11px;">Victory AI печатает...</div>`;
-        box.scrollTop = box.scrollHeight;
+    try {
+        const response = await fetch('/api/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text })
+        });
 
-        try {
-            const response = await fetch('https://tantra-ai.vercel.app/ask-doctor', { 
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userText })
-            });
-            const data = await response.json();
-            let reply = data.reply;
-
+        if (response.ok) {
+            btn.innerText = 'ОТПРАВЛЕНО!';
+            btn.style.background = '#4CAF50';
             setTimeout(() => {
-                const typingElem = document.getElementById(typingId);
-                if (typingElem) typingElem.remove();
+                closePaymentModal();
+                alert('Данные успешно отправлены. Мы свяжемся с вами!');
+                btn.innerText = 'Я ОПЛАТИЛ';
+                btn.style.background = 'var(--accent)';
+                btn.disabled = false;
+                showSelectionStep();
+            }, 2000);
+        } else { throw new Error('Ошибка сети'); }
+    } catch (error) {
+        alert('Ошибка при отправке. Попробуйте еще раз.');
+        btn.innerText = 'Я ОПЛАТИЛ';
+        btn.disabled = false;
+    }
+}
 
-                let formattedText = reply
-                    .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', '/course.html?id=vostanovlenie'))
-                    .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', '/course.html?id=prana'))
-                    .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', '/course.html?id=antistress'))
-                    .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+// === 4. ЧАТ И МЕНЮ ===
+function toggleMenu(s) { document.getElementById('full-menu').style.display = s ? 'flex' : 'none'; document.body.style.overflow = s ? 'hidden' : 'auto'; }
+function toggleChat() { const win = document.getElementById('ai-window'); win.style.display = (win.style.display === 'flex') ? 'none' : 'flex'; }
 
-                box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
-                box.scrollTop = box.scrollHeight;
-            }, 1800);
+function createChatBtn(text, link, color = 'var(--accent)') {
+    return `<a href="${link}" target="_blank" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff; border-radius: 10px; border: 1px solid ${color};">${text}</a>`;
+}
 
-        } catch (e) {
+async function sendChat() {
+    const input = document.getElementById('chat-input');
+    const box = document.getElementById('chat-messages');
+    const userText = input.value.trim();
+    if (!userText) return;
+
+    box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+    input.value = '';
+    box.scrollTop = box.scrollHeight;
+
+    const typingId = 'typing-' + Date.now();
+    box.innerHTML += `<div id="${typingId}" class="msg msg-ai" style="opacity: 0.6; font-size: 11px;">Victory AI печатает...</div>`;
+    box.scrollTop = box.scrollHeight;
+
+    try {
+        const response = await fetch('https://tantra-ai.vercel.app/ask-doctor', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userText })
+        });
+        const data = await response.json();
+        let reply = data.reply;
+
+        setTimeout(() => {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
-            box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
-        }
-    }
 
-    document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
+            let formattedText = reply
+                .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', '/course.html?id=vostanovlenie'))
+                .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', '/course.html?id=prana'))
+                .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', '/course.html?id=antistress'))
+                .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+
+            box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 1800);
+
+    } catch (e) {
+        const typingElem = document.getElementById(typingId);
+        if (typingElem) typingElem.remove();
+        box.innerHTML += `<div class="msg msg-ai">Victory AI: На линии помехи. Повтори, пожалуйста.</div>`;
+    }
+}
+
+document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
 </script>
 </body>
 </html>
