@@ -934,13 +934,20 @@ const courseData = {
         document.body.style.overflow = 'auto';
     }
 
-    // Слайдер ДО/ПОСЛЕ
+    // Слайдер ДО/ПОСЛЕ (Улучшенная логика clip-path)
     const sliderRange = document.getElementById('sliderRange');
-    if (sliderRange) {
+    const imgAfter = document.getElementById('sliderAfter');
+    const sliderLine = document.getElementById('sliderLine');
+
+    if (sliderRange && imgAfter && sliderLine) {
+        sliderRange.value = 50; // Ставим ровно по центру при старте
+        
         sliderRange.addEventListener('input', (e) => {
             const val = e.target.value;
-            document.getElementById('sliderAfter').style.width = val + '%';
-            document.getElementById('sliderBtn').style.left = val + '%';
+            // Плавно сдвигаем шторку
+            imgAfter.style.clipPath = `polygon(0 0, ${val}% 0, ${val}% 100%, 0 100%)`;
+            // Сдвигаем неоновую линию
+            sliderLine.style.left = `${val}%`;
         });
     }
 
