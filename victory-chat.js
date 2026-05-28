@@ -45,7 +45,7 @@ window.toggleChat = function() {
     win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
 }
 
-function createChatBtn(text, link, color = 'var(--accent)') {
+window.createChatBtn = function(text, link, color = 'var(--accent)') {
     return `<a href="${link}" target="_blank" class="btn-main" style="display:block; margin-top:10px; padding:12px; text-decoration:none; text-align:center; font-size:11px; border-color:${color}; background: rgba(168, 218, 220, 0.1); color: #fff; border-radius: 10px; border: 1px solid ${color};">${text}</a>`;
 }
 
@@ -55,6 +55,18 @@ window.sendChat = async function() {
     const userText = input.value.trim();
     if (!userText) return;
 
+    // === СЕКРЕТНАЯ МЕХАНИКА ПАМЯТИ ===
+    // Запоминаем последний вопрос, который задал ИИ
+    const aiMessages = document.querySelectorAll('.msg-ai');
+    let lastAiText = "";
+    if (aiMessages.length > 0) {
+        lastAiText = aiMessages[aiMessages.length - 1].innerText.replace('VICTORY AI', '').trim();
+    }
+
+    // Формируем для сервера умное сообщение с контекстом!
+    const payloadMessage = lastAiText ? `Твой прошлый вопрос ко мне был: "${lastAiText}". Мой ответ тебе: "${userText}"` : userText;
+
+    // Выводим текст юзера на экран
     box.innerHTML += `<div class="msg msg-user">${userText}</div>`;
     input.value = '';
     box.scrollTop = box.scrollHeight;
@@ -71,8 +83,8 @@ window.sendChat = async function() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                message: userText,
-                context: coursesContext // Передаем список серверу!
+                message: payloadMessage, // Отправляем текст ВМЕСТЕ С ПАМЯТЬЮ
+                context: coursesContext  // Передаем список курсов серверу!
             })
         });
         
@@ -83,25 +95,31 @@ window.sendChat = async function() {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.remove();
 
-            // Динамически превращаем новые умные теги ИИ [COURSE:id] в красивые кнопки
-            let formattedText = reply.replace(/\[COURSE:([a-zA-Z0-9_-]+)\]/gi, (match, courseId) => {
-                const course = window.victoryCourses.find(c => c.id.toLowerCase() === courseId.toLowerCase());
+            // Обработка кнопки связи с Викторией
+            let formattedReply = reply.replaceAll('[BUTTON_VIKA]', window.createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'));
+
+            // Универсальный обработчик ДИНАМИЧЕСКИХ кнопок курсов
+            formattedReply = formattedReply.replace(/\[COURSE:([a-zA-Z0-9_-]+)\]/gi, (match, id) => {
+                let btnName = 'Узнать больше о программе';
+                let link = `/course.html?id=${id}`; // Ссылка по умолчанию для новых курсов
+
+                // Подставляем правильное название из базы, если оно есть
+                const course = window.victoryCourses.find(c => c.id.toLowerCase() === id.toLowerCase());
                 if (course) {
-                    return createChatBtn(`Программа: ${course.title}`, `/course.html?id=${course.id}`);
+                    btnName = `Программа: ${course.title}`;
                 }
-                return ''; 
+
+                // Оставляем жесткие ссылки для трех базовых программ
+                if(id.toLowerCase() === 'antistress') { btnName = 'Программа: Анти-стресс'; link = 'https://inoedyhanie.vercel.app/antistress.html'; }
+                if(id.toLowerCase() === 'vostanovlenie') { btnName = 'Программа: Восстановление'; link = 'https://inoedyhanie.vercel.app/vostanovlenie.html'; }
+                if(id.toLowerCase() === 'prana') { btnName = 'Программа: Прана'; link = 'https://inoedyhanie.vercel.app/prana.html'; }
+
+                return window.createChatBtn(btnName, link);
             });
 
-            // Оставляем поддержку старых кнопок и связи с Викторией
-            formattedText = formattedText
-                .replaceAll('[BUTTON_VIKA]', createChatBtn('Написать Виктории', 'https://t.me/vika_breathe', '#fff'))
-                .replaceAll('[BUTTON_VOST]', createChatBtn('Программа: Код восстановления', '/course.html?id=vostanovlenie'))
-                .replaceAll('[BUTTON_PRANA]', createChatBtn('Программа: Код Прана дыхание', '/course.html?id=prana'))
-                .replaceAll('[BUTTON_ANTISTRESS]', createChatBtn('Программа: Анти-стресс', '/course.html?id=antistress'));
-
-            box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
+            box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div><div>${formattedReply}</div></div>`;
             box.scrollTop = box.scrollHeight;
-        }, 2500);
+        }, 2500); // 2.5 секунды - идеальная пауза
 
     } catch (e) {
         const typingElem = document.getElementById(typingId);
