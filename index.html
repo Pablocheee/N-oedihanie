@@ -735,7 +735,7 @@
         <div class="product-card">
             <span style="font-size: 10px; letter-spacing: 3px; font-weight: 700; color: var(--accent);">БАЛАНС</span>
             <h3>Анти-стресс</h3>
-            <p id="dynamic-desc" style="opacity: 0.6; font-size: 13px;">Загрузка актуальной информации...</p>
+            <p>Моментальный выход из тревоги и стабилизация эмоционального фона через работу с нервной системой.</p>
             <a href="https://n-oedihanie.vercel.app/antistress.html" class="btn-main" style="text-decoration: none; display: inline-block; text-align: center;">Узнать больше</a>
         </div>
 
@@ -976,38 +976,7 @@ changeSlogan();
 
 // И ставим на интервал
 setInterval(changeSlogan, 6000);
-// === ПОДГРУЗКА ДАННЫХ ИЗ GOOGLE ТАБЛИЦЫ (С ДИАГНОСТИКОЙ) ===
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('=== ОРДО АКСИО: Скрипт подгрузки запущен ===');
-    try {
-        const response = await fetch('/api/sheets', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' })
-        });
-        const result = await response.json();
-        console.log('1. Ответ от сервера получен:', result);
-
-        if (result.success && result.data) {
-            const productRow = result.data.find(row => row[1] && row[1].toLowerCase().includes('анти-стресс'));
-            console.log('2. Найденная строка в таблице:', productRow);
-
-            if (productRow && productRow[3]) {
-                const descElement = document.getElementById('dynamic-desc');
-                if (descElement) {
-                    descElement.innerText = productRow[3];
-                    descElement.style.opacity = '1';
-                    descElement.style.fontSize = '15px';
-                    console.log('3. УСПЕХ: Текст на сайте заменен на:', productRow[3]);
-                } else {
-                    console.error('🚨 ОШИБКА: На странице не найден элемент с id="dynamic-desc"!');
-                }
-            }
-        }
-    } catch (e) {
-        console.error('🚨 ОШИБКА FETCH-запроса:', e);
-    }
-});
 </script>
 </body>
 </html>
+
