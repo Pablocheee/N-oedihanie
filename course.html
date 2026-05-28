@@ -92,7 +92,7 @@
             <div id="buy-section" style="margin-top: 50px; display: none;">
                 <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" 
                    style="border: 1px solid var(--accent); color: var(--text-main); padding: 18px 40px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; display: inline-block; background: rgba(168, 218, 220, 0.05);">
-                    Получить доступ <span id="course-price-btn" style="color: var(--accent); font-weight: bold; margin-left: 8px; font-size: 16px; text-shadow: 0 0 10px var(--accent-glow);"></span>
+                    Получить доступ <span id="course-price-btn" style="color: var(--accent); font-weight: bold; margin-left: 5px;"></span>
                 </a>
             </div>
         </div>
@@ -229,14 +229,12 @@
                     }
 
                     // Обновляем текст на кнопках и на верху продукта
-                    // Обновляем текст на кнопке Получить доступ
                     const priceBtn = document.getElementById('course-price-btn');
                     const cryptoPrice = document.getElementById('crypto-price');
                     const priceTopRub = document.getElementById('course-price-top-rub');
-                    const priceTopUsdt = document.getElementById('course-price-top-usdt');      
-
+                    const priceTopUsdt = document.getElementById('course-price-top-usdt');
+                    
                     // Вывод рублей
-
                     if (price > 0) {
                         if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
                         if (priceTopRub) priceTopRub.innerText = `${price} ₽`;
@@ -246,7 +244,6 @@
                     }
 
                     // Вывод крипты
-
                     if (priceUsdt > 0) {
                         if (cryptoPrice) cryptoPrice.innerText = `${priceUsdt} USDT`;
                         if (priceTopUsdt) priceTopUsdt.innerText = `/  ${priceUsdt} USDT`;
@@ -254,7 +251,7 @@
                         if (cryptoPrice) cryptoPrice.innerText = `0 USDT`;
                         if (priceTopUsdt) priceTopUsdt.innerText = ``;
                     }
-
+                    
                     const buySection = document.getElementById('buy-section');
                     if (buySection) buySection.style.display = 'block';
 
