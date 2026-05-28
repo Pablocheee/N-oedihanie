@@ -184,28 +184,29 @@
         }
 
         try {
+            // ИЗМЕНЕНИЕ 1: Теперь запрашиваем диапазон A:H (добавили колонку H)
             const response = await fetch('/api/sheets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:G' })
+                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' })
             });
             const result = await response.json();
 
             if (result.success && result.data) {
-                // Ищем строку, где Колонка A совпадает с нашим ID из ссылки
                 const row = result.data.find(r => r[0] && r[0].toLowerCase() === courseId.toLowerCase());
 
                 if (row) {
                     const title = row[1] || 'Без названия';
                     const imageSrc = row[4] || '';
                     const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
-                    const price = parseInt(row[6]) || 0; // Если в колонке G пусто или текст, price будет 0
+                    const price = parseInt(row[6]) || 0; // Колонка G (индекс 6)
+                    const priceUsdt = parseInt(row[7]) || 0; // ИЗМЕНЕНИЕ 2: Колонка H (индекс 7)
 
                     // Сохраняем в глобальную память
                     window.currentCourseData.id = courseId;
                     window.currentCourseData.title = title;
                     window.currentCourseData.priceRub = price;
-                    window.currentCourseData.priceUsdt = Math.round(price / 100); 
+                    window.currentCourseData.priceUsdt = priceUsdt; // Теперь берем точную цифру из таблицы!
 
                     // Вставляем данные в HTML
                     document.title = `ИNOE ДЫХАНИЕ — ${title}`;
@@ -228,22 +229,24 @@
                         img.style.display = 'block';
                     }
 
-                    // --- ФИКС КНОПКИ: Показываем её всегда ---
+                    // Обновляем текст на кнопках
                     const priceBtn = document.getElementById('course-price-btn');
                     const cryptoPrice = document.getElementById('crypto-price');
                     
                     if (price > 0) {
                         if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
-                        if (cryptoPrice) cryptoPrice.innerText = `${window.currentCourseData.priceUsdt} USDT`;
                     } else {
-                        if (priceBtn) priceBtn.innerText = ``; // Убираем цену с кнопки, если ее нет в таблице
+                        if (priceBtn) priceBtn.innerText = ``; 
+                    }
+
+                    if (priceUsdt > 0) {
+                        if (cryptoPrice) cryptoPrice.innerText = `${priceUsdt} USDT`;
+                    } else {
                         if (cryptoPrice) cryptoPrice.innerText = `0 USDT`;
                     }
                     
-                    // Самое главное: включаем кнопку "Получить доступ" принудительно!
                     const buySection = document.getElementById('buy-section');
                     if (buySection) buySection.style.display = 'block';
-                    // ------------------------------------------
 
                 } else {
                     showError('Курс не найден', `Продукт с ID "${courseId}" отсутствует в Google Таблице (Колонка А).`);
