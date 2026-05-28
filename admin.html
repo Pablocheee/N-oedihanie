@@ -68,7 +68,7 @@
             <div class="panel-header"><span>ЖУРНАЛ ДЕЙСТВИЙ</span>
                 <div class="history-controls">
                     <button id="btn-undo" class="ctrl-btn disabled" title="Шаг назад (Отменить)" onclick="undoLast()">↺</button>
-                    <button id="btn-redo" class="ctrl-btn disabled" title="Шаг вперед (Вернуть)">↻</button>
+                    <button id="btn-redo" class="ctrl-btn disabled" title="Шаг вперед (Вернуть)" onclick="redoLast()">↻</button>
                 </div>
             </div>
             <div id="history-logs"></div>
@@ -192,11 +192,9 @@
                 updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен: ${prodName}`);
                 document.getElementById('btn-undo').classList.remove('disabled');
                 
-                // СОХРАНЯЕМ ДЛЯ ОТКАТА
-                window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText };
-
-                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Таблица успешно обновлена!</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
+                // СОХРАНЯЕМ ДЛЯ ОТКАТА И ВОЗВРАТА
+                window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: newValue };
+                document.getElementById('btn-redo').classList.add('disabled');
                 saveAdminState();
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', error.message);
