@@ -173,6 +173,18 @@
                 if (!result.success) throw new Error(result.error);
                 
                 const aiData = result.data;
+
+                // === 🧠 УМНЫЙ ПЕРЕХВАТЧИК (Исправляет ошибки ИИ) ===
+                // Если ты написал слово "фото" или "картинк", 
+                // мы принудительно заставляем систему выдать окно загрузки!
+                const requestText = text.toLowerCase();
+                if (requestText.includes('фото') || requestText.includes('картинк') || requestText.includes('изображени')) {
+                    if (aiData.action !== 'create_product') {
+                        aiData.action = 'update_image';
+                    }
+                }
+                // ==================================================
+
                 let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
                 
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
