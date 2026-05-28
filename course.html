@@ -175,7 +175,6 @@
 
     // === 2. ДИНАМИЧЕСКАЯ ПОДГРУЗКА ИЗ GOOGLE SHEETS ===
     document.addEventListener('DOMContentLoaded', async () => {
-        // Читаем параметр ?id=... из ссылки (например, ?id=prana)
         const urlParams = new URLSearchParams(window.location.search);
         const courseId = urlParams.get('id');
 
@@ -185,7 +184,6 @@
         }
 
         try {
-            // Запрашиваем всю таблицу (Колонки A-G)
             const response = await fetch('/api/sheets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -198,8 +196,6 @@
                 const row = result.data.find(r => r[0] && r[0].toLowerCase() === courseId.toLowerCase());
 
                 if (row) {
-                    // Разбираем данные из колонок (ВАЖНО СОБЛЮДАТЬ ЭТОТ ПОРЯДОК В ТАБЛИЦЕ!)
-                    // A: ID (prana) | B: Название | C: Категория | D: Коротко | E: Картинка | F: HTML описание | G: Цена
                     const title = row[1] || 'Без названия';
                     const imageSrc = row[4] || '';
                     const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
@@ -209,21 +205,23 @@
                     window.currentCourseData.id = courseId;
                     window.currentCourseData.title = title;
                     window.currentCourseData.priceRub = price;
-                    // Для примера USDT считаем по курсу 100, можно вынести в отдельную колонку
                     window.currentCourseData.priceUsdt = Math.round(price / 100); 
 
                     // Вставляем данные в HTML
                     document.title = `ИNOE ДЫХАНИЕ — ${title}`;
                     document.getElementById('page-title').innerText = `ИNOE ДЫХАНИЕ — ${title}`;
                     document.getElementById('course-name').innerText = title;
-                    document.getElementById('modal-course-name').innerText = title;
+                    
+                    const modalName = document.getElementById('modal-course-name');
+                    if (modalName) modalName.innerText = title;
                     
                     const descContainer = document.getElementById('course-description');
                     descContainer.innerHTML = fullDescHTML;
                     descContainer.style.opacity = '1';
 
                     if (imageSrc) {
-                        document.getElementById('img-loader').style.display = 'none';
+                        const loader = document.getElementById('img-loader');
+                        if (loader) loader.style.display = 'none';
                         const img = document.getElementById('course-image');
                         img.src = imageSrc;
                         img.alt = title;
@@ -231,26 +229,36 @@
                     }
 
                     if (price > 0) {
-                        document.getElementById('course-price-btn').innerText = `— ${price} ₽`;
-                        document.getElementById('crypto-price').innerText = `${window.currentCourseData.priceUsdt} USDT`;
+                        const priceBtn = document.getElementById('course-price-btn');
+                        const cryptoPrice = document.getElementById('crypto-price');
+                        if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
+                        if (cryptoPrice) cryptoPrice.innerText = `${window.currentCourseData.priceUsdt} USDT`;
                         document.getElementById('buy-section').style.display = 'block';
                     }
 
                 } else {
-                    showError('Курс не найден', 'Проверьте правильность ссылки или вернитесь на главную.');
+                    showError('Курс не найден', `Продукт с ID "${courseId}" отсутствует в Google Таблице (Колонка А).`);
                 }
+            } else {
+                showError('Ошибка базы данных', result.error || 'Сервер вернул пустой ответ или доступ к таблице заблокирован.');
             }
         } catch (error) {
             console.error(error);
-            showError('Ошибка связи', 'Не удалось загрузить данные курса из базы.');
+            showError('Системная ошибка кода', `Не удалось обработать скрипт. Причина: ${error.message}`);
         }
     });
 
     function showError(title, desc) {
-        document.getElementById('course-name').innerText = title;
-        document.getElementById('course-description').innerText = desc;
-        document.getElementById('course-description').style.opacity = '1';
-        document.getElementById('img-loader').style.display = 'none';
+        const nameElem = document.getElementById('course-name');
+        const descElem = document.getElementById('course-description');
+        const loaderElem = document.getElementById('img-loader');
+        
+        if (nameElem) nameElem.innerText = title;
+        if (descElem) {
+            descElem.innerText = desc;
+            descElem.style.opacity = '1';
+        }
+        if (loaderElem) loaderElem.style.display = 'none';
     }
 
     // === 3. НАСТРОЙКА ОПЛАТЫ (ТЕПЕРЬ ДИНАМИЧЕСКИ) ===
