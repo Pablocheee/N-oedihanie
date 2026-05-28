@@ -806,25 +806,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (!id || !title) return;
 
-                // ОБНОВЛЕННАЯ КАРТОЧКА БЕЗ ФОТО
+                // ОБНОВЛЕННАЯ КАРТОЧКА БЕЗ ФОТО С КНОПКОЙ ПО ЦЕНТРУ
                 const cardHTML = `
-                    <div class="program-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-                        <div>
-                            <span style="font-size: 10px; letter-spacing: 2px; color: var(--accent, #a8dadc); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 10px;">${category}</span>
-                            
-                            <h3 style="font-size: 22px; font-weight: 400; margin-bottom: 15px; color: #f1faee; line-height: 1.4;">${title}</h3>
-                            
-                            <p style="font-size: 13px; opacity: 0.6; line-height: 1.6; margin-bottom: 25px; min-height: 60px;">${shortDesc}</p>
-                        </div>
-                        
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
-                            <span style="font-size: 16px; font-weight: 700; color: #fff;">${price ? price + ' ₽' : ''}</span>
-                            <a href="/course.html?id=${id.toLowerCase()}" class="btn-main" style="text-decoration: none; display: inline-block; padding: 12px 25px; border: 1px solid var(--accent, #a8dadc); color: #fff; border-radius: 50px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; background: rgba(168, 218, 220, 0.05);">
-                                Узнать больше
-                            </a>
-                        </div>
-                    </div>
-                `;
+    <div class="program-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+        <div>
+            <span style="font-size: 10px; letter-spacing: 2px; color: var(--accent, #a8dadc); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 10px;">${category}</span>
+            
+            <h3 style="font-size: 22px; font-weight: 400; margin-bottom: 15px; color: #f1faee; line-height: 1.4;">${title}</h3>
+            
+            <p style="font-size: 13px; opacity: 0.6; line-height: 1.6; margin-bottom: 25px; min-height: 60px;">${shortDesc}</p>
+        </div>
+        
+        <div style="display: flex; justify-content: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; width: 100%;">
+            <a href="/course.html?id=${id.toLowerCase()}" class="btn-main" style="text-decoration: none; display: inline-block; padding: 12px 40px; border: 1px solid var(--accent, #a8dadc); color: #fff; border-radius: 50px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; background: rgba(168, 218, 220, 0.05); text-align: center;">
+                Узнать больше
+            </a>
+        </div>
+    </div>
+`;
 
                 gridContainer.innerHTML += cardHTML;
             });
