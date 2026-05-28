@@ -236,14 +236,19 @@
                     }
                     if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
 
-                    let updateRange = payload.action === 'update_price' ? `G${targetRow}` : `F${targetRow}`;
-                    let newValue = payload.action === 'update_price' ? payload.new_price : payload.new_text;
+                    // ИЗМЕНЕНИЕ: Если обновляем цену, то указываем диапазон сразу на 2 ячейки (Например: G2:H2)
+                    let updateRange = payload.action === 'update_price' ? `G${targetRow}:H${targetRow}` : `F${targetRow}`;
+                    
+                    // ИЗМЕНЕНИЕ: Формируем данные. Для цены передаем сразу два значения: [Рубли, USDT (рубли/100)]
+                    let updateValues = payload.action === 'update_price' 
+                        ? [payload.new_price, Math.round(payload.new_price / 100)] 
+                        : [payload.new_text];
 
-                    const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: [newValue] }) });
+                    const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: updateValues }) });
                     const updateData = await updateRes.json();
                     if (!updateData.success) throw new Error(updateData.error);
 
-                    window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: newValue };
+                    window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: updateValues };
                 }
 
                 // === 2. КОМАНДА: СОЗДАНИЕ НОВОГО ПРОДУКТА ===
