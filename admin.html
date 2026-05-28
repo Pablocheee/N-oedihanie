@@ -240,9 +240,8 @@
                         status.style.color = "#f44336";
                         status.innerText = "⚠️ Сначала выберите и загрузите фото!";
                     }
-                    return; // Блокируем отправку пустых данных в таблицу
+                    return; // Блокируем отправку без картинки
                 }
-                // === КОНЕЦ ЗАЩИТЫ ===
                 
                 // Безопасная замена кнопок на статус активации
                 const msgDiv = document.getElementById(`ai-msg-${logId}`);
@@ -257,8 +256,8 @@
                 updateLogStatus(logId, 'pending', '⏳ СВЯЗЬ С БАЗОЙ...', `Выполняем действие: ${payload.action}`);
                 saveAdminState();
 
-                // === 1. КОМАНДА: ИЗМЕНЕНИЕ ЦЕНЫ ИЛИ ТЕКСТА ===
-                if (payload.action === 'update_price' || payload.action === 'update_text') {
+                // === 1. КОМАНДА: ИЗМЕНЕНИЕ ЦЕНЫ, ТЕКСТА ИЛИ ФОТО ===
+                if (payload.action === 'update_price' || payload.action === 'update_text' || payload.action === 'update_image') {
                     const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
                     const readData = await readRes.json();
                     if (!readData.success) throw new Error(readData.error);
@@ -269,19 +268,23 @@
                     for (let i = 0; i < rows.length; i++) {
                         if (rows[i][0] && rows[i][0].toLowerCase() === targetName || rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
                             targetRow = i + 1; 
-                            oldText = payload.action === 'update_price' ? rows[i][6] : rows[i][5]; 
+                            if (payload.action === 'update_price') oldText = rows[i][6];
+                            else if (payload.action === 'update_image') oldText = rows[i][4]; // Колонка E для фото
+                            else oldText = rows[i][5];
                             break;
                         }
                     }
                     if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
 
-                    // ИЗМЕНЕНИЕ: Если обновляем цену, то указываем диапазон сразу на 2 ячейки (Например: G2:H2)
-                    let updateRange = payload.action === 'update_price' ? `G${targetRow}:H${targetRow}` : `F${targetRow}`;
+                    // Определяем диапазон для записи
+                    let updateRange = 'F' + targetRow; 
+                    if (payload.action === 'update_price') updateRange = `G${targetRow}:H${targetRow}`;
+                    if (payload.action === 'update_image') updateRange = `E${targetRow}`; // ВАЖНО: Фото пишем в колонку E
                     
-                    // ИЗМЕНЕНИЕ: Формируем данные. Для цены передаем сразу два значения: [Рубли, USDT (рубли/100)]
-                    let updateValues = payload.action === 'update_price' 
-                        ? [payload.new_price, Math.round(payload.new_price / 100)] 
-                        : [payload.new_text];
+                    // Формируем данные
+                    let updateValues = [payload.new_text];
+                    if (payload.action === 'update_price') updateValues = [payload.new_price, Math.round(payload.new_price / 100)];
+                    if (payload.action === 'update_image') updateValues = [payload.image_url]; // Вставляем ссылку
 
                     const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: updateValues }) });
                     const updateData = await updateRes.json();
@@ -289,7 +292,6 @@
 
                     window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: updateValues };
                 }
-
                 // === 2. КОМАНДА: СОЗДАНИЕ НОВОГО ПРОДУКТА ===
                 else if (payload.action === 'create_product') {
                     // Передаем массив данных новой строки: ID, Название, Категория, Короткое описание, Фото, Полное описание, Цена РУБ, Цена USDT
