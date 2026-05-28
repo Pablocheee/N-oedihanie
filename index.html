@@ -739,18 +739,24 @@
             </div>
         </div>
 
-        <div class="slider-wrapper">
-            <img src="https://i.postimg.cc/ZYDncc3s/before.png" class="slider-img img-before">
-            <img id="sliderAfter" src="https://cdn.phototourl.com/free/2026-05-28-e7176277-6af9-4992-9fdc-9d02c32e7be1.jpg" class="slider-img img-after">
+        <!-- Обновленный, стильный слайдер -->
+        <div class="modern-slider">
+            <img src="https://i.postimg.cc/ZYDncc3s/before.png" class="slider-img img-before" alt="До">
             
-            <div id="sliderBtn" class="slider-btn">◂▸</div>
+            <img id="sliderAfter" src="https://cdn.phototourl.com/free/2026-05-28-e7176277-6af9-4992-9fdc-9d02c32e7be1.jpg" class="slider-img img-after" alt="После">
+            
+            <div class="slider-line" id="sliderLine">
+                <div class="slider-button">
+                    <span style="margin-right: 2px;">◄</span><span style="margin-left: 2px;">►</span>
+                </div>
+            </div>
             
             <div class="slider-labels">
                 <div class="slider-label label-before">ДО</div>
                 <div class="slider-label label-after">ПОСЛЕ</div>
             </div>
 
-            <input type="range" min="0" max="100" value="0" class="slider-input" id="sliderRange">
+            <input type="range" min="0" max="100" value="50" class="slider-input" id="sliderRange">
         </div>
     </div>
 </section>
