@@ -402,6 +402,52 @@
         }
 
         document.getElementById('admin-chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendAdminCommand(); });
+        // === ЛОГИКА ЗАГРУЗКИ ФОТО В ОБЛАКО ===
+        document.getElementById('image-upload').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusLabel = document.getElementById('upload-status');
+            const chatInput = document.getElementById('admin-chat-input');
+            
+            statusLabel.style.display = 'block';
+            statusLabel.innerText = "⏳ Отправка в облако...";
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function () {
+                const base64String = reader.result.split(',')[1]; 
+
+                try {
+                    // Отправляем на наш сервер (убедись, что добавил маршрут в index.js сервера)
+                    const response = await fetch('/upload-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: base64String })
+                    });
+                    
+                    const data = await response.json();
+
+                    if (data.success) {
+                        statusLabel.innerHTML = `✅ Успешно!`;
+                        
+                        // МАГИЯ: Автоматически добавляем ссылку прямо в строку чата!
+                        const currentText = chatInput.value.trim();
+                        chatInput.value = currentText ? `${currentText} ${data.url}` : data.url;
+                        
+                        // Фокусируемся на вводе, чтобы ты мог сразу дописать команду
+                        chatInput.focus();
+
+                        // Прячем надпись "Успешно" через 3 секунды для красоты
+                        setTimeout(() => statusLabel.innerText = "", 3000); 
+                    } else {
+                        statusLabel.innerText = "❌ Ошибка: " + (data.error || "Сбой загрузки");
+                    }
+                } catch (err) {
+                    statusLabel.innerText = "❌ Ошибка соединения с сервером.";
+                }
+            };
+        });
     </script>
 </body>
 </html>
