@@ -334,10 +334,108 @@
         }
     }
 
-    // === 4. ОСТАЛЬНЫЕ СКРИПТЫ (МЕНЮ И ЧАТ) ===
-    function toggleMenu(s) { document.getElementById('full-menu').style.display = s ? 'flex' : 'none'; document.body.style.overflow = s ? 'hidden' : 'auto'; }
-    function toggleChat() { const win = document.getElementById('ai-window'); win.style.display = (win.style.display === 'flex') ? 'none' : 'flex'; }
-    function copyWallet() { navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); alert('Адрес скопирован!'); }
+    // === 3. НАСТРОЙКА ОПЛАТЫ И МОДАЛЬНОГО ОКНА ===
+    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+    const memoDisplay = document.getElementById('memoDisplay');
+    const hiddenMemo = document.getElementById('hiddenMemo');
+    if (memoDisplay) memoDisplay.innerText = generatedMemo;
+    if (hiddenMemo) hiddenMemo.value = generatedMemo;
+
+    // Функции переключения окон
+    function showCryptoStep() { 
+        document.getElementById('step-selection').style.display = 'none'; 
+        document.getElementById('step-crypto').style.display = 'block'; 
+    }
+    function showSelectionStep() { 
+        document.getElementById('step-crypto').style.display = 'none'; 
+        document.getElementById('step-selection').style.display = 'block'; 
+    }
+    function openPaymentModal() { 
+        document.getElementById('paymentModal').style.display = 'flex'; 
+        document.body.style.overflow = 'hidden'; 
+    }
+    function closePaymentModal() { 
+        document.getElementById('paymentModal').style.display = 'none'; 
+        document.body.style.overflow = 'auto'; 
+        showSelectionStep(); // Сбрасываем окно обратно при закрытии
+    }
+    function copyWallet() { 
+        navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); 
+        alert('Адрес скопирован!'); 
+    }
+
+    // Логика Робокассы
+    async function payWithRobokassa() {
+        const emailInput = document.getElementById('robokassaEmail');
+        let emailParam = '';
+        
+        if (emailInput) {
+            const email = emailInput.value.trim();
+            if (!email || !email.includes('@')) {
+                alert('Пожалуйста, введите корректный Email для получения доступа.');
+                emailInput.style.borderColor = 'var(--accent)';
+                return;
+            }
+            emailParam = `&Email=${encodeURIComponent(email)}`;
+        }
+
+        const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН ИЗ ЛК РОБОКАССЫ
+        const price = window.currentCourseData.priceRub; 
+        const pageTitle = window.currentCourseData.title;
+        
+        fetch('/api/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: `💳 *Клик по Робокассе*\nПродукт: ${pageTitle}\nСумма: ${price} руб.` })
+        });
+
+        if (price === 0) {
+            alert('Ошибка: Цена не загружена из базы данных.');
+            return;
+        }
+
+        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}${emailParam}&Culture=ru`; 
+    }
+
+    // Логика оплаты USDT
+    async function sendToTelegram(event) {
+        event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const email = document.getElementById('customerEmail').value;
+        const memo = document.getElementById('hiddenMemo').value;
+        const pageTitle = window.currentCourseData.title;
+        const usdtPrice = window.currentCourseData.priceUsdt;
+
+        btn.innerText = 'ОТПРАВКА...';
+        btn.disabled = true;
+
+        const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: ${usdtPrice} USDT (TON)`;
+
+        try {
+            const response = await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            });
+
+            if (response.ok) {
+                btn.innerText = 'ОТПРАВЛЕНО!';
+                btn.style.background = '#4CAF50';
+                setTimeout(() => {
+                    closePaymentModal();
+                    alert('Данные успешно отправлены. Мы свяжемся с вами!');
+                    btn.innerText = 'Я ОПЛАТИЛ';
+                    btn.style.background = 'var(--accent)';
+                    btn.disabled = false;
+                    showSelectionStep();
+                }, 2000);
+            } else { throw new Error('Ошибка сети'); }
+        } catch (error) {
+            alert('Ошибка при отправке. Попробуйте еще раз.');
+            btn.innerText = 'Я ОПЛАТИЛ';
+            btn.disabled = false;
+        }
+    }
 </script>
 </body>
 </html>
