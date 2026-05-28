@@ -101,7 +101,7 @@ window.sendChat = async function() {
 
             box.innerHTML += `<div class="msg msg-ai"><div style="font-size: 9px; color: var(--accent); margin-bottom: 4px; font-weight: bold; letter-spacing: 1px;">VICTORY AI</div>${formattedText}</div>`;
             box.scrollTop = box.scrollHeight;
-        }, 1800);
+        }, 2500);
 
     } catch (e) {
         const typingElem = document.getElementById(typingId);
