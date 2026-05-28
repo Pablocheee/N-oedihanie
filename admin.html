@@ -220,6 +220,17 @@
             try {
                 const payload = window.pendingCommands[logId];
                 if (!payload) return;
+
+                // === ЗАЩИТА: ТРЕБУЕМ ФОТО ПЕРЕД ОТПРАВКОЙ ===
+                if (payload.action === 'update_image' && !payload.image_url) {
+                    const status = document.getElementById(`up-status-${logId}`);
+                    if (status) {
+                        status.style.color = "#f44336";
+                        status.innerText = "⚠️ Сначала выберите и загрузите фото!";
+                    }
+                    return; // Блокируем отправку пустых данных в таблицу
+                }
+                // === КОНЕЦ ЗАЩИТЫ ===
                 
                 // Безопасная замена кнопок на статус активации
                 const msgDiv = document.getElementById(`ai-msg-${logId}`);
