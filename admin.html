@@ -77,7 +77,7 @@
 
     <script>
         window.pendingCommands = {};
-        window.lastUpdate = null; // Для кнопки "Вернуть"
+        window.lastUpdate = null; 
 
         function saveAdminState() {
             const chatBox = document.getElementById('chat-messages');
@@ -85,9 +85,9 @@
             while (chatBox.children.length > 50) chatBox.removeChild(chatBox.firstElementChild);
             while (historyBox.children.length > 50) historyBox.removeChild(historyBox.lastElementChild); 
             const chatClone = chatBox.cloneNode(true);
-            const actionButtons = chatClone.querySelectorAll('div[style*="margin-top: 15px; display: flex"]');
+            const actionButtons = chatClone.querySelectorAll('.action-buttons');
             actionButtons.forEach(btnDiv => {
-                btnDiv.innerHTML = '<div style="margin-top: 10px; color: var(--text-muted); font-size: 11px; font-style: italic;">[Действие из прошлой сессии]</div>';
+                btnDiv.outerHTML = '<div style="margin-top: 10px; color: var(--text-muted); font-size: 11px; font-style: italic;">[Действие из прошлой сессии]</div>';
             });
             localStorage.setItem('ordo_chat_history', chatClone.innerHTML);
             localStorage.setItem('ordo_log_history', historyBox.innerHTML);
@@ -117,9 +117,11 @@
             const historyBox = document.getElementById('history-logs');
             const text = input.value.trim();
             if(!text) return;
+            
             chatBox.innerHTML += `<div class="msg msg-user">${text}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
+            
             const logId = 'log-' + Date.now();
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
             const pendingLog = `<div id="${logId}" class="log-item pending"><div class="log-header"><span>${timeStr}</span><span class="log-status log-pending-text">⏳ ОБРАБОТКА ИИ...</span></div><div>${text}</div></div>`;
@@ -130,11 +132,13 @@
                 const response = await fetch('/api/admin-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
                 const result = await response.json();
                 if (!result.success) throw new Error(result.error);
+                
                 const aiData = result.data;
                 let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
+                
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     window.pendingCommands[logId] = aiData;
-                    aiMessageHtml += `<div style="margin-top: 15px; display: flex; gap: 10px;">
+                    aiMessageHtml += `<div class="action-buttons" style="margin-top: 15px; display: flex; gap: 10px;">
                             <button onclick="confirmAction('${logId}')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Подтвердить</button>
                             <button onclick="cancelAction('${logId}')" style="background: transparent; color: #f44336; border: 1px solid #f44336; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Отмена</button>
                         </div>`;
@@ -142,8 +146,15 @@
                 aiMessageHtml += `</div>`;
                 chatBox.innerHTML += aiMessageHtml;
                 chatBox.scrollTop = chatBox.scrollHeight;
-                if (aiData.action === 'unknown') updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
+                
+                // ВАЖНОЕ ИСПРАВЛЕНИЕ: Обновляем статус лога после ответа ИИ
+                if (aiData.action === 'unknown') {
+                    updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
+                } else if (aiData.action !== 'error') {
+                    updateLogStatus(logId, 'pending', '🟡 ЖДЕТ ОТВЕТА', 'Нажмите Подтвердить или Отмена');
+                }
                 saveAdminState();
+
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', text);
                 chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: #f44336; display: block; margin-bottom: 5px; font-size: 11px;">СИСТЕМНАЯ ОШИБКА</strong>${error.message}</div>`;
@@ -152,17 +163,25 @@
         }
 
         async function confirmAction(logId) {
-            const payload = window.pendingCommands[logId];
-            if (!payload) return;
-            const msgDiv = document.getElementById(`ai-msg-${logId}`);
-            const chatBox = document.getElementById('chat-messages');
-            if(msgDiv) msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>');
-            const prodName = payload.product_name || 'Неизвестный товар';
-            updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ В БАЗУ...', `Ищем товар: ${prodName}`);
-            saveAdminState();
-
             try {
+                const payload = window.pendingCommands[logId];
+                if (!payload) return;
+                
+                // Безопасная замена кнопок
+                const msgDiv = document.getElementById(`ai-msg-${logId}`);
+                if(msgDiv) {
+                    const btnContainer = msgDiv.querySelector('.action-buttons');
+                    if (btnContainer) {
+                        btnContainer.outerHTML = '<div style="margin-top: 10px; color: #4CAF50; font-size: 12px; font-weight: bold;">[Действие подтверждено]</div>';
+                    }
+                }
+
+                const prodName = payload.product_name || 'Неизвестный товар';
+                updateLogStatus(logId, 'pending', '⏳ ЧТЕНИЕ БАЗЫ...', `Ищем товар: ${prodName}`);
+                saveAdminState();
+
                 let targetRow = null; let oldText = "";
+                
                 if (payload.action === 'update_price' || payload.action === 'update_text') {
                     const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' }) });
                     const readData = await readRes.json();
@@ -176,7 +195,7 @@
                     if (!targetRow) throw new Error(`Товар "${prodName}" не найден.`);
                 }
 
-                updateLogStatus(logId, 'pending', '⏳ ОБНОВЛЕНИЕ...', `Запись...`);
+                updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ...', `Сохраняем новые данные`);
                 let updateRange = ''; let newValue = '';
                 if (payload.action === 'update_price') { updateRange = `C${targetRow}`; newValue = payload.new_price; } 
                 else if (payload.action === 'update_text') { updateRange = `D${targetRow}`; newValue = payload.new_text; }
@@ -192,12 +211,17 @@
                 updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен: ${prodName}`);
                 document.getElementById('btn-undo').classList.remove('disabled');
                 
-                // СОХРАНЯЕМ ДЛЯ ОТКАТА И ВОЗВРАТА
                 window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: newValue };
                 document.getElementById('btn-redo').classList.add('disabled');
+
+                const chatBox = document.getElementById('chat-messages');
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Таблица успешно обновлена! Новые данные уже на сайте.</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
                 saveAdminState();
+
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', error.message);
+                const chatBox = document.getElementById('chat-messages');
                 chatBox.innerHTML += `<div class="msg msg-ai" style="color:#f44336;">Ошибка: ${error.message}</div>`;
                 saveAdminState();
             }
@@ -206,21 +230,17 @@
         async function undoLast() {
             if (!window.lastUpdate) return;
             const { logId, range, oldText } = window.lastUpdate;
-            
             document.getElementById('btn-undo').classList.add('disabled');
             updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возврат старых данных...');
             saveAdminState();
-            
             try {
                 await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [oldText] }) });
-                
                 updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращен старый текст');
                 const chatBox = document.getElementById('chat-messages');
                 chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг назад выполнен. Старый текст возвращен!</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 
-                // Включаем кнопку REDO (Шаг вперед)
-                document.getElementById('btn-redo').classList.remove('disabled'); 
+                document.getElementById('btn-redo').classList.remove('disabled');
                 saveAdminState();
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА ОТМЕНЫ', error.message);
@@ -231,26 +251,39 @@
         async function redoLast() {
             if (!window.lastUpdate) return;
             const { logId, range, newText } = window.lastUpdate;
-            
             document.getElementById('btn-redo').classList.add('disabled');
             updateLogStatus(logId, 'pending', '⏳ ВОЗВРАТ...', 'Применяем новые данные...');
             saveAdminState();
-            
             try {
                 await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [newText] }) });
-                
                 updateLogStatus(logId, 'success', '✅ ВЕРНУЛИ', 'Снова применен новый текст');
                 const chatBox = document.getElementById('chat-messages');
                 chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг вперед выполнен. Новый текст снова в базе!</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 
-                // Включаем обратно кнопку UNDO
-                document.getElementById('btn-undo').classList.remove('disabled'); 
+                document.getElementById('btn-undo').classList.remove('disabled');
                 saveAdminState();
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', error.message);
                 saveAdminState();
             }
+        }
+
+        function cancelAction(logId) {
+            const msgDiv = document.getElementById(`ai-msg-${logId}`);
+            if(msgDiv) {
+                const btnContainer = msgDiv.querySelector('.action-buttons');
+                if (btnContainer) btnContainer.outerHTML = '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>';
+            }
+            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил');
+            saveAdminState();
+        }
+
+        function updateLogStatus(logId, status, statusText, descText) {
+            const logItem = document.getElementById(logId); if(!logItem) return;
+            logItem.className = `log-item ${status}`;
+            let colorClass = 'log-pending-text'; if (status === 'success') colorClass = 'log-success-text'; if (status === 'error') colorClass = 'log-error-text';
+            logItem.innerHTML = `<div class="log-header"><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span><span class="log-status ${colorClass}">${statusText}</span></div><div>${descText}</div>`;
         }
 
         document.getElementById('admin-chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendAdminCommand(); });
