@@ -420,7 +420,7 @@
 
                 try {
                     // Отправляем на наш сервер (убедись, что добавил маршрут в index.js сервера)
-                    const response = await fetch('/upload-image', {
+                    const response = await fetch('https://tantra-ai.vercel.app/upload-image', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ image: base64String })
