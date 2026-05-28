@@ -174,23 +174,21 @@
                 
                 const aiData = result.data;
 
-                // === 🧠 УМНЫЙ ПЕРЕХВАТЧИК (Исправляет ошибки ИИ) ===
-                // Если ты написал слово "фото" или "картинк", 
-                // мы принудительно заставляем систему выдать окно загрузки!
+                // === 🧠 УМНЫЙ ПЕРЕХВАТЧИК ===
+                // Принудительно включаем загрузку фото, если есть ключевые слова
                 const requestText = text.toLowerCase();
                 if (requestText.includes('фото') || requestText.includes('картинк') || requestText.includes('изображени')) {
                     if (aiData.action !== 'create_product') {
                         aiData.action = 'update_image';
                     }
                 }
-                // ==================================================
 
                 let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
                 
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     window.pendingCommands[logId] = aiData;
 
-                    // МАГИЯ: Автоматически добавляем окно загрузки фото прямо в сообщение, если это нужно
+                    // МАГИЯ: Автоматически добавляем окно загрузки фото
                     if (aiData.action === 'update_image' || aiData.action === 'create_product') {
                         aiMessageHtml += `
                             <div id="upload-wrapper-${logId}" style="margin: 15px 0; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px dashed var(--accent);">
@@ -213,7 +211,6 @@
                 chatBox.innerHTML += aiMessageHtml;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 
-                // ВАЖНОЕ ИСПРАВЛЕНИЕ: Обновляем статус лога после ответа ИИ
                 if (aiData.action === 'unknown') {
                     updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
                 } else if (aiData.action !== 'error') {
@@ -292,12 +289,12 @@
 
                     window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: updateValues };
                 }
+
                 // === 2. КОМАНДА: СОЗДАНИЕ НОВОГО ПРОДУКТА ===
                 else if (payload.action === 'create_product') {
-                    // Передаем массив данных новой строки: ID, Название, Категория, Короткое описание, Фото, Полное описание, Цена РУБ, Цена USDT
                     const newRowValues = [
-                        payload.new_id,          // Например: vostanovlenie
-                        payload.product_name,    // Код восстановления...
+                        payload.new_id,          
+                        payload.product_name,    
                         payload.category || '', 
                         payload.short_desc || '',
                         payload.image_url || '',
@@ -324,14 +321,13 @@
                     }
                     if (!targetRow) throw new Error(`Курс с ID "${prodName}" не найден.`);
 
-                    // Очищаем строку, записывая туда пустые ячейки (удаляем контент курса)
                     const clearValues = ["", "", "", "", "", "", "", ""];
                     const deleteRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${targetRow}:H${targetRow}`, values: clearValues }) });
                     const deleteData = await deleteRes.json();
                     if (!deleteData.success) throw new Error(deleteData.error);
                 }
 
-                // === 4. КОМАНДА: СМЕНА ПОЛОЖЕНИЯ (МЕНЯЕМ МЕСТАМИ) ===
+                // === 4. КОМАНДА: СМЕНА ПОЛОЖЕНИЯ ===
                 else if (payload.action === 'swap_products') {
                     const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
                     const readData = await readRes.json();
@@ -348,14 +344,12 @@
 
                     if (rowIdx1 === -1 || rowIdx2 === -1) throw new Error('Один из указанных курсов не найден для перемещения.');
 
-                    // Делаем рокировку данных в таблице
                     const data1 = rows[rowIdx1]; const data2 = rows[rowIdx2];
                     
                     await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx1 + 1}:H${rowIdx1 + 1}`, values: data2 }) });
                     await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx2 + 1}:H${rowIdx2 + 1}`, values: data1 }) });
                 }
 
-                // Пишем лог в историю действий на отдельный лист
                 await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'append', sheetName: 'History', values: [new Date().toISOString(), logId, payload.action, "Products", prodName] }) });
 
                 updateLogStatus(logId, 'success', '✅ ГОТОВО', `Действие ${payload.action} успешно выполнено.`);
