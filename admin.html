@@ -167,7 +167,7 @@
                 const payload = window.pendingCommands[logId];
                 if (!payload) return;
                 
-                // Безопасная замена кнопок
+                // Безопасная замена кнопок на статус активации
                 const msgDiv = document.getElementById(`ai-msg-${logId}`);
                 if(msgDiv) {
                     const btnContainer = msgDiv.querySelector('.action-buttons');
@@ -176,46 +176,109 @@
                     }
                 }
 
-                const prodName = payload.product_name || 'Неизвестный товар';
-                updateLogStatus(logId, 'pending', '⏳ ЧТЕНИЕ БАЗЫ...', `Ищем товар: ${prodName}`);
+                const prodName = payload.product_name || 'Продукт';
+                updateLogStatus(logId, 'pending', '⏳ СВЯЗЬ С БАЗОЙ...', `Выполняем действие: ${payload.action}`);
                 saveAdminState();
 
-                let targetRow = null; let oldText = "";
-                
+                // === 1. КОМАНДА: ИЗМЕНЕНИЕ ЦЕНЫ ИЛИ ТЕКСТА ===
                 if (payload.action === 'update_price' || payload.action === 'update_text') {
-                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:E' }) });
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
                     const readData = await readRes.json();
                     if (!readData.success) throw new Error(readData.error);
+                    
+                    let targetRow = null; let oldText = "";
                     const rows = readData.data; const targetName = prodName.toLowerCase();
+                    
                     for (let i = 0; i < rows.length; i++) {
-                        if (rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
-                            targetRow = i + 1; oldText = payload.action === 'update_price' ? rows[i][2] : rows[i][3]; break;
+                        if (rows[i][0] && rows[i][0].toLowerCase() === targetName || rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
+                            targetRow = i + 1; 
+                            oldText = payload.action === 'update_price' ? rows[i][6] : rows[i][5]; 
+                            break;
                         }
                     }
-                    if (!targetRow) throw new Error(`Товар "${prodName}" не найден.`);
-                }
+                    if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
 
-                updateLogStatus(logId, 'pending', '⏳ ЗАПИСЬ...', `Сохраняем новые данные`);
-                let updateRange = ''; let newValue = '';
-                if (payload.action === 'update_price') { updateRange = `C${targetRow}`; newValue = payload.new_price; } 
-                else if (payload.action === 'update_text') { updateRange = `D${targetRow}`; newValue = payload.new_text; }
+                    let updateRange = payload.action === 'update_price' ? `G${targetRow}` : `F${targetRow}`;
+                    let newValue = payload.action === 'update_price' ? payload.new_price : payload.new_text;
 
-                if (updateRange) {
                     const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: [newValue] }) });
                     const updateData = await updateRes.json();
                     if (!updateData.success) throw new Error(updateData.error);
+
+                    window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: newValue };
                 }
 
-                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'append', sheetName: 'History', values: [new Date().toISOString(), logId, payload.action, "Products", `row_${targetRow}`, updateRange, oldText, newValue] }) });
+                // === 2. КОМАНДА: СОЗДАНИЕ НОВОГО ПРОДУКТА ===
+                else if (payload.action === 'create_product') {
+                    // Передаем массив данных новой строки: ID, Название, Категория, Короткое описание, Фото, Полное описание, Цена РУБ, Цена USDT
+                    const newRowValues = [
+                        payload.new_id,          // Например: vostanovlenie
+                        payload.product_name,    // Код восстановления...
+                        payload.category || '', 
+                        payload.short_desc || '',
+                        payload.image_url || '',
+                        payload.full_desc || '',
+                        payload.price_rub || 0,
+                        payload.price_usdt || 0
+                    ];
 
-                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Обновлен: ${prodName}`);
+                    const appendRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'append', sheetName: 'Products', values: newRowValues }) });
+                    const appendData = await appendRes.json();
+                    if (!appendData.success) throw new Error(appendData.error);
+                }
+
+                // === 3. КОМАНДА: ПОЛНОЕ УДАЛЕНИЕ КУРСА ===
+                else if (payload.action === 'delete_product') {
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
+                    const readData = await readRes.json();
+                    if (!readData.success) throw new Error(readData.error);
+
+                    let targetRow = null;
+                    const rows = readData.data; const targetId = prodName.toLowerCase();
+                    for (let i = 0; i < rows.length; i++) {
+                        if (rows[i][0] && rows[i][0].toLowerCase() === targetId) { targetRow = i + 1; break; }
+                    }
+                    if (!targetRow) throw new Error(`Курс с ID "${prodName}" не найден.`);
+
+                    // Очищаем строку, записывая туда пустые ячейки (удаляем контент курса)
+                    const clearValues = ["", "", "", "", "", "", "", ""];
+                    const deleteRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${targetRow}:H${targetRow}`, values: clearValues }) });
+                    const deleteData = await deleteRes.json();
+                    if (!deleteData.success) throw new Error(deleteData.error);
+                }
+
+                // === 4. КОМАНДА: СМЕНА ПОЛОЖЕНИЯ (МЕНЯЕМ МЕСТАМИ) ===
+                else if (payload.action === 'swap_products') {
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
+                    const readData = await readRes.json();
+                    if (!readData.success) throw new Error(readData.error);
+
+                    const rows = readData.data;
+                    let rowIdx1 = -1; let rowIdx2 = -1;
+                    const id1 = payload.id_first.toLowerCase(); const id2 = payload.id_second.toLowerCase();
+
+                    for (let i = 0; i < rows.length; i++) {
+                        if (rows[i][0] && rows[i][0].toLowerCase() === id1) rowIdx1 = i;
+                        if (rows[i][0] && rows[i][0].toLowerCase() === id2) rowIdx2 = i;
+                    }
+
+                    if (rowIdx1 === -1 || rowIdx2 === -1) throw new Error('Один из указанных курсов не найден для перемещения.');
+
+                    // Делаем рокировку данных в таблице
+                    const data1 = rows[rowIdx1]; const data2 = rows[rowIdx2];
+                    
+                    await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx1 + 1}:H${rowIdx1 + 1}`, values: data2 }) });
+                    await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx2 + 1}:H${rowIdx2 + 1}`, values: data1 }) });
+                }
+
+                // Пишем лог в историю действий на отдельный лист
+                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'append', sheetName: 'History', values: [new Date().toISOString(), logId, payload.action, "Products", prodName] }) });
+
+                updateLogStatus(logId, 'success', '✅ ГОТОВО', `Действие ${payload.action} успешно выполнено.`);
                 document.getElementById('btn-undo').classList.remove('disabled');
-                
-                window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: newValue };
-                document.getElementById('btn-redo').classList.add('disabled');
 
                 const chatBox = document.getElementById('chat-messages');
-                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Таблица успешно обновлена! Новые данные уже на сайте.</div>`;
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Действие синхронизировано с Google Таблицей! База данных обновлена.</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 saveAdminState();
 
