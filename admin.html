@@ -206,34 +206,51 @@
         async function undoLast() {
             if (!window.lastUpdate) return;
             const { logId, range, oldText } = window.lastUpdate;
+            
             document.getElementById('btn-undo').classList.add('disabled');
             updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возврат старых данных...');
             saveAdminState();
+            
             try {
                 await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [oldText] }) });
+                
                 updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращен старый текст');
                 const chatBox = document.getElementById('chat-messages');
                 chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг назад выполнен. Старый текст возвращен!</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
-                window.lastUpdate = null; saveAdminState();
+                
+                // Включаем кнопку REDO (Шаг вперед)
+                document.getElementById('btn-redo').classList.remove('disabled'); 
+                saveAdminState();
             } catch (error) {
                 updateLogStatus(logId, 'error', '❌ ОШИБКА ОТМЕНЫ', error.message);
                 saveAdminState();
             }
         }
 
-        function cancelAction(logId) {
-            const msgDiv = document.getElementById(`ai-msg-${logId}`);
-            if(msgDiv) msgDiv.innerHTML = msgDiv.innerHTML.replace(/<div style="margin-top: 15px;.*?<\/div>/s, '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>');
-            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил');
+        async function redoLast() {
+            if (!window.lastUpdate) return;
+            const { logId, range, newText } = window.lastUpdate;
+            
+            document.getElementById('btn-redo').classList.add('disabled');
+            updateLogStatus(logId, 'pending', '⏳ ВОЗВРАТ...', 'Применяем новые данные...');
             saveAdminState();
-        }
-
-        function updateLogStatus(logId, status, statusText, descText) {
-            const logItem = document.getElementById(logId); if(!logItem) return;
-            logItem.className = `log-item ${status}`;
-            let colorClass = 'log-pending-text'; if (status === 'success') colorClass = 'log-success-text'; if (status === 'error') colorClass = 'log-error-text';
-            logItem.innerHTML = `<div class="log-header"><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span><span class="log-status ${colorClass}">${statusText}</span></div><div>${descText}</div>`;
+            
+            try {
+                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [newText] }) });
+                
+                updateLogStatus(logId, 'success', '✅ ВЕРНУЛИ', 'Снова применен новый текст');
+                const chatBox = document.getElementById('chat-messages');
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг вперед выполнен. Новый текст снова в базе!</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                // Включаем обратно кнопку UNDO
+                document.getElementById('btn-undo').classList.remove('disabled'); 
+                saveAdminState();
+            } catch (error) {
+                updateLogStatus(logId, 'error', '❌ ОШИБКА', error.message);
+                saveAdminState();
+            }
         }
 
         document.getElementById('admin-chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendAdminCommand(); });
