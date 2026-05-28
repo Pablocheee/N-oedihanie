@@ -174,7 +174,7 @@
                 
                 const aiData = result.data;
 
-                // === 🧠 УМНЫЙ ПЕРЕХВАТЧИК ===
+                // УМНЫЙ ПЕРЕХВАТЧИК
                 const requestText = text.toLowerCase();
                 if (requestText.includes('фото') || requestText.includes('картинк') || requestText.includes('изображени')) {
                     if (aiData.action !== 'create_product') {
@@ -187,16 +187,16 @@
                 if (aiData.action !== 'unknown' && aiData.action !== 'error') {
                     window.pendingCommands[logId] = aiData;
 
-                    // МАГИЯ: Железобетонная кнопка загрузки (без слоев, работает 100% везде)
                     if (aiData.action === 'update_image' || aiData.action === 'create_product') {
+                        // Железобетонная кнопка через label
                         aiMessageHtml += `
                             <div id="upload-wrapper-${logId}" style="margin: 15px 0; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px dashed var(--accent);">
                                 <div style="font-size: 10px; margin-bottom: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Требуется медиафайл (до 4 МБ):</div>
                                 
-                                <button onclick="document.getElementById('img-up-${logId}').click()" class="btn-main" style="display:inline-block; padding:8px 15px; font-size:10px; cursor:pointer; width: auto; margin: 0;">
+                                <label for="img-up-${logId}" class="btn-main" style="display:inline-block; padding:8px 15px; font-size:10px; cursor:pointer; width: auto; margin: 0;">
                                     📸 ВЫБРАТЬ И ЗАГРУЗИТЬ
-                                </button>
-                                <input type="file" id="img-up-${logId}" accept="image/*" style="display:none;" onchange="handleInlineUpload(this, '${logId}')">
+                                </label>
+                                <input type="file" id="img-up-${logId}" accept="image/*" style="display:none;" onchange="window.handleInlineUpload(this, '${logId}')">
                                 
                                 <div id="up-status-${logId}" style="font-size:11px; margin-top:8px; color:var(--accent); font-weight: bold;"></div>
                             </div>
@@ -231,23 +231,21 @@
                 const payload = window.pendingCommands[logId];
                 if (!payload) return;
 
-                // === УМНАЯ ЗАЩИТА ОТ СПЕШКИ ===
                 if ((payload.action === 'update_image' || payload.action === 'create_product') && !payload.image_url) {
-                    const status = document.getElementById(`up-status-${logId}`);
+                    const status = document.getElementById('up-status-' + logId);
                     if (status) {
                         if (status.innerText.includes('⏳')) {
                             status.style.color = "#FFC107";
                             status.innerText = "⏳ Подождите, фото еще загружается в облако...";
                         } else {
                             status.style.color = "#f44336";
-                            status.innerText = "⚠️ Сначала нажмите 'ВЫБРАТЬ И ЗАГРУЗИТЬ' и дождитесь зеленой галочки!";
+                            status.innerText = "⚠️ Сначала выберите файл, нажав 'ВЫБРАТЬ И ЗАГРУЗИТЬ'!";
                         }
                     }
-                    return; // Блокируем отправку
+                    return;
                 }
                 
-                // Безопасная замена кнопок на статус активации
-                const msgDiv = document.getElementById(`ai-msg-${logId}`);
+                const msgDiv = document.getElementById('ai-msg-' + logId);
                 if(msgDiv) {
                     const btnContainer = msgDiv.querySelector('.action-buttons');
                     if (btnContainer) {
@@ -259,7 +257,6 @@
                 updateLogStatus(logId, 'pending', '⏳ СВЯЗЬ С БАЗОЙ...', `Выполняем действие: ${payload.action}`);
                 saveAdminState();
 
-                // === 1. КОМАНДА: ИЗМЕНЕНИЕ ЦЕНЫ, ТЕКСТА ИЛИ ФОТО ===
                 if (payload.action === 'update_price' || payload.action === 'update_text' || payload.action === 'update_image') {
                     const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
                     const readData = await readRes.json();
@@ -293,8 +290,6 @@
 
                     window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: updateValues };
                 }
-
-                // === 2. КОМАНДА: СОЗДАНИЕ НОВОГО ПРОДУКТА ===
                 else if (payload.action === 'create_product') {
                     const newRowValues = [
                         payload.new_id,          
@@ -311,8 +306,6 @@
                     const appendData = await appendRes.json();
                     if (!appendData.success) throw new Error(appendData.error);
                 }
-
-                // === 3. КОМАНДА: ПОЛНОЕ УДАЛЕНИЕ КУРСА ===
                 else if (payload.action === 'delete_product') {
                     const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
                     const readData = await readRes.json();
@@ -330,8 +323,6 @@
                     const deleteData = await deleteRes.json();
                     if (!deleteData.success) throw new Error(deleteData.error);
                 }
-
-                // === 4. КОМАНДА: СМЕНА ПОЛОЖЕНИЯ ===
                 else if (payload.action === 'swap_products') {
                     const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
                     const readData = await readRes.json();
@@ -415,7 +406,7 @@
         }
 
         function cancelAction(logId) {
-            const msgDiv = document.getElementById(`ai-msg-${logId}`);
+            const msgDiv = document.getElementById('ai-msg-' + logId);
             if(msgDiv) {
                 const btnContainer = msgDiv.querySelector('.action-buttons');
                 if (btnContainer) btnContainer.outerHTML = '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>';
@@ -432,69 +423,22 @@
         }
 
         document.getElementById('admin-chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendAdminCommand(); });
-        // === ЛОГИКА ЗАГРУЗКИ ФОТО В ОБЛАКО ===
-        document.getElementById('image-upload').addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
 
-            const statusLabel = document.getElementById('upload-status');
-            const chatInput = document.getElementById('admin-chat-input');
-            
-            statusLabel.style.display = 'block';
-            statusLabel.innerText = "⏳ Отправка в облако...";
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async function () {
-                const base64String = reader.result.split(',')[1]; 
-
-                try {
-                    // Отправляем на наш сервер (убедись, что добавил маршрут в index.js сервера)
-                    const response = await fetch('https://tantra-ai.vercel.app/upload-image', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image: base64String })
-                    });
-                    
-                    const data = await response.json();
-
-                    if (data.success) {
-                        statusLabel.innerHTML = `✅ Успешно!`;
-                        
-                        // МАГИЯ: Автоматически добавляем ссылку прямо в строку чата!
-                        const currentText = chatInput.value.trim();
-                        chatInput.value = currentText ? `${currentText} ${data.url}` : data.url;
-                        
-                        // Фокусируемся на вводе, чтобы ты мог сразу дописать команду
-                        chatInput.focus();
-
-                        // Прячем надпись "Успешно" через 3 секунды для красоты
-                        setTimeout(() => statusLabel.innerText = "", 3000); 
-                    } else {
-                        statusLabel.innerText = "❌ Ошибка: " + (data.error || "Сбой загрузки");
-                    }
-                } catch (err) {
-                    statusLabel.innerText = "❌ Ошибка соединения с сервером.";
-                }
-            };
-        });
-        // === ЛОГИКА ВСТРОЕННОЙ ЗАГРУЗКИ ФОТО ===
-        // === ЛОГИКА ВСТРОЕННОЙ ЗАГРУЗКИ ФОТО (УЛУЧШЕННАЯ) ===
         window.handleInlineUpload = async function(input, logId) {
             const file = input.files[0];
             if (!file) return;
 
-            const statusLabel = document.getElementById(`up-status-${logId}`);
+            const statusLabel = document.getElementById('up-status-' + logId);
+            if (!statusLabel) return;
+            
             statusLabel.style.color = "var(--accent)";
             statusLabel.innerText = "⏳ Загружаем фото в облако...";
 
-            // Функция сброса: позволяет выбрать тот же файл еще раз, если была ошибка
             const resetInput = () => { input.value = ''; };
 
-            // Защита от тяжелых файлов (лимит Vercel - 4.5 MB)
             if (file.size > 4.5 * 1024 * 1024) { 
                 statusLabel.style.color = "#f44336";
-                statusLabel.innerText = "❌ Файл слишком тяжелый. Сожмите фото (максимум 4.5 МБ).";
+                statusLabel.innerText = "❌ Файл слишком тяжелый. Сожмите фото (макс. 4.5 МБ).";
                 resetInput();
                 return;
             }
@@ -504,7 +448,7 @@
             
             reader.onerror = function() {
                 statusLabel.style.color = "#f44336";
-                statusLabel.innerText = "❌ Ошибка чтения файла с устройства.";
+                statusLabel.innerText = "❌ Ошибка чтения файла.";
                 resetInput();
             };
 
@@ -518,31 +462,29 @@
                         body: JSON.stringify({ image: base64String })
                     });
                     
-                    // Ловим скрытые ошибки сервера
                     const textData = await response.text(); 
                     let data;
-                    try {
-                        data = JSON.parse(textData);
-                    } catch(e) {
+                    try { data = JSON.parse(textData); } 
+                    catch(e) {
                         statusLabel.style.color = "#f44336";
-                        statusLabel.innerText = "❌ Сервер перегружен. Попробуйте сжать фото.";
+                        statusLabel.innerText = "❌ Сервер перегружен. Попробуйте фото поменьше.";
                         resetInput();
                         return;
                     }
 
                     if (data.success) {
                         statusLabel.style.color = "#4CAF50";
-                        statusLabel.innerHTML = `✅ Фото успешно прикреплено! (Можно нажимать Подтвердить)`;
+                        statusLabel.innerHTML = `✅ Фото успешно прикреплено! (Жмите Подтвердить)`;
                         
                         if (!window.pendingCommands[logId]) window.pendingCommands[logId] = {};
                         window.pendingCommands[logId].image_url = data.url;
                     } else {
                         statusLabel.style.color = "#f44336";
-                        statusLabel.innerText = "❌ Ошибка облака: " + (data.error || "Сбой");
+                        statusLabel.innerText = "❌ Ошибка: " + (data.error || "Сбой");
                     }
                 } catch (err) {
                     statusLabel.style.color = "#f44336";
-                    statusLabel.innerText = "❌ Ошибка соединения с сервером.";
+                    statusLabel.innerText = "❌ Ошибка сети. Проверьте сервер.";
                 }
                 resetInput();
             };
