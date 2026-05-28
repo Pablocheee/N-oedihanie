@@ -919,12 +919,6 @@ const courseData = {
     return `<a href="${link}" class="btn-main" style="display:block; margin-top:10px; padding:10px; text-decoration:none; text-align:center; font-size:12px; border-color:${color}">${text}</a>`;
 }
 
-// Добавляем отправку по Enter
-document.getElementById('chat-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        sendChat();
-    }
-});
 // Обновленный скрипт: 6 секунд, плавная анимация, без смещения блоков
 const slogans = [
     "Простые практики дыхания 5-10 минут в день для ощутимого результата с первого занятия",
