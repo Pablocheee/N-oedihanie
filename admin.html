@@ -44,6 +44,44 @@
         .log-pending-text { color: #FFC107; }
         .log-error-text { color: #f44336; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); } 70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
+        /* === АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ (МОБИЛЬНАЯ ВЕРСИЯ) === */
+        @media screen and (max-width: 850px) {
+            body { 
+                height: auto; 
+                overflow: auto; 
+                padding: 15px; 
+                align-items: flex-start; /* Убираем жесткое центрирование */
+            }
+            #admin-dashboard { 
+                flex-direction: column; /* Ставим панели друг под друга */
+                height: auto; 
+                padding: 0; 
+                gap: 20px; 
+            }
+            .panel { 
+                height: 75vh; /* Каждая панель занимает 75% экрана, можно плавно скроллить вниз */
+                min-height: 500px; 
+            }
+            .history-section { 
+                min-width: 100%; 
+            }
+            .chat-input-area { 
+                padding: 15px; 
+            }
+            .chat-input-area input { 
+                padding: 15px; 
+                font-size: 16px; /* Строго 16px, чтобы iOS Safari не зумил экран при наборе текста */
+            }
+            .panel-header {
+                padding: 15px 20px;
+            }
+            #login-screen {
+                padding: 40px 20px;
+            }
+            .msg {
+                max-width: 95%; /* Расширяем сообщения, чтобы влезало больше текста */
+            }
+        }
     </style>
 </head>
 <body>
