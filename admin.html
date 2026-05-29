@@ -258,8 +258,10 @@
                 updateLogStatus(logId, 'pending', '⏳ СВЯЗЬ С БАЗОЙ...', `Выполняем действие: ${payload.action}`);
                 saveAdminState();
 
-                if (payload.action === 'update_price' || payload.action === 'update_text' || payload.action === 'update_image') {
-                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
+                // === 1. ОБНОВЛЕНИЕ ДАННЫХ И АКЦИЙ ===
+                if (payload.action === 'update_price' || payload.action === 'update_text' || payload.action === 'update_image' || payload.action === 'set_promo') {
+                    // Запрашиваем до колонки J
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' }) });
                     const readData = await readRes.json();
                     if (!readData.success) throw new Error(readData.error);
                     
@@ -267,15 +269,16 @@
                     const rows = readData.data; const targetName = prodName.toLowerCase();
                     
                     for (let i = 0; i < rows.length; i++) {
-                        if (rows[i][0] && rows[i][0].toLowerCase() === targetName || rows[i][1] && rows[i][1].toLowerCase().includes(targetName)) {
+                        if ((rows[i][0] && rows[i][0].toLowerCase() === targetName) || (rows[i][1] && rows[i][1].toLowerCase().includes(targetName))) {
                             targetRow = i + 1; 
-                            if (payload.action === 'update_price') oldText = rows[i][6];
-                            else if (payload.action === 'update_image') oldText = rows[i][4]; 
-                            else oldText = rows[i][5];
+                            if (payload.action === 'update_price') oldText = [rows[i][6] || "", rows[i][7] || ""];
+                            else if (payload.action === 'update_image') oldText = rows[i][4] || ""; 
+                            else if (payload.action === 'set_promo') oldText = [rows[i][8] || "", rows[i][9] || ""];
+                            else oldText = rows[i][5] || "";
                             break;
                         }
                     }
-                    if (!targetRow) throw new Error(`Товар "${prodName}" не найден в таблице.`);
+                    if (!targetRow) throw new Error(`Объект "${prodName}" не найден в таблице.`);
 
                     let updateRange = 'F' + targetRow; 
                     let updateValues = [];
@@ -291,12 +294,13 @@
                     }
                     else if (payload.action === 'update_text') {
                         updateRange = `F${targetRow}`;
-                        // === НАДЁЖНЫЙ ЗАХВАТ ТЕКСТА (ЗАЩИТА ОТ УДАЛЕНИЯ) ===
                         const textToWrite = payload.new_text || payload.text || payload.description || payload.full_desc;
-                        if (!textToWrite) {
-                            throw new Error("ИИ не сгенерировал текст. Изменение заблокировано, чтобы не стереть старое описание.");
-                        }
+                        if (!textToWrite) throw new Error("ИИ не сгенерировал текст.");
                         updateValues = [textToWrite];
+                    }
+                    else if (payload.action === 'set_promo') {
+                        updateRange = `I${targetRow}:J${targetRow}`;
+                        updateValues = [payload.promo_price, payload.promo_date];
                     }
 
                     const updateRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: updateRange, values: updateValues }) });
@@ -306,7 +310,7 @@
                     window.lastUpdate = { logId: logId, range: updateRange, oldText: oldText, newText: updateValues };
                 }
                 
-                // ... создание, удаление и смена мест остаются без изменений ...
+                // === 2. СОЗДАНИЕ ===
                 else if (payload.action === 'create_product') {
                     const newRowValues = [
                         payload.new_id,          
@@ -322,8 +326,9 @@
                     const appendData = await appendRes.json();
                     if (!appendData.success) throw new Error(appendData.error);
                 }
+                // === 3. УДАЛЕНИЕ ===
                 else if (payload.action === 'delete_product') {
-                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' }) });
                     const readData = await readRes.json();
                     if (!readData.success) throw new Error(readData.error);
                     let targetRow = null;
@@ -331,14 +336,15 @@
                     for (let i = 0; i < rows.length; i++) {
                         if (rows[i][0] && rows[i][0].toLowerCase() === targetId) { targetRow = i + 1; break; }
                     }
-                    if (!targetRow) throw new Error(`Курс с ID "${prodName}" не найден.`);
-                    const clearValues = ["", "", "", "", "", "", "", ""];
-                    const deleteRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${targetRow}:H${targetRow}`, values: clearValues }) });
+                    if (!targetRow) throw new Error(`Элемент "${prodName}" не найден.`);
+                    const clearValues = ["", "", "", "", "", "", "", "", "", ""]; // Чистим 10 колонок
+                    const deleteRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${targetRow}:J${targetRow}`, values: clearValues }) });
                     const deleteData = await deleteRes.json();
                     if (!deleteData.success) throw new Error(deleteData.error);
                 }
+                // === 4. ПЕРЕМЕЩЕНИЕ ===
                 else if (payload.action === 'swap_products') {
-                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' }) });
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' }) });
                     const readData = await readRes.json();
                     if (!readData.success) throw new Error(readData.error);
                     const rows = readData.data;
@@ -350,8 +356,12 @@
                     }
                     if (rowIdx1 === -1 || rowIdx2 === -1) throw new Error('Один из указанных курсов не найден для перемещения.');
                     const data1 = rows[rowIdx1]; const data2 = rows[rowIdx2];
-                    await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx1 + 1}:H${rowIdx1 + 1}`, values: data2 }) });
-                    await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx2 + 1}:H${rowIdx2 + 1}`, values: data1 }) });
+                    
+                    while(data1.length < 10) data1.push("");
+                    while(data2.length < 10) data2.push("");
+
+                    await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx1 + 1}:J${rowIdx1 + 1}`, values: data2 }) });
+                    await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: `A${rowIdx2 + 1}:J${rowIdx2 + 1}`, values: data1 }) });
                 }
 
                 await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'append', sheetName: 'History', values: [new Date().toISOString(), logId, payload.action, "Products", prodName] }) });
@@ -379,10 +389,13 @@
             updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возврат старых данных...');
             saveAdminState();
             try {
-                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [oldText] }) });
-                updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращен старый текст');
+                // Защита: Если отменяем сразу две ячейки (цену или акцию), Гугл ждет массив
+                const vals = Array.isArray(oldText) ? oldText : [oldText];
+                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: vals }) });
+                
+                updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращены старые данные');
                 const chatBox = document.getElementById('chat-messages');
-                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг назад выполнен. Старый текст возвращен!</div>`;
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг назад выполнен. Старые данные возвращены!</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 
                 document.getElementById('btn-redo').classList.remove('disabled');
@@ -400,10 +413,12 @@
             updateLogStatus(logId, 'pending', '⏳ ВОЗВРАТ...', 'Применяем новые данные...');
             saveAdminState();
             try {
-                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: [newText] }) });
-                updateLogStatus(logId, 'success', '✅ ВЕРНУЛИ', 'Снова применен новый текст');
+                const vals = Array.isArray(newText) ? newText : [newText];
+                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: vals }) });
+                
+                updateLogStatus(logId, 'success', '✅ ВЕРНУЛИ', 'Снова применены новые данные');
                 const chatBox = document.getElementById('chat-messages');
-                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг вперед выполнен. Новый текст снова в базе!</div>`;
+                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг вперед выполнен. Данные снова в базе!</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 
                 document.getElementById('btn-undo').classList.remove('disabled');
@@ -412,16 +427,6 @@
                 updateLogStatus(logId, 'error', '❌ ОШИБКА', error.message);
                 saveAdminState();
             }
-        }
-
-        function cancelAction(logId) {
-            const msgDiv = document.getElementById('ai-msg-' + logId);
-            if(msgDiv) {
-                const btnContainer = msgDiv.querySelector('.action-buttons');
-                if (btnContainer) btnContainer.outerHTML = '<div style="margin-top: 10px; color: #f44336; font-size: 12px;">[Действие отменено]</div>';
-            }
-            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил');
-            saveAdminState();
         }
 
         function updateLogStatus(logId, status, statusText, descText) {
