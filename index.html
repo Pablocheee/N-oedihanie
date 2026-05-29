@@ -574,6 +574,53 @@
         #chat-messages { padding-bottom: 100px; }
         .chat-input-area { padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
     }
+        
+/* Стили для карточек контента */
+.content-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: left;
+    transition: 0.3s;
+}
+.content-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(168, 218, 220, 0.3);
+}
+.content-date {
+    font-size: 11px;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 10px;
+    display: block;
+    letter-spacing: 1px;
+}
+.content-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* Пропорция 16:9 */
+    height: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 480px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+        
 </style>
     <meta property="og:image" content="https://ibb.co/dsZmvsqp">
 <meta property="og:image:width" content="1200">
@@ -777,6 +824,13 @@
     </div>
 </section>
 
+<section id="video-section" style="display: none; padding: 40px 20px; text-align: center; position: relative; z-index: 2;">
+    <h2 style="font-family: 'Manrope', sans-serif; color: var(--accent); font-weight: 300; letter-spacing: 2px; margin-bottom: 30px;">ПОЛЕЗНЫЕ МАТЕРИАЛЫ</h2>
+    
+    <div id="video-container" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 1000px; margin: 0 auto;">
+        </div>
+</section>
+
 <section id="programs">
     <div id="dynamic-products-grid" class="products-grid">
         </div>
@@ -786,6 +840,13 @@
         <p style="font-size: 15px; color: var(--text-main); opacity: 0.8; margin-bottom: 25px; max-width: 600px; margin-inline: auto; line-height: 1.5;">Снятие хронического напряжения и подавленных эмоций. Возвращение легкости, чувствительности и живости тела.</p>
         <a href="https://t.me/vika_breathe" target="_blank" class="btn-main" style="border-color: var(--accent); text-decoration: none;">Оставить заявку</a>
     </div>
+</section>
+
+<section id="blog-section" style="display: none; padding: 50px 20px; background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(5px); border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 2;">
+    <h2 style="text-align: center; font-family: 'Manrope', sans-serif; color: var(--accent); font-weight: 300; letter-spacing: 2px; margin-bottom: 40px;">МЫСЛИ & ИНСАЙТЫ</h2>
+    
+    <div id="blog-container" style="display: flex; flex-direction: column; gap: 30px; max-width: 800px; margin: 0 auto;">
+        </div>
 </section>
 
 <section id="author">
@@ -812,79 +873,138 @@
 </div>
 
 <script>
-    // === АВТОМАТИЧЕСКАЯ СБОРКА ВИТРИНЫ ИЗ GOOGLE ТАБЛИЦЫ ===
-document.addEventListener('DOMContentLoaded', async () => {
-    const gridContainer = document.getElementById('dynamic-products-grid');
-    if (!gridContainer) return;
+    // === УМНАЯ СБОРКА ВИТРИНЫ, ВИДЕО И БЛОГА ИЗ GOOGLE ТАБЛИЦЫ ===
+    document.addEventListener('DOMContentLoaded', async () => {
+        const gridContainer = document.getElementById('dynamic-products-grid');
+        const videoContainer = document.getElementById('video-container');
+        const blogContainer = document.getElementById('blog-container');
+        const videoSection = document.getElementById('video-section');
+        const blogSection = document.getElementById('blog-section');
 
-    try {
-        const response = await fetch('/api/sheets', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' })
-        });
-        const result = await response.json();
+        if (!gridContainer) return;
 
-        if (result.success && result.data) {
-            gridContainer.innerHTML = '';
+        try {
+            // Запрашиваем сразу A:J (до колонки J)
+            const response = await fetch('/api/sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' })
+            });
+            const result = await response.json();
 
-            result.data.forEach((row, index) => {
-                if (index === 0 && row[0] && row[0].toLowerCase().includes('id')) return;
+            if (result.success && result.data) {
+                gridContainer.innerHTML = '';
+                if(videoContainer) videoContainer.innerHTML = '';
+                if(blogContainer) blogContainer.innerHTML = '';
 
-                const id = row[0] ? row[0].trim() : '';
-                const title = row[1] ? row[1].trim() : '';
-                const category = row[2] ? row[2].trim() : ''; // Колонка C (Категория: БАЛАНС, СОЗНАНИЕ...)
-                const shortDesc = row[3] ? row[3].trim() : ''; // Колонка D (Краткое описание)
-                const price = row[6] ? row[6].trim() : ''; // Колонка G (Цена в рублях)
+                let hasVideos = false;
+                let hasPosts = false;
 
-                if (!id || !title) return;
+                result.data.forEach((row, index) => {
+                    // Пропускаем строку с заголовками таблицы
+                    if (index === 0 && row[0] && row[0].toLowerCase().includes('id')) return;
 
-// ОБНОВЛЕННАЯ КАРТОЧКА (КАТЕГОРИЯ ПО ЦЕНТРУ)
-                // ОБНОВЛЕННАЯ КАРТОЧКА (ВЕСЬ ТЕКСТ ПО ЦЕНТРУ)
-                const cardHTML = `
-                    <div class="program-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                    const id = row[0] ? row[0].trim() : '';
+                    const title = row[1] ? row[1].trim() : '';
+                    const category = row[2] ? row[2].trim().toLowerCase() : ''; 
+                    const shortDesc = row[3] ? row[3].trim() : ''; 
+                    const imageSrc = row[4] ? row[4].trim() : '';
+                    const fullTextOrLink = row[5] ? row[5].trim() : '';
+
+                    if (!id || !title) return;
+
+                    // === 1. ЛОГИКА ДЛЯ ВИДЕО ===
+                    if (category === 'video') {
+                        hasVideos = true;
                         
-                        <!-- Мы добавили text-align: center; главному контейнеру текста -->
-                        <div style="text-align: center;">
-                            <div style="margin-bottom: 20px; width: 100%;">
-                                <span style="font-size: 10px; letter-spacing: 2px; color: var(--accent, #a8dadc); text-transform: uppercase; font-weight: 700;">${category || 'ПРАКТИКА'}</span>
+                        // Если это YouTube ссылка, преобразуем в красивый плеер
+                        let videoIframe = fullTextOrLink;
+                        if (fullTextOrLink.includes('youtube.com/watch?v=')) {
+                            const vidId = fullTextOrLink.split('v=')[1].split('&')[0];
+                            videoIframe = `<iframe src="https://www.youtube.com/embed/${vidId}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                        } else if (fullTextOrLink.includes('youtu.be/')) {
+                            const vidId = fullTextOrLink.split('youtu.be/')[1].split('?')[0];
+                            videoIframe = `<iframe src="https://www.youtube.com/embed/${vidId}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                        } else if (!fullTextOrLink.includes('<iframe')) {
+                            // На случай, если это прямая mp4 ссылка
+                            videoIframe = `<video width="100%" height="100%" controls style="position:absolute; top:0; left:0; object-fit:cover;"><source src="${fullTextOrLink}" type="video/mp4"></video>`;
+                        }
+
+                        const videoCard = `
+                            <div class="video-wrapper">
+                                ${videoIframe}
                             </div>
-                            
-                            <h3 style="font-size: 22px; font-weight: 400; margin-bottom: 15px; color: #f1faee; line-height: 1.4;">${title}</h3>
-                            
-                            <p style="font-size: 13px; opacity: 0.6; line-height: 1.6; margin-bottom: 25px; min-height: 60px;">${shortDesc}</p>
-                        </div>
+                        `;
+                        if(videoContainer) videoContainer.innerHTML += videoCard;
+                    }
+
+                    // === 2. ЛОГИКА ДЛЯ ПОСТА (БЛОГ) ===
+                    else if (category === 'post') {
+                        hasPosts = true;
                         
-                        <div style="display: flex; justify-content: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; width: 100%;">
-                            <a href="/course.html?id=${id.toLowerCase()}" class="btn-main" style="text-decoration: none; display: inline-block; padding: 12px 40px; border: 1px solid var(--accent, #a8dadc); color: #fff; border-radius: 50px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; background: rgba(168, 218, 220, 0.05); text-align: center; width: 100%; max-width: 220px;">
-                                Узнать больше
-                            </a>
-                        </div>
-                    </div>
-                `;
+                        // Если загружена картинка, показываем её
+                        const imageHTML = imageSrc ? `<img src="${imageSrc}" class="content-image" alt="Post">` : '';
+                        
+                        // Дата поста (берем из колонки ID)
+                        const postCard = `
+                            <div class="content-card">
+                                <span class="content-date">${id}</span>
+                                ${imageHTML}
+                                <h3 style="font-size: 18px; margin-bottom: 10px; font-weight: 600;">${title}</h3>
+                                <p style="font-size: 14px; opacity: 0.8; line-height: 1.6;">${fullTextOrLink}</p>
+                            </div>
+                        `;
+                        // Новые посты добавляются сверху ленты
+                        if(blogContainer) blogContainer.innerHTML = postCard + blogContainer.innerHTML; 
+                    }
 
-                gridContainer.innerHTML += cardHTML;
-            });
+                    // === 3. ЛОГИКА ДЛЯ КУРСОВ (СТАНДАРТ) ===
+                    else {
+                        const displayCategory = row[2] ? row[2].trim() : 'ПРАКТИКА';
+                        const cardHTML = `
+                            <div class="program-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                                <div style="text-align: center;">
+                                    <div style="margin-bottom: 20px; width: 100%;">
+                                        <span style="font-size: 10px; letter-spacing: 2px; color: var(--accent, #a8dadc); text-transform: uppercase; font-weight: 700;">${displayCategory}</span>
+                                    </div>
+                                    <h3 style="font-size: 22px; font-weight: 400; margin-bottom: 15px; color: #f1faee; line-height: 1.4;">${title}</h3>
+                                    <p style="font-size: 13px; opacity: 0.6; line-height: 1.6; margin-bottom: 25px; min-height: 60px;">${shortDesc}</p>
+                                </div>
+                                <div style="display: flex; justify-content: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; width: 100%;">
+                                    <a href="/course.html?id=${id.toLowerCase()}" class="btn-main" style="text-decoration: none; display: inline-block; padding: 12px 40px; border: 1px solid var(--accent, #a8dadc); color: #fff; border-radius: 50px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; background: rgba(168, 218, 220, 0.05); text-align: center; width: 100%; max-width: 220px;">
+                                        Узнать больше
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        gridContainer.innerHTML += cardHTML;
+                    }
+                });
 
-            const cards = gridContainer.querySelectorAll('.program-card');
-            cards.forEach(c => {
-                c.addEventListener('mouseenter', () => {
-                    c.style.transform = 'translateY(-5px)';
-                    c.style.borderColor = 'var(--accent, #a8dadc)';
-                    c.style.boxShadow = '0 30px 60px rgba(168, 218, 220, 0.15)';
+                // Если есть контент - включаем видимость секций
+                if (hasVideos && videoSection) videoSection.style.display = 'block';
+                if (hasPosts && blogSection) blogSection.style.display = 'block';
+
+                // Анимация наведения на курсы
+                const cards = gridContainer.querySelectorAll('.program-card');
+                cards.forEach(c => {
+                    c.addEventListener('mouseenter', () => {
+                        c.style.transform = 'translateY(-5px)';
+                        c.style.borderColor = 'var(--accent, #a8dadc)';
+                        c.style.boxShadow = '0 30px 60px rgba(168, 218, 220, 0.15)';
+                    });
+                    c.addEventListener('mouseleave', () => {
+                        c.style.transform = 'translateY(0)';
+                        c.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        c.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
+                    });
                 });
-                c.addEventListener('mouseleave', () => {
-                    c.style.transform = 'translateY(0)';
-                    c.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                    c.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
-                });
-            });
+            }
+        } catch (error) {
+            console.error('Ошибка сборки:', error);
+            gridContainer.innerHTML = `<div style="color: #ff4500; text-align: center; width: 100%; padding: 40px;">Ошибка загрузки контента: ${error.message}</div>`;
         }
-    } catch (error) {
-        console.error('Ошибка автоматической сборки витрины:', error);
-        gridContainer.innerHTML = `<div style="color: #ff4500; text-align: center; width: 100%; padding: 40px;">Ошибка загрузки витрины продуктов. Причина: ${error.message}</div>`;
-    }
-});
+    });
     // Управление меню
     function toggleMenu(s) {
         document.getElementById('full-menu').style.display = s ? 'flex' : 'none';
