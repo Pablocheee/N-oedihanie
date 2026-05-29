@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">ИNOE ДЫХАНИЕ — Загрузка...</title>
     <style>
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 69, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0); } }
         .product-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 5% 60px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; max-width: 1200px; align-items: center; }
         .product-image-wrap { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.4); max-width: 320px; width: 100%; aspect-ratio: 4 / 5; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; }
@@ -178,10 +179,11 @@
 
         try {
             // ИЗМЕНЕНИЕ 1: Теперь запрашиваем диапазон A:H (добавили колонку H)
+            // ЗАПРАШИВАЕМ ДИАПАЗОН A:J (Включая акционную цену и дату)
             const response = await fetch('/api/sheets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:H' })
+                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' })
             });
             const result = await response.json();
 
@@ -192,19 +194,32 @@
                     const title = row[1] || 'Без названия';
                     const imageSrc = row[4] || '';
                     const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
-                    const price = parseInt(row[6]) || 0; // Колонка G (индекс 6)
-                    const priceUsdt = parseInt(row[7]) || 0; // ИЗМЕНЕНИЕ 2: Колонка H (индекс 7)
+                    let price = parseInt(row[6]) || 0; 
+                    const priceUsdt = parseInt(row[7]) || 0; 
+                    
+                    // === ЛОГИКА ВРЕМЕННОЙ АКЦИИ ===
+                    const promoPrice = parseInt(row[8]) || 0; // Колонка I
+                    const promoEndTimeStr = row[9] || '';     // Колонка J
+                    let isPromoActive = false;
 
-                    // Сохраняем в глобальную память
+                    // Проверяем, не истекло ли время
+                    if (promoPrice > 0 && promoEndTimeStr) {
+                        const endTime = new Date(promoEndTimeStr).getTime();
+                        const now = new Date().getTime();
+                        if (now < endTime) {
+                            isPromoActive = true;
+                        }
+                    }
+
+                    // Если акция активна, перезаписываем цену для Робокассы
                     window.currentCourseData.id = courseId;
                     window.currentCourseData.title = title;
-                    window.currentCourseData.priceRub = price;
-                    window.currentCourseData.priceUsdt = priceUsdt; // Теперь берем точную цифру из таблицы!
+                    window.currentCourseData.priceRub = isPromoActive ? promoPrice : price;
+                    window.currentCourseData.priceUsdt = priceUsdt; 
 
                     // Вставляем данные в HTML
                     document.title = `ИNOE ДЫХАНИЕ — ${title}`;
                     document.getElementById('page-title').innerText = `ИNOE ДЫХАНИЕ — ${title}`;
-                    document.getElementById('course-name').innerText = title;
                     
                     const modalName = document.getElementById('modal-course-name');
                     if (modalName) modalName.innerText = title;
@@ -222,16 +237,30 @@
                         img.style.display = 'block';
                     }
 
-                   // Обновляем текст на кнопке Получить доступ
+                   // === ОТРИСОВКА ЦЕНЫ С УЧЕТОМ СКИДКИ ===
                     const priceBtn = document.getElementById('course-price-btn');
-                    const cryptoPrice = document.getElementById('crypto-price'); // Остается для инструкции внутри модалки
+                    const nameContainer = document.getElementById('course-name');
                     
-                    if (price > 0) {
-                        if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
+                    if (isPromoActive) {
+                        // Показываем плашку скидки и перечеркнутую старую цену
+                        nameContainer.innerHTML = `
+                            <div style="font-size: 12px; background: rgba(255, 69, 0, 0.1); border: 1px solid #ff4500; color: #ff4500; display: inline-block; padding: 4px 12px; border-radius: 20px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite;">
+                                🔥 Ограниченная акция
+                            </div>
+                            <br>${title}
+                        `;
+                        if (priceBtn) priceBtn.innerHTML = `— <span style="text-decoration: line-through; opacity: 0.5; font-size: 12px; margin-right: 5px;">${price} ₽</span> <span style="color: #ff4500;">${promoPrice} ₽</span>`;
                     } else {
-                        if (priceBtn) priceBtn.innerText = ``; 
+                        // Обычное отображение
+                        nameContainer.innerText = title;
+                        if (price > 0) {
+                            if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
+                        } else {
+                            if (priceBtn) priceBtn.innerText = ``; 
+                        }
                     }
 
+                    const cryptoPrice = document.getElementById('crypto-price');
                     if (priceUsdt > 0) {
                         if (cryptoPrice) cryptoPrice.innerText = `${priceUsdt} USDT`;
                     } else {
