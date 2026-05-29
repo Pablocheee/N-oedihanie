@@ -1,7 +1,6 @@
 // api/admin-chat.js
 
 export default async function handler(req, res) {
-    // Разрешаем только POST-запросы
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, error: 'Метод не поддерживается. Используйте POST.' });
     }
@@ -78,7 +77,6 @@ export default async function handler(req, res) {
 
         const aiText = data.choices[0].message.content.trim();
         
-        // Пытаемся безопасно распарсить JSON
         let parsedResult;
         try {
             const cleanText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
