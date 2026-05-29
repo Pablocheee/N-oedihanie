@@ -660,6 +660,15 @@
     </div>
 </header>
 
+<div id="global-promo-bar" style="display: none; position: fixed; top: 75px; left: 0; width: 100%; background: rgba(255, 69, 0, 0.1); border-bottom: 1px solid #ff4500; border-top: 1px solid #ff4500; color: #ff4500; text-align: center; padding: 12px 20px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; z-index: 990; backdrop-filter: blur(10px); animation: pulse-bg 2s infinite;">
+    <span id="promo-text">🔥 Ищет акцию...</span>
+    <a id="promo-link" href="#" style="color: #fff; text-decoration: none; margin-left: 15px; background: #ff4500; padding: 6px 18px; border-radius: 20px; font-weight: bold; font-size: 11px; transition: 0.3s; display: inline-block;">ПОСМОТРЕТЬ</a>
+</div>
+
+<style>
+    @keyframes pulse-bg { 0% { background: rgba(255, 69, 0, 0.05); } 50% { background: rgba(255, 69, 0, 0.15); } 100% { background: rgba(255, 69, 0, 0.05); } }
+</style>
+
 <div id="full-menu">
     <div class="close-menu" onclick="toggleMenu(false)">×</div>
     <a href="#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
@@ -999,6 +1008,51 @@ setInterval(changeSlogan, 6000);
 
 </script>
 <script src="/victory-chat.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Читаем базу товаров
+            const response = await fetch('/api/sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' })
+            });
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                const now = new Date().getTime();
+                
+                // Перебираем товары в поиске активной акции
+                for (let i = 0; i < result.data.length; i++) {
+                    const row = result.data[i];
+                    if(!row[0]) continue; 
+                    
+                    const id = row[0];
+                    const title = row[1];
+                    const promoPrice = parseInt(row[8]) || 0; // Колонка I
+                    const promoEndTimeStr = row[9] || '';     // Колонка J
+
+                    if (promoPrice > 0 && promoEndTimeStr) {
+                        const endTime = new Date(promoEndTimeStr).getTime();
+                        if (now < endTime) {
+                            // АКЦИЯ НАЙДЕНА! Включаем бар и заполняем данные
+                            const promoBar = document.getElementById('global-promo-bar');
+                            const promoText = document.getElementById('promo-text');
+                            const promoLink = document.getElementById('promo-link');
+                            
+                            promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за <span style="font-size: 14px; font-weight: bold;">${promoPrice} ₽</span>`;
+                            promoLink.href = `/course.html?id=${id}`;
+                            promoBar.style.display = 'block';
+                            break; // Останавливаем поиск (показываем только одну акцию)
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Ошибка проверки акций:', e);
+        }
+    });
+</script>
 </body>
 </html>
 
