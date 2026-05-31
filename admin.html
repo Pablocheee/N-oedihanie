@@ -144,24 +144,33 @@
             <!-- ВСПЛЫВАЮЩЕЕ ОКНО ПОДСКАЗОК -->
             <div id="hint-popup" class="hint-popup">
                 <select id="hint-selector">
-                    <option value="course">Создание и редактирование курса</option>
+                    <option value="course">Создание, редактирование и удаление курсов</option>
                     <!-- В будущем сюда можно добавить другие разделы -->
                 </select>
                 
                 <div id="hint-course" class="hint-content">
-                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 12px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">📍 Точные названия областей:</div>
+                    
+                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 12px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">⚙️ Базовые команды:</div>
+                    <ul class="hint-list" style="margin-bottom: 20px;">
+                        <li><span class="icon">➕</span> <strong>Создание:</strong> «Создай курс [Название]» <br><i style="font-size: 10px; opacity: 0.7; margin-left: 23px;">(создаст пустой каркас, куда можно добавлять цену/фото)</i></li>
+                        <li><span class="icon">❌</span> <strong>Удаление:</strong> «Удали курс [Название]»</li>
+                        <li><span class="icon">🔄</span> <strong>Перемещение:</strong> «Поменяй местами [Курс 1] и [Курс 2]»</li>
+                    </ul>
+
+                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 12px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">📍 Что можно менять (Редактирование):</div>
                     <ul class="hint-list">
                         <li><span class="icon">🏷️</span> <strong>Название</strong> ➔ Главное имя курса.</li>
-                        <li><span class="icon">📋</span> <strong>Краткое описание</strong> ➔ Текст для маленькой карточки на главной странице.</li>
-                        <li><span class="icon">📖</span> <strong>Внутреннее описание</strong> ➔ Большой подробный текст внутри самой страницы курса.</li>
-                        <li><span class="icon">🖼️</span> <strong>Фото / Картинка</strong> ➔ Обложка курса (ИИ сам выдаст кнопку для загрузки файла).</li>
+                        <li><span class="icon">📋</span> <strong>Краткое описание</strong> ➔ На главной странице.</li>
+                        <li><span class="icon">📖</span> <strong>Внутреннее описание</strong> ➔ Текст внутри страницы курса.</li>
+                        <li><span class="icon">🖼️</span> <strong>Фото / Картинка</strong> ➔ Кнопка для загрузки.</li>
                         <li><span class="icon">💰</span> <strong>Основная цена</strong> ➔ Стандартный ценник.</li>
-                        <li><span class="icon">🔥</span> <strong>Скидочная цена</strong> ➔ Акция с таймером (нужно указать часы/дни).</li>
+                        <li><span class="icon">🔥</span> <strong>Скидочная цена</strong> ➔ Акция с таймером.</li>
                     </ul>
+                    
                     <div class="hint-examples">
-                        <div style="font-size: 10px; color: var(--accent); font-style: normal; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">💬 Примеры:</div>
-                        <div>"Поменяй краткое описание у курса Прана на: Отличный старт для новичков."</div>
-                        <div>"Обнови внутреннее описание у Анти-стресс на: [весь твой большой текст]"</div>
+                        <div style="font-size: 10px; color: var(--accent); font-style: normal; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">💬 Примеры редактирования:</div>
+                        <div>"Поменяй краткое описание у курса Прана на: Отличный старт."</div>
+                        <div>"Поставь скидочную цену на Анти-стресс 3000 на 24 часа."</div>
                         <div>"Поменяй фото у Базового курса"</div>
                     </div>
                 </div>
