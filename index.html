@@ -707,9 +707,9 @@
     </div>
 </header>
 
-<div id="global-promo-bar" style="display: none; position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 90%; background: rgba(255, 69, 0, 0.15); border: 1px solid #ff4500; border-radius: 40px; color: #ff4500; text-align: center; padding: 8px 25px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; z-index: 990; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); animation: pulse-border 2s infinite;">
+<div id="global-promo-bar" onclick="document.getElementById('promo-link').click();" style="cursor: pointer; display: none; position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 90%; background: rgba(255, 69, 0, 0.15); border: 1px solid #ff4500; border-radius: 40px; color: #ff4500; text-align: center; padding: 8px 25px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; z-index: 990; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); animation: pulse-border 2s infinite;">
     <span id="promo-text">🔥 Ищет акцию...</span>
-    <a id="promo-link" href="/course.html" style="color: #fff; text-decoration: none; margin-left: 15px; background: #ff4500; padding: 6px 18px; border-radius: 20px; font-weight: bold; font-size: 11px; transition: 0.3s; display: inline-block;">ПОСМОТРЕТЬ</a>
+    <a id="promo-link" href="/course.html" style="color: #fff; text-decoration: none; margin-left: 15px; background: #ff4500; padding: 6px 18px; border-radius: 20px; font-weight: bold; font-size: 11px; transition: 0.3s; display: inline-block; pointer-events: none;">ПОСМОТРЕТЬ</a>
 </div>
 
 <style>
