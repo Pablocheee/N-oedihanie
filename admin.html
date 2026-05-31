@@ -174,14 +174,34 @@
                 
                 const aiData = result.data;
 
-                // === УМНЫЙ ПЕРЕХВАТЧИК (СМЯГЧЕННЫЙ) ===
+                // === УМНЫЙ ПЕРЕХВАТЧИК (СМЯГЧЕННЫЙ И РАСШИРЕННЫЙ) ===
                 const requestText = text.toLowerCase();
-                // Активируем фото ТОЛЬКО если просят фото, и при этом не просят поменять ТЕКСТ или ОПИСАНИЕ
+                
+                // 1. Перехватчик для фото
                 const wantsImage = (requestText.includes('фото') || requestText.includes('картинк') || requestText.includes('изображени')) 
                                    && !requestText.includes('описани') && !requestText.includes('текст');
                 
                 if (wantsImage && aiData.action !== 'create_product') {
                     aiData.action = 'update_image';
+                }
+
+                // 2. Перехватчик для скидок и акций
+                const isPromo = requestText.includes('скидк') || requestText.includes('акци');
+                if (isPromo && aiData.action === 'update_price') {
+                    aiData.action = 'set_promo';
+                    aiData.promo_price = aiData.new_price || aiData.price;
+                }
+
+                // 3. Динамический расчет времени таймера
+                if (aiData.action === 'set_promo') {
+                    // Берем часы от ИИ. Если он не прислал, ставим 72 часа (3 дня) по умолчанию
+                    const hours = aiData.duration_hours || 72; 
+                    
+                    const d = new Date();
+                    d.setHours(d.getHours() + hours); // Прибавляем часы к текущему времени
+                    
+                    const pad = (n) => n < 10 ? '0' + n : n;
+                    aiData.promo_date = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
                 }
 
                 let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
