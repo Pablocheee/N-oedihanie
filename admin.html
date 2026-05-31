@@ -206,7 +206,8 @@
 
                 let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
                 
-                if (aiData.action !== 'unknown' && aiData.action !== 'error') {
+                // Для запроса информации (get_info) не показываем кнопки подтверждения!
+                if (aiData.action !== 'unknown' && aiData.action !== 'error' && aiData.action !== 'get_info') {
                     window.pendingCommands[logId] = aiData;
 
                     if (aiData.action === 'update_image' || aiData.action === 'create_product') {
@@ -235,6 +236,53 @@
                 
                 if (aiData.action === 'unknown') {
                     updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
+                } else if (aiData.action === 'get_info') {
+                    // === ЛОГИКА ЧТЕНИЯ ИНФОРМАЦИИ ИЗ БАЗЫ ===
+                    updateLogStatus(logId, 'pending', '🔍 ИЩЕМ...', 'Чтение базы данных');
+                    saveAdminState();
+                    
+                    const readRes = await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' }) });
+                    const readData = await readRes.json();
+                    
+                    if (readData.success) {
+                        let found = null;
+                        const target = (aiData.product_name || "").toLowerCase();
+                        for (let row of readData.data) {
+                            if ((row[0] && row[0].toLowerCase() === target) || (row[1] && row[1].toLowerCase().includes(target))) { found = row; break; }
+                        }
+                        
+                        if (found) {
+                            const title = found[1] || 'Без названия';
+                            const price = found[6] || 'не указана';
+                            const promoPrice = found[8] || 'нет';
+                            const promoDate = found[9] || '';
+                            
+                            let answer = `<div class="msg msg-ai" style="background: rgba(168, 218, 220, 0.05); border-color: var(--accent);"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>📊 <b>Информация по "${title}":</b><br>`;
+                            answer += `• Обычная цена: ${price} ₽<br>`;
+                            
+                            if (promoPrice !== 'нет' && promoDate) {
+                                const d = new Date(promoDate);
+                                const now = new Date();
+                                answer += `• Акция: <span style="color:#ff4500; font-weight:bold;">${promoPrice} ₽</span><br>`;
+                                if (d > now) {
+                                    const diff = Math.floor((d - now) / (1000 * 60 * 60));
+                                    answer += `• Заканчивается: <b>${d.toLocaleString('ru-RU')}</b><br><i>(Осталось часов: ~${diff})</i>`;
+                                } else {
+                                    answer += `• Таймер: <i>(⚠️ Акция уже истекла)</i>`;
+                                }
+                            } else {
+                                answer += `• Активных акций нет.`;
+                            }
+                            answer += `</div>`;
+                            
+                            chatBox.innerHTML += answer;
+                            updateLogStatus(logId, 'success', '✅ НАЙДЕНО', `Вывели инфу по ${title}`);
+                        } else {
+                            chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: #f44336; display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Курс "${aiData.product_name}" не найден в базе.</div>`;
+                            updateLogStatus(logId, 'error', '❌ НЕ НАЙДЕНО', 'Курс не найден');
+                        }
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
                 } else if (aiData.action !== 'error') {
                     updateLogStatus(logId, 'pending', '🟡 ЖДЕТ ОТВЕТА', 'Нажмите Подтвердить или Отмена');
                 }
