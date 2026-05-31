@@ -83,6 +83,7 @@
             }
         }
 /* === СТИЛИ ДЛЯ ВСПЛЫВАЮЩИХ ПОДСКАЗОК === */
+        /* === СТИЛИ ДЛЯ ВСПЛЫВАЮЩИХ ПОДСКАЗОК === */
         .hint-popup {
             display: none; 
             position: absolute; 
@@ -90,13 +91,30 @@
             right: 30px; 
             width: 350px; 
             max-width: 90vw;
-            background: #0f2032; /* Плотный, абсолютно непрозрачный темно-синий цвет */
+            max-height: 75vh; /* Ограничиваем высоту (не больше 75% экрана) */
+            overflow-y: auto; /* Включаем прокрутку внутри окна */
+            background: #0f2032; 
             border: 1px solid var(--accent); 
             border-radius: 20px; 
             padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8); /* Сделал тень чуть гуще, чтобы окно сильнее выделялось */
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8); 
             z-index: 1000; 
             color: var(--text-main);
+        }
+
+        /* Красивый тонкий ползунок прокрутки для подсказки */
+        .hint-popup::-webkit-scrollbar { width: 4px; }
+        .hint-popup::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        /* === ИДЕАЛЬНО ДЛЯ ТЕЛЕФОНОВ === */
+        @media screen and (max-width: 600px) {
+            .hint-popup {
+                right: 50%;
+                transform: translateX(50%); /* Центрируем ровно посередине экрана */
+                width: 92vw;
+                top: 65px;
+                padding: 15px; /* Чуть уменьшаем отступы для экономии места */
+            }
         }
         .hint-popup select {
             width: 100%; 
