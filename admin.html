@@ -19,7 +19,7 @@
         #admin-dashboard { display: none; width: 100%; height: 100vh; padding: 30px; gap: 30px; max-width: 1400px; }
         .panel { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 30px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         .panel-header { padding: 20px 30px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; letter-spacing: 3px; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
-        .chat-section { flex: 2; }
+        .chat-section { flex: 2; position: relative; }
         #chat-messages { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         .msg { max-width: 80%; padding: 15px 20px; border-radius: 20px; font-size: 14px; line-height: 1.5; }
         .msg-ai { align-self: flex-start; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
@@ -82,6 +82,52 @@
                 max-width: 95%; /* Расширяем сообщения, чтобы влезало больше текста */
             }
         }
+/* === СТИЛИ ДЛЯ ВСПЛЫВАЮЩИХ ПОДСКАЗОК === */
+        .hint-popup {
+            display: none; 
+            position: absolute; 
+            top: 75px; 
+            right: 30px; 
+            width: 350px; 
+            max-width: 90vw;
+            background: var(--glass); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--accent); 
+            border-radius: 20px; 
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            color: var(--text-main);
+        }
+        }
+        .hint-popup select {
+            width: 100%; 
+            background: rgba(0,0,0,0.4); 
+            color: var(--accent); 
+            border: 1px solid var(--border);
+            padding: 12px; 
+            border-radius: 12px; 
+            margin-bottom: 15px; 
+            outline: none; 
+            font-family: inherit; 
+            font-size: 13px; 
+            font-weight: 600; 
+            cursor: pointer;
+        }
+        .hint-popup select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        .hint-content { font-size: 12px; line-height: 1.5; }
+        .hint-list { list-style: none; padding: 0; margin: 0 0 15px 0; }
+        .hint-list li { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .hint-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .hint-list span.icon { font-size: 15px; margin-right: 8px; display: inline-block; transform: translateY(2px); }
+        .hint-list strong { color: var(--accent); letter-spacing: 0.5px; }
+        .hint-examples { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border-left: 3px solid var(--accent); }
+        .hint-examples div { margin-bottom: 8px; font-style: italic; opacity: 0.9; }
+        .hint-examples div:last-child { margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -93,7 +139,36 @@
     </div>
     <div id="admin-dashboard">
         <div class="panel chat-section">
-            <div class="panel-header"><span>ИИ АДМИНИСТРАТОР</span><span style="opacity: 0.5;">v.1.0</span></div>
+            <div class="panel-header">
+                <span>ИИ АДМИНИСТРАТОР <span style="opacity: 0.5; margin-left: 5px;">v.1.0</span></span>
+                <button id="btn-hints" class="ctrl-btn" onclick="toggleHints(event)" title="Шпаргалка команд">💡</button>
+            </div>
+
+            <!-- ВСПЛЫВАЮЩЕЕ ОКНО ПОДСКАЗОК -->
+            <div id="hint-popup" class="hint-popup">
+                <select id="hint-selector">
+                    <option value="course">Создание и редактирование курса</option>
+                    <!-- В будущем сюда можно добавить другие разделы -->
+                </select>
+                
+                <div id="hint-course" class="hint-content">
+                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 12px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">📍 Точные названия областей:</div>
+                    <ul class="hint-list">
+                        <li><span class="icon">🏷️</span> <strong>Название</strong> ➔ Главное имя курса.</li>
+                        <li><span class="icon">📋</span> <strong>Краткое описание</strong> ➔ Текст для маленькой карточки на главной странице.</li>
+                        <li><span class="icon">📖</span> <strong>Внутреннее описание</strong> ➔ Большой подробный текст внутри самой страницы курса.</li>
+                        <li><span class="icon">🖼️</span> <strong>Фото / Картинка</strong> ➔ Обложка курса (ИИ сам выдаст кнопку для загрузки файла).</li>
+                        <li><span class="icon">💰</span> <strong>Основная цена</strong> ➔ Стандартный ценник.</li>
+                        <li><span class="icon">🔥</span> <strong>Скидочная цена</strong> ➔ Акция с таймером (нужно указать часы/дни).</li>
+                    </ul>
+                    <div class="hint-examples">
+                        <div style="font-size: 10px; color: var(--accent); font-style: normal; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">💬 Примеры:</div>
+                        <div>"Поменяй краткое описание у курса Прана на: Отличный старт для новичков."</div>
+                        <div>"Обнови внутреннее описание у Анти-стресс на: [весь твой большой текст]"</div>
+                        <div>"Поменяй фото у Базового курса"</div>
+                    </div>
+                </div>
+            </div>
             <div id="chat-messages">
                 <div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Система инициализирована. База данных подключена. Что будем менять?</div>
             </div>
@@ -599,6 +674,23 @@
             
             resetInput();
         };
+    // === ЛОГИКА ОКНА ПОДСКАЗОК ===
+        function toggleHints(e) {
+            e.stopPropagation(); // Останавливаем клик, чтобы он не улетел в документ
+            const popup = document.getElementById('hint-popup');
+            // Переключаем: если открыто — закрыть, если закрыто — открыть
+            popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Закрытие при клике в любую пустую область
+        document.addEventListener('click', function(e) {
+            const popup = document.getElementById('hint-popup');
+            const btn = document.getElementById('btn-hints');
+            // Если окно открыто, и мы кликнули НЕ по окну и НЕ по кнопке открытия — закрываем
+            if (popup && popup.style.display === 'block' && !popup.contains(e.target) && e.target !== btn) {
+                popup.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
