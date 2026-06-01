@@ -109,11 +109,11 @@ window.sendChat = async function() {
                     btnName = `Программа: ${course.title}`;
                 }
 
-                // Оставляем жесткие ссылки для трех базовых программ
-                if(id.toLowerCase() === 'antistress') { btnName = 'Программа: Анти-стресс'; link = 'https://inoedyhanie.vercel.app/antistress.html'; }
-                if(id.toLowerCase() === 'vostanovlenie') { btnName = 'Программа: Восстановление'; link = 'https://inoedyhanie.vercel.app/vostanovlenie.html'; }
-                if(id.toLowerCase() === 'prana') { btnName = 'Программа: Прана'; link = 'https://inoedyhanie.vercel.app/prana.html'; }
-
+                // Оставляем красивые названия для базовых программ, но ссылки направляем на единую универсальную страницу
+                if(id.toLowerCase() === 'antistress') { btnName = 'Программа: Анти-стресс'; link = '/course.html?id=antistress'; }
+                if(id.toLowerCase() === 'vostanovlenie') { btnName = 'Программа: Восстановление'; link = '/course.html?id=vostanovlenie'; }
+                if(id.toLowerCase() === 'prana') { btnName = 'Программа: Прана'; link = '/course.html?id=prana'; }
+                
                 return window.createChatBtn(btnName, link);
             });
 
