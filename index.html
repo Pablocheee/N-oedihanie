@@ -620,6 +620,83 @@
     width: 100%;
     height: 100%;
 }
+/* === СТИЛИ ДЛЯ ПОДВАЛА (FOOTER) === */
+    .site-footer {
+        background: rgba(9, 21, 34, 0.9);
+        border-top: 1px solid var(--border);
+        padding: 50px 5% 30px;
+        margin-top: 80px;
+        color: var(--text-muted);
+        font-size: 13px;
+        position: relative;
+        z-index: 10;
+    }
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .footer-col h4 {
+        color: var(--accent);
+        margin-bottom: 20px;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    .footer-col p { margin-bottom: 10px; line-height: 1.6; }
+    .footer-links a {
+        display: block;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 12px;
+        transition: 0.3s;
+        border-bottom: 1px dashed transparent;
+        width: max-content;
+    }
+    .footer-links a:hover {
+        color: var(--text-main);
+        border-bottom: 1px dashed var(--accent);
+    }
+    .footer-bottom {
+        text-align: center;
+        padding-top: 30px;
+        margin-top: 40px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        font-size: 11px;
+        opacity: 0.6;
+    }
+
+    /* === СТИЛИ ДЛЯ ЮРИДИЧЕСКИХ ДОКУМЕНТОВ === */
+    .legal-modal {
+        position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        z-index: 4000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s;
+    }
+    .legal-content {
+        background: #0d1b2a; border: 1px solid var(--accent); border-radius: 24px;
+        width: 100%; max-width: 800px; height: 85vh; overflow-y: auto;
+        padding: 40px; text-align: left; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .close-legal {
+        position: absolute; top: 20px; right: 30px; font-size: 35px; cursor: pointer; color: var(--text-muted); transition: 0.3s; line-height: 1; font-weight: 200;
+    }
+    .close-legal:hover { color: #f44336; transform: scale(1.1); }
+    .legal-content h2 { color: var(--accent); margin-bottom: 30px; font-size: 24px; text-align: center; font-weight: 400; letter-spacing: 1px; }
+    .legal-content h3 { color: #fff; margin: 25px 0 15px; font-size: 16px; font-weight: 600; }
+    .legal-content p, .legal-content li { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.7; font-weight: 300; }
+    .legal-content ul { padding-left: 20px; margin-bottom: 15px; }
+    
+    /* Скроллбар для документов */
+    .legal-content::-webkit-scrollbar { width: 6px; }
+    .legal-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+    
+    @media screen and (max-width: 768px) {
+        .legal-content { padding: 30px 20px; height: 90vh; }
+        .footer-grid { text-align: center; }
+        .footer-links a { margin: 0 auto 12px; }
+    }
         
 </style>
     <meta property="og:image" content="https://ibb.co/dsZmvsqp">
@@ -1166,6 +1243,23 @@ changeSlogan();
 // И ставим на интервал
 setInterval(changeSlogan, 6000);
 
+// === ЛОГИКА ОТКРЫТИЯ ЮРИДИЧЕСКИХ ДОКУМЕНТОВ ===
+function openLegal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    // Небольшая задержка для плавного появления
+    setTimeout(() => { modal.style.opacity = '1'; }, 10);
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLegal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.opacity = '0';
+    setTimeout(() => { 
+        modal.style.display = 'none'; 
+        document.body.style.overflow = 'auto';
+    }, 400); // Ждем окончания CSS анимации
+}
 </script>
 <script src="/victory-chat.js"></script>
 <script>
@@ -1220,6 +1314,122 @@ setInterval(changeSlogan, 6000);
         }
     });
 </script>
+<footer class="site-footer">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="logo" style="justify-content: flex-start; margin-bottom: 20px;">
+                <span class="logo-composite">ИN</span><span class="logo-bridge">O</span><span class="logo-bridge">E</span>
+                <span class="logo-thin" style="font-size: 16px;">ДЫХАНИЕ</span>
+            </div>
+            <p>Дыхательные практики для ясности ума и спокойствия. Трансформация состояния на клеточном уровне.</p>
+        </div>
+        
+        <div class="footer-col footer-links">
+            <h4>Документы</h4>
+            <a href="#" onclick="openLegal('modal-oferta'); return false;">Договор-оферта</a>
+            <a href="#" onclick="openLegal('modal-refund'); return false;">Политика возврата</a>
+            <a href="#" onclick="openLegal('modal-privacy'); return false;">Политика обработки ПД</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Контакты и Реквизиты</h4>
+            <p><b>E-mail:</b> <a href="mailto:dyuzhakinaviktoria@gmail.com" style="color: var(--accent); text-decoration: none;">dyuzhakinaviktoria@gmail.com</a></p>
+            <p><b>Telegram:</b> <a href="https://t.me/vika_breathe" target="_blank" style="color: var(--accent); text-decoration: none;">@vika_breathe</a></p>
+            <div style="margin-top: 15px; font-size: 11px; opacity: 0.7; line-height: 1.5;">
+                <p>Самозанятая Дюжакина Виктория Сергеевна</p>
+                <p>ИНН Банка: 7710140679 / КПП: 771301001</p>
+                <p>Р/С: 40817810000021921486 (АО "ТБанк")</p>
+                <p>К/С: 30101810145250000974 / БИК: 044525974</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2026 ИNOE ДЫХАНИЕ. Все права защищены.
+    </div>
+</footer>
+<div id="modal-oferta" class="legal-modal">
+    <div class="legal-content">
+        <div class="close-legal" onclick="closeLegal('modal-oferta')">×</div>
+        <h2>Договор-оферта на оказание информационно-консультационных услуг</h2>
+        
+        <h3>1. Общие положения</h3>
+        <p>1.1. Настоящий документ является публичной офертой Самозанятой Дюжакиной Виктории Сергеевны (далее — Исполнитель) и содержит все существенные условия договора на оказание информационно-консультационных услуг (предоставление доступа к онлайн-курсам и материалам).</p>
+        <p>1.2. Акцептом (полным и безоговорочным принятием) условий настоящей оферты считается осуществление Заказчиком 100% оплаты стоимости выбранной услуги на сайте.</p>
+
+        <h3>2. Предмет договора</h3>
+        <p>2.1. Исполнитель обязуется оказать Заказчику услуги по предоставлению удаленного доступа к цифровым материалам, видеоурокам и прямым эфирам (далее — Курс), а Заказчик обязуется оплатить эти услуги в порядке, установленном настоящим Договором.</p>
+
+        <h3>3. Порядок оформления заказа и предоставления услуг</h3>
+        <p>3.1. Заказчик самостоятельно выбирает Курс на Сайте и оформляет заказ.</p>
+        <p>3.2. Доступ к материалам (Доставка цифрового товара) предоставляется Заказчику автоматически путем направления ссылки на закрытую платформу/канал на указанный при оформлении заказа e-mail или мессенджер Telegram.</p>
+        <p>3.3. Услуга считается оказанной в полном объеме с момента предоставления Заказчику доступа к материалам Курса.</p>
+
+        <h3>4. Стоимость услуг и порядок оплаты</h3>
+        <p>4.1. Актуальная стоимость услуг указана на страницах Сайта.</p>
+        <p>4.2. Оплата производится в размере 100% предоплаты безналичным расчетом через платежный сервис Робокасса (банковскими картами, электронными деньгами и иными доступными способами).</p>
+
+        <h3>5. Реквизиты Исполнителя</h3>
+        <p>Дюжакина Виктория Сергеевна<br>
+        Банк: АО "ТБанк"<br>
+        Р/С: 40817810000021921486<br>
+        ИНН Банка: 7710140679 / КПП: 771301001<br>
+        БИК: 044525974 / К/С: 30101810145250000974<br>
+        Email: dyuzhakinaviktoria@gmail.com</p>
+    </div>
+</div>
+
+<div id="modal-refund" class="legal-modal">
+    <div class="legal-content">
+        <div class="close-legal" onclick="closeLegal('modal-refund')">×</div>
+        <h2>Условия возврата и отказа от покупки</h2>
+        
+        <h3>1. Общие условия возврата</h3>
+        <p>1.1. Покупатель вправе отказаться от услуги и запросить возврат денежных средств до момента получения доступа к цифровым материалам курса, а также в процессе оказания услуги, если доступ к материалам не был предоставлен в полном объеме или услуга оказалась ненадлежащего качества.</p>
+        <p>1.2. Так как предметом договора является предоставление доступа к цифровому контенту, после фактического получения доступа к материалам курса услуга считается оказанной, и возврат средств осуществляется только в случаях, предусмотренных Законодательством РФ.</p>
+
+        <h3>2. Пошаговый алгоритм возврата средств</h3>
+        <p>2.1. Для осуществления возврата Покупателю необходимо направить официальное обращение на электронную почту Исполнителя: <strong style="color:var(--accent);">dyuzhakinaviktoria@gmail.com</strong>.</p>
+        <p>2.2. В теме письма необходимо указать: «Возврат средств по заказу № [номер]».</p>
+        <p>2.3. В самом письме следует указать: ФИО плательщика, дату оплаты, сумму, название курса, а также описать причину возврата.</p>
+
+        <h3>3. Сроки обработки и возврата</h3>
+        <p>3.1. Обращение Покупателя обрабатывается администрацией в течение 3 (трех) рабочих дней с момента получения письма.</p>
+        <p>3.2. В случае положительного решения, денежные средства возвращаются Покупателю в течение 10 (десяти) календарных дней с момента одобрения возврата.</p>
+
+        <h3>4. Важное условие по комиссиям</h3>
+        <p>4.1. Возврат денежных средств осуществляется на ту же банковскую карту или счет, с которых производилась первоначальная оплата.</p>
+        <p>4.2. <strong>Возврат производится в полном объеме. Удержание комиссии платежных систем (включая сервис Робокасса) или банков с Покупателя не производится.</strong> Все расходы на транзакции по возврату Исполнитель берет на себя.</p>
+    </div>
+</div>
+
+<div id="modal-privacy" class="legal-modal">
+    <div class="legal-content">
+        <div class="close-legal" onclick="closeLegal('modal-privacy')">×</div>
+        <h2>Политика обработки персональных данных</h2>
+        
+        <h3>1. Общие положения</h3>
+        <p>1.1. Настоящая политика определяет порядок обработки и защиты персональных данных пользователей сайта. Оформляя заказ на сайте, Пользователь предоставляет согласие на обработку своих персональных данных.</p>
+
+        <h3>2. Состав собираемых данных</h3>
+        <p>2.1. Исполнитель собирает следующие данные: Имя, адрес электронной почты (e-mail), номер телефона, контакт в мессенджере Telegram.</p>
+
+        <h3>3. Цели сбора данных</h3>
+        <p>3.1. Персональные данные используются исключительно для:
+            <ul>
+                <li>Предоставления доступа к оплаченным курсам и услугам;</li>
+                <li>Обратной связи с клиентом, направления уведомлений о статусе заказа;</li>
+                <li>Направления чеков об оплате.</li>
+            </ul>
+        </p>
+
+        <h3>4. Защита и передача данных</h3>
+        <p>4.1. Исполнитель гарантирует конфиденциальность персональных данных.</p>
+        <p>4.2. Данные Покупателей не передаются третьим лицам, за исключением сервисов, обеспечивающих работоспособность сайта (например, платежный шлюз Робокасса для проведения оплаты).</p>
+
+        <h3>5. Отзыв согласия</h3>
+        <p>5.1. Пользователь в любой момент может отозвать свое согласие на обработку данных, написав требование на электронную почту: <strong style="color:var(--accent);">dyuzhakinaviktoria@gmail.com</strong>. В этом случае данные удаляются из базы Исполнителя в течение 3 рабочих дней.</p>
+    </div>
+</div>
 </body>
 </html>
 
