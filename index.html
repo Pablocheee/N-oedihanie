@@ -987,6 +987,19 @@
                     // === 3. ЛОГИКА ДЛЯ КУРСОВ (СТАНДАРТ) ===
                     else {
                         const displayCategory = row[2] ? row[2].trim() : 'ПРАКТИКА';
+                        
+                        const priceNum = parseInt(row[6]) || 0;
+                        const promoPriceNum = parseInt(row[8]) || 0;
+                        const promoEndStr = row[9] || '';
+                        
+                        // Формируем блок с ценой
+                        let priceHtmlBlock = '';
+                        if (promoPriceNum > 0 && promoEndStr && new Date().getTime() < new Date(promoEndStr).getTime()) {
+                            priceHtmlBlock = `<div style="margin-bottom: 20px;"><s style="font-size: 11px; opacity: 0.5; margin-right: 6px;">${priceNum} ₽</s> <span style="color: #ff4500; font-weight: bold; font-size: 16px;">${promoPriceNum} ₽</span></div>`;
+                        } else if (priceNum > 0) {
+                            priceHtmlBlock = `<div style="margin-bottom: 20px; font-weight: bold; font-size: 14px; opacity: 0.9;">${priceNum} ₽</div>`;
+                        }
+
                         const cardHTML = `
                             <div class="program-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
                                 <div style="text-align: center;">
@@ -994,7 +1007,8 @@
                                         <span style="font-size: 10px; letter-spacing: 2px; color: var(--accent, #a8dadc); text-transform: uppercase; font-weight: 700;">${displayCategory}</span>
                                     </div>
                                     <h3 style="font-size: 22px; font-weight: 400; margin-bottom: 15px; color: #f1faee; line-height: 1.4;">${title}</h3>
-                                    <p style="font-size: 13px; opacity: 0.6; line-height: 1.6; margin-bottom: 25px; min-height: 60px;">${shortDesc}</p>
+                                    <p style="font-size: 13px; opacity: 0.6; line-height: 1.6; margin-bottom: 15px; min-height: 60px;">${shortDesc}</p>
+                                    ${priceHtmlBlock}
                                 </div>
                                 <div style="display: flex; justify-content: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; width: 100%;">
                                     <a href="/course.html?id=${id.toLowerCase()}" class="btn-main" style="text-decoration: none; display: inline-block; padding: 12px 40px; border: 1px solid var(--accent, #a8dadc); color: #fff; border-radius: 50px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; background: rgba(168, 218, 220, 0.05); text-align: center; width: 100%; max-width: 220px;">
@@ -1175,18 +1189,25 @@ setInterval(changeSlogan, 6000);
                     
                     const id = row[0];
                     const title = row[1];
-                    const promoPrice = parseInt(row[8]) || 0; // Колонка I
-                    const promoEndTimeStr = row[9] || '';     // Колонка J
+                    const oldPrice = parseInt(row[6]) || 0;   // Колонка G (обычная цена)
+                    const promoPrice = parseInt(row[8]) || 0; // Колонка I (скидка)
+                    const promoEndTimeStr = row[9] || '';     // Колонка J (таймер)
 
                     if (promoPrice > 0 && promoEndTimeStr) {
                         const endTime = new Date(promoEndTimeStr).getTime();
                         if (now < endTime) {
-                            // АКЦИЯ НАЙДЕНА! Включаем бар и заполняем данные
+                            // АКЦИЯ НАЙДЕНА!
                             const promoBar = document.getElementById('global-promo-bar');
                             const promoText = document.getElementById('promo-text');
                             const promoLink = document.getElementById('promo-link');
                             
-                            promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за <span style="font-size: 14px; font-weight: bold;">${promoPrice} ₽</span>`;
+                            // Вывод зачеркнутой цены
+                            let priceHtml = `<span style="font-size: 14px; font-weight: bold;">${promoPrice} ₽</span>`;
+                            if (oldPrice > 0 && oldPrice > promoPrice) {
+                                priceHtml = `<s style="font-size: 11px; color: rgba(255,255,255,0.6); margin-right: 6px;">${oldPrice} ₽</s>` + priceHtml;
+                            }
+                            
+                            promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за ${priceHtml}`;
                             promoLink.href = `/course.html?id=${id}`;
                             promoBar.style.display = 'block';
                             break; // Останавливаем поиск (показываем только одну акцию)
