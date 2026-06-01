@@ -689,8 +689,9 @@
     .legal-content ul { padding-left: 20px; margin-bottom: 15px; }
     
     /* Скроллбар для документов */
-    .legal-content::-webkit-scrollbar { width: 6px; }
-    .legal-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+    .legal-content::-webkit-scrollbar { width: 4px; } /* Чуть сузил, так выглядит еще изящнее */
+    .legal-content::-webkit-scrollbar-track { margin: 24px 0; background: transparent; } /* Отступ от закругленных краев */
+    .legal-content::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     
     @media screen and (max-width: 768px) {
         .legal-content { padding: 30px 20px; height: 90vh; }
