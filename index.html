@@ -1345,7 +1345,7 @@ function closeLegal(modalId) {
         &copy; 2026 ИNOE ДЫХАНИЕ. Все права защищены.
     </div>
 </footer>
-<div id="modal-oferta" class="legal-modal">
+<div id="modal-oferta" class="legal-modal" onclick="if(event.target === this) closeLegal('modal-oferta')">
     <div class="legal-content">
         <div class="close-legal" onclick="closeLegal('modal-oferta')">×</div>
         <h2>Договор-оферта на оказание информационно-консультационных услуг</h2>
@@ -1373,7 +1373,7 @@ function closeLegal(modalId) {
     </div>
 </div>
 
-<div id="modal-refund" class="legal-modal">
+<div id="modal-refund" class="legal-modal" onclick="if(event.target === this) closeLegal('modal-refund')">
     <div class="legal-content">
         <div class="close-legal" onclick="closeLegal('modal-refund')">×</div>
         <h2>Условия возврата и отказа от покупки</h2>
@@ -1397,7 +1397,7 @@ function closeLegal(modalId) {
     </div>
 </div>
 
-<div id="modal-privacy" class="legal-modal">
+<div id="modal-privacy" class="legal-modal" onclick="if(event.target === this) closeLegal('modal-privacy')">
     <div class="legal-content">
         <div class="close-legal" onclick="closeLegal('modal-privacy')">×</div>
         <h2>Политика обработки персональных данных</h2>
