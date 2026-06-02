@@ -804,17 +804,41 @@
         transform: translateX(-50%) translateZ(0) !important;
         will-change: transform, opacity;
         backface-visibility: hidden;
-        white-space: nowrap; /* Жестко фиксируем текст в одну строку на десктопе, чтобы размер не прыгал */
+        white-space: nowrap;
+        opacity: 1 !important; /* ФИКС ДЛЯ ПК: базовая прозрачность всегда 1 */
     }
 
-    /* На мобилке разрешаем перенос, чтобы плашка не вылезала за экран */
+    /* На мобилке разрешаем перенос */
     @media screen and (max-width: 768px) {
         #global-promo-bar {
             white-space: normal; 
         }
     }
 
-    /* Замедленная анимация мягкого выплывания (1.5 сек вместо 0.8) */
+    #promo-text, #promo-text b, #promo-text span {
+        /* Смягчаем "ядовитый" красный цвет, чтобы убрать пиксельную лесенку */
+        color: rgba(255, 80, 20, 0.95) !important;
+        font-weight: 600 !important; 
+        
+        /* Усиленное сглаживание шрифтов */
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+        
+        /* Микро-тень для гладких краев цифр и букв */
+        -webkit-text-stroke: 0.3px rgba(255, 69, 0, 0.2) !important;
+        text-shadow: 0 0 2px rgba(255, 69, 0, 0.25) !important;
+    }
+
+    /* Защита зачеркнутой цены (чтобы старая цена не стала красной и жирной) */
+    #promo-text s {
+        -webkit-text-stroke: 0 !important;
+        text-shadow: none !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+        font-weight: 400 !important;
+    }
+
+    /* Анимация: убрали багованный forwards, так как базовая opacity уже 1 */
     @keyframes promoFadeIn {
         0% { opacity: 0; transform: translateX(-50%) translateY(-25px) translateZ(0); }
         100% { opacity: 1; transform: translateX(-50%) translateY(0) translateZ(0); }
@@ -1327,26 +1351,25 @@ function closeLegal(modalId) {
                             const promoLink = document.getElementById('promo-link');
                             
                             // Вывод зачеркнутой цены
-                            let priceHtml = `<span style="font-size: 14px; font-weight: bold;">${promoPrice} ₽</span>`;
+                            let priceHtml = `<span style="font-size: 14px; font-weight: 700;">${promoPrice} ₽</span>`;
                             if (oldPrice > 0 && oldPrice > promoPrice) {
-                                priceHtml = `<s style="font-size: 11px; color: rgba(255,255,255,0.6); margin-right: 6px;">${oldPrice} ₽</s>` + priceHtml;
+                                priceHtml = `<s style="font-size: 11px; margin-right: 6px;">${oldPrice} ₽</s>` + priceHtml;
                             }
                             
                             promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за ${priceHtml}`;
                             promoLink.href = `/course.html?id=${id}`;
                             
-                            // === МАГИЯ РАЗМЕРА И ПЛАВНОСТИ ===
-                            // 1. Делаем плашку прозрачной
-                            promoBar.style.opacity = '0';
+                            // === МАГИЯ РАЗМЕРА И ПЛАВНОСТИ (ФИКС ДЛЯ ПК) ===
+                            // 1. Ставим прозрачность 1 (анимация сама корректно начнет с 0)
+                            promoBar.style.opacity = '1'; 
                             
-                            // Умное включение: на телефонах flex (чтобы кнопка была внизу), на ПК - block
+                            // Умное включение
                             promoBar.style.display = window.innerWidth <= 768 ? 'flex' : 'block';
-                            
                             promoBar.style.animation = 'none';
                             
-                            // 2. Ждем 50мс, пока размер "устаканится", и запускаем замедленную анимацию (1.5s)
+                            // 2. Ждем 50мс и запускаем анимацию БЕЗ конфликтующего forwards
                             setTimeout(() => {
-                                promoBar.style.animation = 'promoFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse-border 2.5s infinite 1.5s';
+                                promoBar.style.animation = 'promoFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1), pulse-border 2.5s infinite 1.5s';
                             }, 50);
                             
                             break; // Останавливаем поиск
