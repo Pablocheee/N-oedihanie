@@ -286,7 +286,7 @@
                             <br>${title}
                         `;
                         if (priceBtn) priceBtn.innerHTML = `— <span style="text-decoration: line-through; opacity: 0.5; font-size: 12px; margin-right: 5px;">${price} ₽</span> <span style="color: #ff4500;">${promoPrice} ₽</span>`;
-                    }
+                    } else { // <--- ВОТ ЗДЕСЬ НЕ ХВАТАЛО ELSE
                         // Обычное отображение
                         nameContainer.innerText = title;
                         if (price > 0) {
