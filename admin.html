@@ -556,28 +556,32 @@
             }
         }
 
-        async function undoLast() {
-            if (!window.lastUpdate) return;
-            const { logId, range, oldText } = window.lastUpdate;
-            document.getElementById('btn-undo').classList.add('disabled');
-            updateLogStatus(logId, 'pending', '⏳ ОТМЕНА...', 'Возврат старых данных...');
-            saveAdminState();
-            try {
-                // Защита: Если отменяем сразу две ячейки (цену или акцию), Гугл ждет массив
-                const vals = Array.isArray(oldText) ? oldText : [oldText];
-                await fetch('/api/sheets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update', sheetName: 'Products', range: range, values: vals }) });
-                
-                updateLogStatus(logId, 'error', '↩️ ОТМЕНЕНО', 'Возвращены старые данные');
-                const chatBox = document.getElementById('chat-messages');
-                chatBox.innerHTML += `<div class="msg msg-ai"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>Шаг назад выполнен. Старые данные возвращены!</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-                
-                document.getElementById('btn-redo').classList.remove('disabled');
-                saveAdminState();
-            } catch (error) {
-                updateLogStatus(logId, 'error', '❌ ОШИБКА ОТМЕНЫ', error.message);
-                saveAdminState();
+        function cancelAction(logId) {
+            // Удаляем команду из памяти
+            if (window.pendingCommands[logId]) {
+                delete window.pendingCommands[logId];
             }
+
+            // Обновляем статус в боковом меню логов на красный
+            updateLogStatus(logId, 'error', '🚫 ОТМЕНЕНО', 'Пользователь отменил действие');
+
+            // Находим сообщение в чате и заменяем кнопки на текст
+            const msgDiv = document.getElementById('ai-msg-' + logId);
+            if (msgDiv) {
+                const btnContainer = msgDiv.querySelector('.action-buttons');
+                if (btnContainer) {
+                    btnContainer.outerHTML = '<div style="margin-top: 10px; color: #f44336; font-size: 12px; font-weight: bold;">[Действие отменено]</div>';
+                }
+                
+                // Если там было поле для загрузки фото, прячем его тоже
+                const uploadWrapper = document.getElementById('upload-wrapper-' + logId);
+                if (uploadWrapper) {
+                    uploadWrapper.style.display = 'none';
+                }
+            }
+
+            // Сохраняем состояние чата
+            saveAdminState();
         }
 
         async function redoLast() {
