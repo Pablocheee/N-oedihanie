@@ -313,7 +313,7 @@
                 let aiMessageHtml = `<div class="msg msg-ai" id="ai-msg-${logId}"><strong style="color: var(--accent); display: block; margin-bottom: 5px; font-size: 11px;">ORDO AXIO</strong>${aiData.reply}`;
                 
                 // Для запроса информации (get_info) не показываем кнопки подтверждения!
-                if (aiData.action !== 'unknown' && aiData.action !== 'error' && aiData.action !== 'get_info') {
+                if (aiData.action !== 'unknown' && aiData.action !== 'error' && aiData.action !== 'get_info' && aiData.action !== 'help') {
                     window.pendingCommands[logId] = aiData;
 
                     if (aiData.action === 'update_image' || aiData.action === 'create_product') {
@@ -340,7 +340,7 @@
                 chatBox.innerHTML += aiMessageHtml;
                 chatBox.scrollTop = chatBox.scrollHeight;
                 
-                if (aiData.action === 'unknown') {
+                if (aiData.action === 'unknown' || aiData.action === 'help') {
                     updateLogStatus(logId, 'success', '💬 ОТВЕТ ИИ', text);
                 } else if (aiData.action === 'get_info') {
                     // === ЛОГИКА ЧТЕНИЯ ИНФОРМАЦИИ ИЗ БАЗЫ ===
