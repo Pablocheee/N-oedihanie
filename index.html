@@ -791,46 +791,33 @@
 </div>
 
 <style>
+    /* Базовая пульсация */
     @keyframes pulse-border { 
         0% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.3); } 
         70% { box-shadow: 0 0 0 15px rgba(255, 69, 0, 0); } 
         100% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0); } 
     }
     
-    /* Делаем плашку аккуратной на телефонах */
-    @media screen and (max-width: 768px) {
-    /* Устранение пиксельности плашки акции + ПЛАВНОЕ ПОЯВЛЕНИЕ */
+    /* Устранение пиксельности и настройка плавного выезда */
     #global-promo-bar {
         transform: translateX(-50%) translateZ(0) !important;
         will-change: transform, opacity;
         backface-visibility: hidden;
         white-space: nowrap;
-        opacity: 1 !important; /* ФИКС ДЛЯ ПК: базовая прозрачность всегда 1 */
-    }
-
-    /* На мобилке разрешаем перенос */
-    @media screen and (max-width: 768px) {
-        #global-promo-bar {
-            white-space: normal; 
-        }
+        /* Убрали жесткий opacity !important, чтобы анимация могла дышать */
     }
 
     #promo-text, #promo-text b, #promo-text span {
-        /* Смягчаем "ядовитый" красный цвет, чтобы убрать пиксельную лесенку */
         color: rgba(255, 80, 20, 0.95) !important;
         font-weight: 600 !important; 
-        
-        /* Усиленное сглаживание шрифтов */
         -webkit-font-smoothing: antialiased !important;
         -moz-osx-font-smoothing: grayscale !important;
         text-rendering: optimizeLegibility !important;
-        
-        /* Микро-тень для гладких краев цифр и букв */
         -webkit-text-stroke: 0.3px rgba(255, 69, 0, 0.2) !important;
         text-shadow: 0 0 2px rgba(255, 69, 0, 0.25) !important;
     }
 
-    /* Защита зачеркнутой цены (чтобы старая цена не стала красной и жирной) */
+    /* Защита зачеркнутой цены */
     #promo-text s {
         -webkit-text-stroke: 0 !important;
         text-shadow: none !important;
@@ -838,25 +825,18 @@
         font-weight: 400 !important;
     }
 
-    /* Анимация: убрали багованный forwards, так как базовая opacity уже 1 */
+    /* Анимация выплывания */
     @keyframes promoFadeIn {
         0% { opacity: 0; transform: translateX(-50%) translateY(-25px) translateZ(0); }
         100% { opacity: 1; transform: translateX(-50%) translateY(0) translateZ(0); }
     }
 
-    #promo-text, #promo-text b, #promo-text span {
-        /* Сглаживание шрифтов */
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
-        -webkit-text-stroke: 0.2px rgba(255, 69, 0, 0.15);
-        text-shadow: 0 0 1px rgba(255, 69, 0, 0.2);
-    }
-        @media screen and (max-width: 768px) {
+    /* Мобильная адаптация */
+    @media screen and (max-width: 768px) {
         #global-promo-bar {
+            white-space: normal;
             width: 90% !important;
             padding: 12px 15px !important;
-            /* СТРОКУ display: flex !important; МЫ ОТСЮДА УДАЛИЛИ */
             flex-direction: column !important;
             gap: 10px !important;
             top: 80px !important;
@@ -1359,16 +1339,19 @@ function closeLegal(modalId) {
                             promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за ${priceHtml}`;
                             promoLink.href = `/course.html?id=${id}`;
                             
-                            // === МАГИЯ РАЗМЕРА И ПЛАВНОСТИ (ФИКС ДЛЯ ПК) ===
-                            // 1. Ставим прозрачность 1 (анимация сама корректно начнет с 0)
-                            promoBar.style.opacity = '1'; 
+                            // === МАГИЯ РАЗМЕРА И ПЛАВНОСТИ (ИДЕАЛЬНЫЙ ФИКС) ===
+                            // 1. Делаем плашку невидимой (чтобы не было резкого скачка перед анимацией)
+                            promoBar.style.opacity = '0'; 
                             
-                            // Умное включение
+                            // Умное включение видимости в DOM
                             promoBar.style.display = window.innerWidth <= 768 ? 'flex' : 'block';
                             promoBar.style.animation = 'none';
                             
-                            // 2. Ждем 50мс и запускаем анимацию БЕЗ конфликтующего forwards
+                            // 2. Ждем 50мс и запускаем хитрую связку
                             setTimeout(() => {
+                                // Ставим базовую прозрачность 1 (чтобы после конца анимации плашка осталась на ПК)
+                                promoBar.style.opacity = '1';
+                                // Сама анимация перебьет opacity:1, плавно начнется с 0 и дойдет до конца
                                 promoBar.style.animation = 'promoFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1), pulse-border 2.5s infinite 1.5s';
                             }, 50);
                             
