@@ -786,7 +786,7 @@
 </header>
 
 <div id="global-promo-bar" onclick="document.getElementById('promo-link').click();" style="cursor: pointer; display: none; position: absolute; top: 100px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 90%; background: rgba(255, 69, 0, 0.15); border: 1px solid rgba(255, 69, 0, 0.4); box-shadow: 0 0 15px rgba(255, 69, 0, 0.15); border-radius: 40px; color: #ff4500; text-align: center; padding: 8px 25px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; z-index: 990; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); animation: pulse-border 2s infinite;">
-    <span id="promo-text">🔥 Ищет акцию...</span>
+    <span id="promo-text"></span>
     <a id="promo-link" href="/course.html" style="color: #fff; text-decoration: none; margin-left: 15px; background: #ff4500; padding: 6px 18px; border-radius: 20px; font-weight: bold; font-size: 11px; transition: 0.3s; display: inline-block; pointer-events: none;">ПОСМОТРЕТЬ</a>
 </div>
 
@@ -828,10 +828,11 @@
         -webkit-text-stroke: 0.2px rgba(255, 69, 0, 0.15);
         text-shadow: 0 0 1px rgba(255, 69, 0, 0.2);
     }
+        @media screen and (max-width: 768px) {
         #global-promo-bar {
             width: 90% !important;
             padding: 12px 15px !important;
-            display: flex !important;
+            /* СТРОКУ display: flex !important; МЫ ОТСЮДА УДАЛИЛИ */
             flex-direction: column !important;
             gap: 10px !important;
             top: 80px !important;
@@ -1335,10 +1336,12 @@ function closeLegal(modalId) {
                             promoLink.href = `/course.html?id=${id}`;
                             
                             // === МАГИЯ РАЗМЕРА И ПЛАВНОСТИ ===
-                            // 1. Делаем плашку прозрачной, но включаем display, чтобы браузер 
-                            // успел тихо просчитать ее финальный размер без "скачков"
+                            // 1. Делаем плашку прозрачной
                             promoBar.style.opacity = '0';
-                            promoBar.style.display = 'block';
+                            
+                            // Умное включение: на телефонах flex (чтобы кнопка была внизу), на ПК - block
+                            promoBar.style.display = window.innerWidth <= 768 ? 'flex' : 'block';
+                            
                             promoBar.style.animation = 'none';
                             
                             // 2. Ждем 50мс, пока размер "устаканится", и запускаем замедленную анимацию (1.5s)
