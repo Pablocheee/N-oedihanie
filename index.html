@@ -799,6 +799,24 @@
     
     /* Делаем плашку аккуратной на телефонах */
     @media screen and (max-width: 768px) {
+    /* Устранение пиксельности текста на плашке акции */
+    #global-promo-bar {
+        /* Включаем аппаратное ускорение, сохраняя центровку */
+        transform: translateX(-50%) translateZ(0) !important;
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+
+    #promo-text, #promo-text b, #promo-text span {
+        /* Принудительное сглаживание шрифтов */
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+        
+        /* Микро-тень и микро-обводка под цвет текста (#ff4500) для гладких краев */
+        -webkit-text-stroke: 0.2px rgba(255, 69, 0, 0.15);
+        text-shadow: 0 0 1px rgba(255, 69, 0, 0.2);
+    }
         #global-promo-bar {
             width: 90% !important;
             padding: 12px 15px !important;
