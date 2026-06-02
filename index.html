@@ -1329,15 +1329,20 @@ function closeLegal(modalId) {
                             
                             promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за ${priceHtml}`;
                             promoLink.href = `/course.html?id=${id}`;
-                            // Делаем блок видимым
-                            promoBar.style.display = 'block';
                             
-                            // Сбрасываем старую анимацию и запускаем новую плавную с микро-задержкой (чтобы браузер успел среагировать)
+                            // === МАГИЯ РАЗМЕРА И ПЛАВНОСТИ ===
+                            // 1. Делаем плашку прозрачной, но включаем display, чтобы браузер 
+                            // успел тихо просчитать ее финальный размер без "скачков"
+                            promoBar.style.opacity = '0';
+                            promoBar.style.display = 'block';
                             promoBar.style.animation = 'none';
+                            
+                            // 2. Ждем 50мс, пока размер "устаканится", и запускаем замедленную анимацию (1.5s)
                             setTimeout(() => {
-                                promoBar.style.animation = 'promoFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse-border 2.5s infinite 0.8s';
-                            }, 10);
-                            break; // Останавливаем поиск (показываем только одну акцию)
+                                promoBar.style.animation = 'promoFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse-border 2.5s infinite 1.5s';
+                            }, 50);
+                            
+                            break; // Останавливаем поиск
                         }
                     }
                 }
