@@ -6,6 +6,42 @@
     <title id="page-title">ИNOE ДЫХАНИЕ — Загрузка...</title>
     <style>
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 69, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0); } }
+        /* Премиальная плашка акции на странице курса */
+    #course-promo-badge {
+        display: inline-block;
+        font-size: 12px;
+        background: rgba(255, 69, 0, 0.1);
+        border: 1px solid #ff4500;
+        color: #ff4500;
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+
+        /* Убираем пиксельность (сглаживание) */
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+        -webkit-text-stroke: 0.2px rgba(255, 69, 0, 0.15);
+        text-shadow: 0 0 1px rgba(255, 69, 0, 0.2);
+
+        /* Аппаратное ускорение */
+        transform: translateZ(0);
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+
+        /* Плавное выплывание и затем пульсация */
+        opacity: 0;
+        animation: coursePromoFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse 2.5s infinite 1.2s;
+    }
+
+    /* Анимация мягкого появления */
+    @keyframes coursePromoFadeIn {
+        0% { opacity: 0; transform: translateY(-15px) translateZ(0); }
+        100% { opacity: 1; transform: translateY(0) translateZ(0); }
+    }
         .product-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 5% 60px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; max-width: 1200px; align-items: center; }
         .product-image-wrap { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.4); max-width: 320px; width: 100%; aspect-ratio: 4 / 5; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; }
@@ -244,13 +280,13 @@
                     if (isPromoActive) {
                         // Показываем плашку скидки и перечеркнутую старую цену
                         nameContainer.innerHTML = `
-                            <div style="font-size: 12px; background: rgba(255, 69, 0, 0.1); border: 1px solid #ff4500; color: #ff4500; display: inline-block; padding: 4px 12px; border-radius: 20px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite;">
+                            <div id="course-promo-badge">
                                 🔥 Ограниченная акция
                             </div>
                             <br>${title}
                         `;
                         if (priceBtn) priceBtn.innerHTML = `— <span style="text-decoration: line-through; opacity: 0.5; font-size: 12px; margin-right: 5px;">${price} ₽</span> <span style="color: #ff4500;">${promoPrice} ₽</span>`;
-                    } else {
+                    }
                         // Обычное отображение
                         nameContainer.innerText = title;
                         if (price > 0) {
