@@ -801,16 +801,20 @@
     @media screen and (max-width: 768px) {
     /* Устранение пиксельности плашки акции + ПЛАВНОЕ ПОЯВЛЕНИЕ */
     #global-promo-bar {
-        /* Аппаратное ускорение и позиционирование */
         transform: translateX(-50%) translateZ(0) !important;
         will-change: transform, opacity;
         backface-visibility: hidden;
-        
-        /* Магия: сначала плавный выезд (0.8 сек), а только потом запуск пульсации */
-        animation: promoFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse-border 2.5s infinite 0.8s !important;
+        white-space: nowrap; /* Жестко фиксируем текст в одну строку на десктопе, чтобы размер не прыгал */
     }
 
-    /* Анимация мягкого выплывания сверху вниз */
+    /* На мобилке разрешаем перенос, чтобы плашка не вылезала за экран */
+    @media screen and (max-width: 768px) {
+        #global-promo-bar {
+            white-space: normal; 
+        }
+    }
+
+    /* Замедленная анимация мягкого выплывания (1.5 сек вместо 0.8) */
     @keyframes promoFadeIn {
         0% { opacity: 0; transform: translateX(-50%) translateY(-25px) translateZ(0); }
         100% { opacity: 1; transform: translateX(-50%) translateY(0) translateZ(0); }
