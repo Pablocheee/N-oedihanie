@@ -1329,7 +1329,14 @@ function closeLegal(modalId) {
                             
                             promoText.innerHTML = `🔥 Ограниченное предложение: <b>${title}</b> за ${priceHtml}`;
                             promoLink.href = `/course.html?id=${id}`;
+                            // Делаем блок видимым
                             promoBar.style.display = 'block';
+                            
+                            // Сбрасываем старую анимацию и запускаем новую плавную с микро-задержкой (чтобы браузер успел среагировать)
+                            promoBar.style.animation = 'none';
+                            setTimeout(() => {
+                                promoBar.style.animation = 'promoFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse-border 2.5s infinite 0.8s';
+                            }, 10);
                             break; // Останавливаем поиск (показываем только одну акцию)
                         }
                     }
