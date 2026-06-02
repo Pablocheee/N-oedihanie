@@ -799,21 +799,28 @@
     
     /* Делаем плашку аккуратной на телефонах */
     @media screen and (max-width: 768px) {
-    /* Устранение пиксельности текста на плашке акции */
+    /* Устранение пиксельности плашки акции + ПЛАВНОЕ ПОЯВЛЕНИЕ */
     #global-promo-bar {
-        /* Включаем аппаратное ускорение, сохраняя центровку */
+        /* Аппаратное ускорение и позиционирование */
         transform: translateX(-50%) translateZ(0) !important;
-        will-change: transform;
+        will-change: transform, opacity;
         backface-visibility: hidden;
+        
+        /* Магия: сначала плавный выезд (0.8 сек), а только потом запуск пульсации */
+        animation: promoFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse-border 2.5s infinite 0.8s !important;
+    }
+
+    /* Анимация мягкого выплывания сверху вниз */
+    @keyframes promoFadeIn {
+        0% { opacity: 0; transform: translateX(-50%) translateY(-25px) translateZ(0); }
+        100% { opacity: 1; transform: translateX(-50%) translateY(0) translateZ(0); }
     }
 
     #promo-text, #promo-text b, #promo-text span {
-        /* Принудительное сглаживание шрифтов */
+        /* Сглаживание шрифтов */
         -webkit-font-smoothing: antialiased !important;
         -moz-osx-font-smoothing: grayscale !important;
         text-rendering: optimizeLegibility !important;
-        
-        /* Микро-тень и микро-обводка под цвет текста (#ff4500) для гладких краев */
         -webkit-text-stroke: 0.2px rgba(255, 69, 0, 0.15);
         text-shadow: 0 0 1px rgba(255, 69, 0, 0.2);
     }
