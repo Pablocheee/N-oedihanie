@@ -348,35 +348,42 @@
     function copyWallet() { navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); alert('Адрес скопирован!'); }
 
     async function payWithRobokassa() {
-        const emailInput = document.getElementById('robokassaEmail');
-        let emailParam = '';
-        
-        if (emailInput) {
-            const email = emailInput.value.trim();
-            if (!email || !email.includes('@')) {
-                alert('Пожалуйста, введите корректный Email для получения доступа.');
-                emailInput.style.borderColor = 'var(--accent)';
-                return;
-            }
-            emailParam = `&Email=${encodeURIComponent(email)}`;
-        }
-
-        const merchantLogin = 'YOUR_LOGIN'; // ЗАМЕНИ НА СВОЙ ЛОГИН ИЗ ЛК РОБОКАССЫ
         const price = window.currentCourseData.priceRub; 
         const pageTitle = window.currentCourseData.title;
         
-        fetch('/api/notify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: `💳 *Клик по Робокассе*\nПродукт: ${pageTitle}\nСумма: ${price} руб.` })
-        });
-
-        if (price === 0) {
-            alert('Внимание: В Google Таблице не указана цена для этого курса. Оплата невозможна. Обратитесь в поддержку.');
+        if (!price || price === 0) {
+            alert('Внимание: В таблице не указана цена для этого курса. Оплата невозможна.');
             return;
         }
 
-        window.location.href = `https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=${merchantLogin}&OutSum=${price}&InvId=0&Description=${encodeURIComponent(pageTitle)}${emailParam}&Culture=ru`; 
+        // Блокируем кнопку, чтобы не кликали дважды
+        const btn = document.querySelector('.btn-main-trigger');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ ПОДКЛЮЧЕНИЕ К КАССЕ...';
+        btn.style.pointerEvents = 'none';
+
+        try {
+            // Обращаемся к нашему бэкенду за ссылкой
+            const response = await fetch('/api/pay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseName: pageTitle, price: price })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.paymentUrl) {
+                // Если сервер дал ссылку — переходим в кассу
+                window.location.href = data.paymentUrl;
+            } else {
+                throw new Error(data.error || "Ошибка создания платежа");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+            alert('Сбой при подключении к кассе. Попробуйте еще раз.');
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'auto';
+        }
     }
 
     async function sendToTelegram(event) {
