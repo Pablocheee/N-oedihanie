@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 
 const ROBO_LOGIN = 'Tantraa'; 
-const ROBO_PASS1 = 'WJS6H6d2R98XfQKIrofu'; // Строго ТЕСТОВЫЙ!
+// Вставь сюда ТЕСТОВЫЙ Пароль #1 и я добавил .trim() для защиты от пробелов
+const ROBO_PASS1 = 'nFApbOsn13F9ZDAy44Ve'.trim(); 
 const IS_TEST = 1;
 
 module.exports = async (req, res) => {
@@ -9,9 +10,12 @@ module.exports = async (req, res) => {
 
     try {
         const { courseName, price } = req.body;
+        
         const invId = 0; 
-        const outSum = price.toString(); 
+        // Принудительно делаем формат с копейками, например "5.00"
+        const outSum = parseFloat(price).toFixed(2); 
 
+        // Формула: Login:OutSum:InvId:Pass1
         const signatureString = `${ROBO_LOGIN}:${outSum}:${invId}:${ROBO_PASS1}`;
         const signature = crypto.createHash('md5').update(signatureString).digest('hex');
 
@@ -19,10 +23,9 @@ module.exports = async (req, res) => {
         roboUrl.searchParams.append('MerchantLogin', ROBO_LOGIN);
         roboUrl.searchParams.append('OutSum', outSum);
         roboUrl.searchParams.append('InvId', invId);
-        roboUrl.searchParams.append('Description', `Оплата курса: ${courseName}`);
+        roboUrl.searchParams.append('Description', `Оплата: ${courseName}`);
         roboUrl.searchParams.append('SignatureValue', signature);
         
-        // Передаем IsTest только если режим реально тестовый
         if (IS_TEST === 1) {
             roboUrl.searchParams.append('IsTest', '1'); 
         }
