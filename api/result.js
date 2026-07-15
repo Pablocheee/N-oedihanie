@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-const ROBO_PASS2 = 'Mk3LNoY1ZVrEVsN7L47t'; // Твой Пароль #2
+const ROBO_PASS2 = 'Mk3LNoY1ZVrEVsN7L47t'; // Строго ТЕСТОВЫЙ!
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
