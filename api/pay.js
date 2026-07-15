@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const ROBO_LOGIN = 'Tantraa'; 
 const ROBO_PASS1 = 'WJS6H6d2R98XfQKIrofu'; // Строго Пароль #1 (без пробелов)
-const IS_TEST = 1;
+const IS_TEST = 0;
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
