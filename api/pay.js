@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const ROBO_LOGIN = 'Tantraa'; 
 // Вставь сюда ТЕСТОВЫЙ Пароль #1 и я добавил .trim() для защиты от пробелов
-const ROBO_PASS1 = 'nFApbOsn13F9ZDAy44Ve'.trim(); 
+const ROBO_PASS1 = 'AFK0dD5e6S7wCPWjrn6i'.trim(); 
 const IS_TEST = 1;
 
 module.exports = async (req, res) => {
