@@ -249,10 +249,28 @@
 
         function checkLogin() {
             const pass = document.getElementById('admin-pass').value;
-            if(pass.length > 0) { 
+            const inputField = document.getElementById('admin-pass');
+            
+            // Укажи здесь свой надежный пароль
+            const SECRET_PASSWORD = "Quiet!Apple!Tree!88"; 
+
+            if (pass === SECRET_PASSWORD) { 
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'flex';
                 loadAdminState();
+            } else {
+                // Визуальный отклик при неверном пароле
+                inputField.style.borderColor = "#f44336";
+                inputField.style.boxShadow = "0 0 15px rgba(244, 67, 54, 0.4)";
+                inputField.value = '';
+                inputField.placeholder = 'Неверный пароль!';
+                
+                // Возвращаем обычный стиль через 2 секунды
+                setTimeout(() => {
+                    inputField.style.borderColor = "var(--border)";
+                    inputField.style.boxShadow = "none";
+                    inputField.placeholder = 'Пароль доступа';
+                }, 2000);
             }
         }
 
@@ -614,7 +632,7 @@
             logItem.innerHTML = `<div class="log-header"><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span><span class="log-status ${colorClass}">${statusText}</span></div><div>${descText}</div>`;
         }
 
-        document.getElementById('admin-chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendAdminCommand(); });
+        document.getElementById('admin-pass').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkLogin(); });
 
         // === ЛОГИКА ВСТРОЕННОЙ ЗАГРУЗКИ (С УМНЫМ СЖАТИЕМ ФОТО) ===
         window.handleInlineUpload = async function(input, logId) {
