@@ -4,49 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">ИNOE ДЫХАНИЕ — Загрузка...</title>
-    
-    <!-- Подключаем Tailwind для кастомных блоков -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
-        /* === ЖЕСТКАЯ ЗАЩИТА СТАНДАРТНЫХ КУРСОВ ОТ СБРОСА TAILWIND === */
-        #course-description h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; line-height: 1.3; }
-        #course-description h2 { font-size: 1.5em; font-weight: bold; margin: 0.83em 0; line-height: 1.3; }
-        #course-description h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; line-height: 1.3; }
-        #course-description p { margin: 1em 0; display: block; }
-        #course-description ul { list-style-type: disc !important; padding-left: 40px !important; margin: 1em 0; display: block; }
-        #course-description ol { list-style-type: decimal !important; padding-left: 40px !important; margin: 1em 0; display: block; }
-        #course-description li { display: list-item !important; margin-bottom: 0.5em; }
-        #course-description b, #course-description strong { font-weight: bolder; }
-        #course-description i, #course-description em { font-style: italic; }
-        #course-description a { color: #a8dadc; text-decoration: underline; }
-
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 69, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0); } }
-        
-        #course-promo-badge {
-            display: inline-block; font-size: 12px; font-weight: 600; background: rgba(255, 69, 0, 0.1); border: 1px solid rgba(255, 69, 0, 0.8);
-            color: rgba(255, 80, 20, 0.95); padding: 4px 12px; border-radius: 20px; margin-bottom: 15px; text-transform: uppercase;
-            letter-spacing: 1px; white-space: nowrap; -webkit-font-smoothing: antialiased !important; opacity: 1;
-            animation: coursePromoFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1), pulse 2.5s infinite 1.2s;
-        }
+        /* Премиальная плашка акции на странице курса */
+    /* Премиальная плашка акции на странице курса */
+    #course-promo-badge {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600; /* Делаем шрифт чуть толще, чтобы он не "рвался" */
+        background: rgba(255, 69, 0, 0.1);
+        border: 1px solid rgba(255, 69, 0, 0.8);
+        color: rgba(255, 80, 20, 0.95); /* Чуть-чуть смягчаем красный цвет */
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
 
-        @keyframes coursePromoFadeIn {
-            0% { opacity: 0; transform: translateY(-15px) translateZ(0); }
-            100% { opacity: 1; transform: translateY(0) translateZ(0); }
-        }
+        /* Усиленное сглаживание для красного на темном */
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+        -webkit-text-stroke: 0.3px rgba(255, 69, 0, 0.2);
+        text-shadow: 0 0 2px rgba(255, 69, 0, 0.25);
 
-        /* === БАЗОВЫЕ СТИЛИ САЙТА === */
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-        
+        /* Аппаратное ускорение */
+        transform: translateZ(0);
+        will-change: transform;
+        backface-visibility: hidden;
+
+        /* ИСПРАВЛЕНИЕ БАГА НА ПК: 
+           Ставим базовую opacity 1, убираем forwards из анимации */
+        opacity: 1;
+        animation: coursePromoFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1), pulse 2.5s infinite 1.2s;
+    }
+
+    /* Анимация мягкого появления */
+    @keyframes coursePromoFadeIn {
+        0% { opacity: 0; transform: translateY(-15px) translateZ(0); }
+        100% { opacity: 1; transform: translateY(0) translateZ(0); }
+    }
+        .product-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 5% 60px; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; max-width: 1200px; align-items: center; }
+        .product-image-wrap { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.4); max-width: 320px; width: 100%; aspect-ratio: 4 / 5; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; }
+        .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(20%) contrast(1.1); transition: 0.5s; }
+        .product-image-wrap:hover img { transform: scale(1.05); filter: grayscale(0%) contrast(1.1); }
+        .benefits-list { list-style: none; display: flex; flex-direction: column; gap: 30px; }
+        .benefits-list li { display: flex; gap: 20px; align-items: flex-start; }
+        .benefits-list li .bullet { color: var(--accent); font-size: 20px; line-height: 1.2; text-shadow: 0 0 10px var(--accent-glow); }
+        .benefits-list li p { font-size: 16px; font-weight: 300; line-height: 1.6; color: var(--text-muted); }
+        @media (max-width: 900px) { .product-grid { grid-template-columns: 1fr; gap: 40px; } .product-page { padding-top: 100px; } .product-info { order: 2; } .product-image-wrap { order: 1; max-width: 400px; margin: 0 auto; } }
+        #allrecords, .t-records, .r, .t123, .t123__container, [id^="rec"] { background-color: transparent !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;800&family=Plus+Jakarta+Sans:wght@200;300;500;700&display=swap');
         :root { --accent: #a8dadc; --accent-glow: rgba(168, 218, 220, 0.4); --deep: #1d3557; --text-main: #f1faee; --text-muted: rgba(241, 250, 238, 0.8); --glass: rgba(255, 255, 255, 0.12); --border: rgba(255, 255, 255, 0.2); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); line-height: 1.8; background: #0d1b2a !important; overflow-x: hidden; }
-        
         #breath-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 0% 0%, #1d4059 0%, transparent 50%), radial-gradient(circle at 100% 100%, #a46044 0%, transparent 50%), radial-gradient(circle at 50% 50%, #2a7285 0%, transparent 100%), #0d1b2a; background-size: 200% 200%; animation: elementFlow 20s ease-in-out infinite alternate; filter: saturate(1.2); }
         @keyframes elementFlow { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 100%; } }
-        
-        header { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(9, 21, 34, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: transform 0.4s ease; }
-        header.header--hidden { transform: translateY(-100%); }
+        header { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(9, 21, 34, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
         .nav-right { display: flex; align-items: center; gap: 30px; }
         .lk-link { color: var(--text-main); text-decoration: none; font-size: 11px; letter-spacing: 2px; font-weight: 500; opacity: 0.8; transition: 0.3s; border-bottom: 1px solid transparent; text-transform: uppercase; }
         .lk-link:hover { opacity: 1; color: var(--accent); border-color: var(--accent); }
@@ -54,929 +70,366 @@
         .menu-toggle:hover { opacity: 1; color: var(--accent); }
         .logo { font-family: 'Manrope', sans-serif; font-size: 26px; display: flex; align-items: center; position: relative; text-decoration: none; }
         .logo-composite { font-weight: 800; color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); letter-spacing: 2px; position: relative; }
+        .logo-composite::after { content: "ИN"; position: absolute; left: 0; top: 52%; transform: scaleY(-1); color: var(--accent); opacity: 0.12; filter: blur(1.5px); pointer-events: none; }
+        .logo-o { margin-left: -2px; } .logo-e { margin-left: -2px; }
         .logo-bridge { font-weight: 600; color: rgba(168, 218, 220, 0.7); letter-spacing: 1px; }
         .logo-thin { font-weight: 200; color: var(--text-main); margin-left: 10px; letter-spacing: 6px; opacity: 0.5; }
-        
         #full-menu { position: fixed; inset: 0; background: rgba(9, 21, 34, 0.98); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; gap: 40px; text-align: center; }
         #full-menu .close-menu { position: absolute; top: 20px; right: 30px; font-size: 50px; line-height: 1; cursor: pointer; font-weight: 100; transition: 0.3s; z-index: 2001; }
         #full-menu a { display: inline-block; font-size: 36px; color: var(--text-main); text-decoration: none; font-weight: 200; transition: 0.4s; letter-spacing: 3px; }
         #full-menu a:hover { color: var(--accent); }
-        @media screen and (max-width: 768px) { .logo-thin { display: none; } }
-
-        /* === СТАНДАРТНАЯ КАРТОЧКА КУРСА === */
-        .product-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 5% 60px; }
-        .product-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; max-width: 1200px; align-items: center; width: 100%; }
-        .product-image-wrap { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.4); max-width: 320px; width: 100%; aspect-ratio: 4 / 5; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; }
-        .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(20%) contrast(1.1); transition: 0.5s; }
-        .product-image-wrap:hover img { transform: scale(1.05); filter: grayscale(0%) contrast(1.1); }
-        @media (max-width: 900px) { .product-grid { grid-template-columns: 1fr; gap: 40px; } .product-page { padding-top: 100px; } .product-info { order: 2; } .product-image-wrap { order: 1; max-width: 400px; margin: 0 auto; } }
-
-        /* === СТИЛИ АНТИ-СТРЕСС ЛЕНДИНГА === */
-        .main-wrapper { padding-top: 120px; }
-        .tilt-1 { transform: rotate(-1.5deg); display: inline-block; }
-        .tilt-2 { transform: rotate(2deg); display: inline-block; }
-        .tilt-3 { transform: rotate(-2.5deg); display: inline-block; }
-        .tilt-4 { transform: rotate(1deg); display: inline-block; }
-
-        .sketch-box { position: relative; width: 100%; aspect-ratio: 1 / 1; background-color: transparent; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
-        .sketch-svg { width: 100%; height: 100%; stroke: #1A1C1D; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; filter: drop-shadow(2px 2px 0px rgba(193,147,144,0.3)); }
-        .sketch-accent { stroke: #F97316; }
-        .sketch-green { stroke: #10B981; }
-
-        .cyber-node.is-active { opacity: 1 !important; transform: translateY(0) !important; }
-        .cyber-node.is-active:not([data-step="6"]) .cyber-pill { border-color: #F97316 !important; color: #F97316 !important; background-color: rgba(13, 27, 42, 0.9) !important; backdrop-filter: blur(12px) !important; }
-        .cyber-node.is-active[data-step="6"] .cyber-pill { border-color: #ef4444 !important; color: #ef4444 !important; background-color: rgba(13, 27, 42, 0.9) !important; backdrop-filter: blur(12px) !important; transform: scale(1.05); }
-        .cyber-btn-cta.is-active { opacity: 1 !important; transform: scale(1) !important; background-color: #F97316 !important; color: #FAFAFA !important; border-color: #F97316 !important; }
-
-        .cyber-node.is-fully-active .cyber-pill { transform: scale(1.03) !important; }
-        .cyber-btn-cta.is-fully-active { transform: scale(1.03) !important; }
-
-        .cyber-node.is-fully-active:not([data-step="6"]) .cyber-pill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid #F97316; animation: cyber-radiate 1.5s infinite ease-out; z-index: -1; }
-        .cyber-node.is-fully-active[data-step="6"] .cyber-pill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid #ef4444; animation: cyber-radiate 1.5s infinite ease-out; z-index: -1; }
-        .cyber-btn-cta.is-fully-active::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid #F97316; animation: cyber-radiate 1.5s infinite ease-out; z-index: -1; }
-
-        @keyframes cyber-radiate { 0% { transform: scale(1); opacity: 1; border-width: 2px; } 100% { transform: scale(1.4); opacity: 0; border-width: 0px; } }
-        .hud-charge-bg { animation: hud-charge 4s steps(20) infinite; }
-        @keyframes hud-charge { 0% { width: 0%; } 80%, 100% { width: 100%; } }
-        .hud-radiate-border { animation: hud-pulse 2s infinite ease-out; }
-        @keyframes hud-pulse { 0% { transform: scale(1); opacity: 1; border-width: 2px; } 100% { transform: scale(1.4); opacity: 0; border-width: 0px; } }
-        .electric-lightning-path { stroke-dasharray: 400; stroke-dashoffset: 400; animation: lightning-strike 3s infinite linear; }
-        .electric-lightning-path.delay-1 { animation-delay: 0.2s; }
-        @keyframes lightning-strike { 0% { stroke-dashoffset: 400; opacity: 1; } 10% { stroke-dashoffset: 0; opacity: 1; } 12% { opacity: 0; } 14% { opacity: 1; } 16% { opacity: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
-
-        .wave-animate-fast { stroke-dasharray: 200; animation: wave-dash 2s linear infinite; }
-        .wave-animate-med { stroke-dasharray: 200; animation: wave-dash 4s linear infinite; }
-        .wave-animate-slow { stroke-dasharray: 200; animation: wave-dash 6s linear infinite; }
-        @keyframes wave-dash { to { stroke-dashoffset: -400; } }
-        .text-glow-accent { text-shadow: 0 0 15px rgba(249,115,22,0.4); }
-
-        /* Окно Оплаты */
+        #ai-trigger { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid var(--accent); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2000; font-size: 24px; transition: 0.4s; backdrop-filter: blur(10px); }
+        #ai-trigger:hover { background: var(--accent); color: var(--deep); box-shadow: 0 0 20px var(--accent-glow); }
+        #ai-window { position: fixed; bottom: 100px; right: 30px; width: 350px; height: 480px; background: rgba(13, 20, 29, 0.95); backdrop-filter: blur(50px); border-radius: 25px; z-index: 2000; display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border); }
+        #chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 80px; }
+        .msg { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
+        .msg-user { align-self: flex-end; background: var(--accent); color: var(--deep); border-bottom-right-radius: 4px; }
+        .chat-input-area { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; display: flex; gap: 10px; background: rgba(13, 20, 29, 0.98); border-top: 1px solid var(--border); }
         .modal { position: fixed; inset: 0; background: rgba(9, 21, 34, 0.95); backdrop-filter: blur(30px); z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        @media screen and (max-width: 768px) { .logo-thin { display: none; } #ai-window { width: calc(100% - 40px); right: 20px; bottom: 90px; height: 60vh; } }
     </style>
 </head>
-<body class="selection:bg-[#F97316] selection:text-white">
-
-    <div id="breath-bg"></div>
-
-    <header id="main-header">
-        <a href="/" class="logo">
-            <span class="logo-composite">ИN</span>
-            <span class="logo-bridge" style="margin-left:-2px;">O</span>
-            <span class="logo-bridge" style="margin-left:-2px;">E</span>
-            <span class="logo-thin">ДЫХАНИЕ</span>
-        </a>
-        <div class="nav-right">
-            <a href="https://classroom.google.com" target="_blank" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
-            <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
-        </div>
-    </header> 
-
-    <div id="full-menu">
-        <div class="close-menu" onclick="toggleMenu(false)">×</div>
-        <a href="/#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
-        <a href="/#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
-        <a href="/#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
-        <a href="/#author" onclick="toggleMenu(false)">ВИКТОРИЯ</a>
-        <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a>
+<body>
+<div id="breath-bg"></div>
+<header>
+    <a href="/" class="logo">
+        <span class="logo-composite">ИN</span>
+        <span class="logo-bridge logo-o">O</span>
+        <span class="logo-bridge logo-e">E</span>
+        <span class="logo-thin">ДЫХАНИЕ</span>
+    </a>
+    <div class="nav-right">
+        <a href="https://classroom.google.com" target="_blank" class="lk-link">ЛИЧНЫЙ КАБИНЕТ</a>
+        <div class="menu-toggle" onclick="toggleMenu(true)">МЕНЮ</div>
     </div>
+</header> 
 
-    <!-- ==========================================
-         БЛОК 1: СТАНДАРТНЫЕ КУРСЫ (БАЗОВЫЙ ДИЗАЙН)
-         ========================================== -->
-    <main class="product-page" id="standard-layout" style="display: none;">
-        <div class="product-grid">
-            <div class="product-image-wrap">
-                <img id="course-image" src="" alt="Загрузка..." style="display: none;">
-                <div id="img-loader" style="color: var(--accent); opacity: 0.5;">Загрузка фото...</div>
-            </div>
+<div id="full-menu">
+    <div class="close-menu" onclick="toggleMenu(false)">×</div>
+    <a href="/#about" onclick="toggleMenu(false)">О МЕТОДИКЕ</a>
+    <a href="/#how-it-works" onclick="toggleMenu(false)">КАК ПРОХОДИТ</a>
+    <a href="/#programs" onclick="toggleMenu(false)">ПРОГРАММЫ</a> 
+    <a href="/#author" onclick="toggleMenu(false)">ВИКТОРИЯ</a>
+    <a href="#" onclick="toggleMenu(false); toggleChat(); return false;" style="color: var(--accent);">СЛУЖБА ПОДДЕРЖКИ</a>
+</div>
 
-            <div class="product-info">
-                <h1 id="course-name" style="font-size: clamp(28px, 4vw, 40px); font-weight: 300; margin-bottom: 25px; color: var(--text-main);">
-                    Поиск курса...
-                </h1>
-                
-                <div id="course-description" style="margin-bottom: 30px; opacity: 0.5; transition: 0.5s; white-space: pre-wrap; line-height: 1.6;">
-                    Соединяемся с базой данных и подтягиваем актуальную информацию...
-                </div>
-
-                <div id="buy-section" style="margin-top: 50px; display: none;">
-                    <a href="#" class="btn-main-trigger" onclick="openPaymentModal(); return false;" 
-                       style="border: 1px solid var(--accent); color: var(--text-main); padding: 15px 20px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; background: rgba(168, 218, 220, 0.05); width: 100%; max-width: 350px; box-sizing: border-box; white-space: nowrap;">
-                        Получить доступ <span id="course-price-btn" style="color: var(--accent); font-weight: bold; margin-left: 8px; font-size: 15px; text-shadow: 0 0 10px var(--accent-glow);"></span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- ==========================================
-         БЛОК 2: АНТИ-СТРЕСС (КАСТОМНЫЙ ЛЕНДИНГ)
-         ========================================== -->
-    <div id="custom-antistress-layout" class="main-wrapper w-full max-w-6xl mx-auto px-6 pb-24 space-y-32" style="display: none;">
-        
-        <!-- Block 1 -->
-        <section class="flex flex-col md:flex-row items-center gap-12">
-            <div class="flex-1 space-y-6">
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-[#F97316] text-glow-accent">
-                    Самый мощный компьютер на планете находится у вас в голове.
-                </h2>
-                <div class="space-y-4 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                    <p>Но большинство людей используют его как калькулятор.</p>
-                    <p>Ваш мозг способен создавать идеи, адаптироваться, обучаться, находить нестандартные решения и управлять сложнейшей биологической системой.</p>
-                    <p>Но есть одна проблема.</p>
-                </div>
-            </div>
-            <div class="flex-1 w-full max-w-md mx-auto">
-                <div class="sketch-box">
-                    <svg viewBox="0 0 512 512" class="w-full h-full drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                        <g fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M246,45 C200,40 140,55 110,95 C80,135 70,195 85,255 C100,315 140,365 190,395 C220,413 245,415 245,415 C240,350 250,250 246,45 Z" stroke="#F97316" fill="rgba(249, 115, 22, 0.05)"/>
-                            <path d="M120,110 C140,90 170,80 200,85 C220,88 230,110 235,130" stroke="#F97316" stroke-opacity="0.7"/>
-                            <path d="M100,150 C130,130 170,130 190,150 C210,170 200,200 230,220" stroke="#F97316" stroke-opacity="0.7"/>
-                            <path d="M266,45 C312,40 372,55 402,95 C432,135 442,195 427,255 C412,315 372,365 322,395 C292,413 267,415 267,415 C272,350 262,250 266,45 Z" stroke="#10B981" fill="rgba(16, 185, 129, 0.05)"/>
-                            <path d="M392,110 C372,90 342,80 312,85 C292,88 282,110 277,130" stroke="#10B981" stroke-opacity="0.7"/>
-                            <path d="M246,45 C256,100 256,200 256,410" stroke="#FAFAFA" stroke-opacity="0.4" stroke-width="2"/>
-                        </g>
-                        <circle r="4" fill="#F97316" filter="drop-shadow(0 0 5px #F97316)">
-                            <animateMotion dur="3s" repeatCount="indefinite" path="M120,110 C140,90 170,80 200,85 C220,88 230,110 235,130"/>
-                            <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="3s" repeatCount="indefinite"/>
-                        </circle>
-                    </svg>
-                </div>
-            </div>
-        </section>
-
-        <!-- Block 1.5 -->
-        <section class="flex flex-col items-center text-center mb-12 max-w-4xl mx-auto px-4" style="margin-top: 2rem !important;">
-            <h2 class="text-3xl md:text-5xl lg:text-6xl font-bold text-[#F97316] leading-tight" style="text-shadow: 0 0 30px rgba(249,115,22,0.3);">
-                Большую часть жизни он занят выживанием.
-            </h2>
-        </section>
-
-        <!-- Block 2 -->
-        <section class="flex flex-col gap-12">
-            <div class="space-y-6">
-                <h2 class="text-3xl md:text-5xl font-bold leading-tight tracking-tight">
-                    Ваш мозг работает на разных <span class="inline-block text-[#FAFAFA]"><span class="bg-[#10B981] pl-2 py-1">час</span><span class="bg-[#F97316] py-1">то</span><span class="bg-[#F472B6] pr-2 py-1">тах</span></span>. И именно они определяют качество вашей жизни.
-                </h2>
-                <div class="space-y-6 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                    <p>Большинство людей думают, что их состояние зависит от обстоятельств. <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">Но сначала меняется активность мозга. И только потом - мысли, эмоции и поведение.</span></p>
-                    <p>В течение дня мозг постоянно переключается между разными режимами.</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-12 mt-6">
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="flex-1 w-full max-w-sm">
-                        <div class="sketch-box aspect-[2/1] p-0 flex items-center justify-center" style="aspect-ratio: 2/1;">
-                            <svg class="sketch-svg w-full" viewBox="0 0 100 50">
-                                <path class="wave-animate-fast" d="M5,25 L10,15 L15,35 L20,10 L25,40 L30,15 L35,35 L40,20 L45,30 L50,15 L55,35 L60,20 L65,30 L70,15 L75,35 L80,20 L85,30 L90,15 L95,25" stroke="#FF3333" stroke-width="2" />
-                                <text x="5" y="48" font-family="monospace" font-size="6" fill="#FF3333" stroke="none">БЕТА: СТРЕСС</text>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="pl-4 border-l-4 border-[#FF3333] text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                            <strong class="text-2xl text-[#FF3333]">Бета</strong> - концентрация, анализ, принятие решений.<br/><br/>
-                            В этом режиме мы работаем, общаемся, решаем задачи. Но когда стресс становится хроническим, мозг застревает здесь. Результат? Постоянный внутренний диалог. Тревожность. Невозможность расслабиться.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="flex-1 w-full max-w-sm">
-                        <div class="sketch-box aspect-[2/1] p-0 flex items-center justify-center" style="aspect-ratio: 2/1;">
-                            <svg class="sketch-svg w-full" viewBox="0 0 100 50">
-                                <path class="sketch-accent wave-animate-med" d="M5,25 Q15,5 25,25 T45,25 T65,25 T85,25 T100,25" stroke="#F97316" stroke-width="2" />
-                                <text x="5" y="48" font-family="monospace" font-size="6" fill="#F97316" stroke="none">АЛЬФА: ПОТОК</text>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="pl-4 border-l-4 border-[#F97316] text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                            <strong class="text-2xl text-[#F97316]">Альфа</strong> - состояние спокойной концентрации.<br/><br/>
-                            Именно здесь рождаются лучшие идеи. Информация усваивается быстрее. Уходит внутреннее напряжение. Появляется ощущение легкости и ясности.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="flex-1 w-full max-w-sm">
-                        <div class="sketch-box aspect-[2/1] p-0 flex items-center justify-center" style="aspect-ratio: 2/1;">
-                            <svg class="sketch-svg w-full" viewBox="0 0 100 50">
-                                <path class="sketch-green wave-animate-slow" d="M5,25 Q25,10 50,25 T95,25" stroke="#10B981" stroke-width="2" />
-                                <text x="5" y="48" font-family="monospace" font-size="6" fill="#10B981" stroke="none">ТЕТА: ОТДЫХ</text>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="pl-4 border-l-4 border-[#10B981] text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                            <strong class="text-2xl text-[#10B981]">Тета</strong> - глубокое восстановление.<br/><br/>
-                            Мозг перестает бороться с миром и начинает восстанавливать самого себя. Это режим глубокого восстановления, творчества и доступа к внутренним ресурсам.
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="space-y-6 mt-12 pt-8 border-t border-[#FAFAFA]/10 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                <p>Представьте, если бы вы могли по собственному желанию входить в состояние, в котором самые лучшие идеи приходят сами, концентрация держится часами, а внутренний шум просто исчезает, <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">энергия становится устойчивой. больше нет тревоги, раздражения и суеты.</span></p>
-                <p>Дыхание это гораздо больше, чем вдох и выдох. Это один из самых естественных способов помочь нервной системе выйти из режима постоянного напряжения и создать условия, в которых мозг снова начинает работать в вашу пользу.</p>
-            </div>
-        </section>
-
-        <!-- Block 3 -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start">
-            <div class="space-y-12">
-                <div class="space-y-6">
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-[#F97316]">
-                        Проблема современного человека<br/>не в том, что он слишком много работает.
-                    </h2>
-                    <div class="space-y-4 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                        <p>Проблема в том, что его мозг почти перестал переключаться между режимами.</p>
-                        <p>Он засыпает в напряжении. Просыпается в напряжении. Живет в напряжении.</p>
-                        <p>И постепенно начинает считать это нормой.</p>
-                    </div>
-                </div>
-
-                <div class="w-full max-w-sm">
-                    <svg viewBox="0 0 200 200" class="w-full h-auto drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">
-                        <path d="M 0 50 L 200 50 M 0 100 L 200 100 M 0 150 L 200 150 M 50 0 L 50 200 M 100 0 L 100 200 M 150 0 L 150 200" stroke="#FAFAFA" stroke-opacity="0.1" stroke-width="1" />
-                        <path d="M0,100 L20,100 L30,40 L40,160 L50,80 L60,180 L70,20 L80,120 L90,190 L100,10 L110,180 L120,40 L130,160 L140,70 L150,130 L160,20 L170,160 L180,100 L200,100" fill="none" stroke="#F97316" stroke-width="3" stroke-linejoin="miter"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="space-y-12">
-                <div class="space-y-6">
-                    <h3 class="text-3xl md:text-5xl font-bold leading-tight tracking-tight">
-                        Вы не оцениваете себя объективно.
-                    </h3>
-                    <div class="space-y-4 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                        <p>Вы оцениваете себя из того состояния, в котором находитесь. <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">Когда нервная система истощена, мозг начинает экономить ресурсы.</span> Он чаще замечает угрозы, теряя фокус возможностей.</p>
-                        <p>Чаще критикует. Чаще сомневается. И однажды человек начинает верить, что проблема в нем:</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-6 pt-4 w-full">
-                    <div class="bg-[#FAFAFA]/10 text-white rounded-3xl rounded-tl-none px-6 py-4 w-fit shadow-sm self-start"><p class="text-xl md:text-2xl font-medium m-0">«Со мной что-то не так.»</p></div>
-                    <div class="bg-[#FAFAFA]/10 text-white rounded-3xl rounded-tr-none px-6 py-4 w-fit shadow-sm self-end"><p class="text-xl md:text-2xl font-medium m-0">«Мне не хватает дисциплины.»</p></div>
-                    <div class="bg-[#FAFAFA]/10 text-white rounded-3xl rounded-tl-none px-6 py-4 w-fit shadow-sm self-start"><p class="text-xl md:text-2xl font-medium m-0">«Я не имею права ошибиться.»</p></div>
-                    <div class="bg-[#FAFAFA]/10 text-white rounded-3xl rounded-tr-none px-6 py-4 w-fit shadow-sm self-end"><p class="text-xl md:text-2xl font-medium m-0">«Если расслаблюсь - все развалится.»</p></div>
-                    <div class="bg-[#FAFAFA]/10 text-white rounded-3xl rounded-bl-none px-6 py-4 w-fit shadow-sm self-center text-center"><p class="text-xl md:text-2xl font-medium m-0">«Почему у других получается, а у меня нет?»</p></div>
-                </div>
-            </div>
-        </section>
-
-        <div class="py-20 flex justify-center w-full">
-            <h3 class="text-4xl md:text-6xl font-black text-[#FAFAFA] text-center">Но что, если это не правда?</h3>
+<main class="product-page">
+    <div class="product-grid">
+        <div class="product-image-wrap">
+            <img id="course-image" src="" alt="Загрузка..." style="display: none;">
+            <div id="img-loader" style="color: var(--accent); opacity: 0.5;">Загрузка фото...</div>
         </div>
 
-        <!-- Block 3.5 -->
-        <section class="space-y-16 pt-4">
-            <div class="space-y-6 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed max-w-4xl mx-auto text-center">
-                <p>Самооценка - это не только психология. Это еще и физиология. Невозможно чувствовать внутреннюю опору, когда организм месяцами живет в режиме выживания. Потому что мозг, занятый выживанием, не думает о вашем потенциале. Он думает только о безопасности. Именно поэтому, восстанавливая нервную систему, многие люди замечают не только спокойствие. Они начинают больше доверять себе. <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">Легче принимать решения. Перестают постоянно сравнивать себя с другими. Получают ощущение внутренней ценности.</span></p>
-            </div>
+        <div class="product-info">
+            <h1 id="course-name" style="font-size: clamp(28px, 4vw, 40px); font-weight: 300; margin-bottom: 25px; color: var(--text-main);">
+                Поиск курса...
+            </h1>
             
-            <div class="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-20">
-                <div class="w-full md:w-[450px] text-center md:text-left">
-                    <p class="text-3xl md:text-5xl font-bold text-[#FAFAFA] leading-tight m-0">
-                        Но что, если это всего лишь голос перегруженной нервной системы?
-                    </p>
-                </div>
+            <div id="course-description" style="margin-bottom: 30px; opacity: 0.5; transition: 0.5s; white-space: pre-wrap; line-height: 1.6;">
+                Соединяемся с базой данных и подтягиваем актуальную информацию...
             </div>
-            
-            <div id="buy-section-antistress" class="text-center pt-12" style="display: none;">
-                <a href="#" onclick="openPaymentModal(); return false;" class="inline-block px-12 py-5 text-xl md:text-2xl font-black rounded-full transition-all duration-300 uppercase tracking-widest text-center text-[#FAFAFA] bg-[#F97316] border border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_40px_rgba(249,115,22,0.8)] hover:-translate-y-1 relative group w-full max-w-sm sm:max-w-none sm:w-auto">
-                    <span class="relative z-10">Получить доступ - <span id="mid-price-display">...</span> ₽</span>
+
+            <div id="buy-section" style="margin-top: 50px; display: none;">
+                <a href="#" class="btn-main-trigger" onclick="payWithRobokassa(); return false;" 
+                   style="border: 1px solid var(--accent); color: var(--text-main); padding: 15px 20px; border-radius: 60px; text-decoration: none; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; background: rgba(168, 218, 220, 0.05); width: 100%; max-width: 350px; box-sizing: border-box; white-space: nowrap;">
+                    Получить доступ <span id="course-price-btn" style="color: var(--accent); font-weight: bold; margin-left: 8px; font-size: 15px; text-shadow: 0 0 10px var(--accent-glow);"></span>
                 </a>
             </div>
-        </section>
-
-        <!-- Block 4 -->
-        <section class="flex flex-col md:flex-row items-center gap-12">
-            <div class="flex-1 space-y-6">
-                <h2 class="text-3xl md:text-5xl font-bold leading-tight text-[#F97316]">
-                    Выгорание не приходит за один день.
-                </h2>
-                <div class="space-y-4 text-xl md:text-2xl font-medium">
-                    <p class="text-white">Оно начинается в тот момент, <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">когда вы перестаете восстанавливаться.</span></p>
-                    <p>Организм еще работает. Мозг еще решает задачи. Вы еще улыбаетесь. Но внутри уже идет обратный отсчет.</p>
-                    <p>Сначала исчезает энергия. Потом интерес. Потом желание.</p>
-                    <p class="font-bold text-2xl text-[#FAFAFA] mt-4">И однажды вы понимаете: Вы не живете. Вы просто функционируете.</p>
-                    <p class="mt-8 pt-8 border-dashed">
-                        Что, если главный тормоз вашего потенциала - не отсутствие мотивации? А перегруженная нервная система. Когда организм находится в хроническом стрессе, мозг не думает о развитии. Он экономит ресурсы. Отключает творчество. Сужает внимание. Переводит вас в режим «<span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">лишь бы дожить до вечера</span>».
-                    </p>
-                    <p class="text-2xl font-bold text-[#FAFAFA] mt-4">Это не слабость. Это алгоритм выживания.</p>
-                </div>
-            </div>
-            <div class="flex-1 w-full max-w-md mx-auto flex items-center justify-center p-6">
-                <div class="w-full">
-                    <svg viewBox="5 20 90 60" class="w-full h-auto drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                        <defs>
-                            <linearGradient id="batteryGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#10B981" />
-                                <stop offset="100%" stop-color="#34D399" />
-                            </linearGradient>
-                        </defs>
-                        <rect x="12" y="30" width="70" height="40" rx="6" fill="transparent" stroke="#FAFAFA" stroke-width="1.5" stroke-opacity="0.4" />
-                        <path d="M82,42 L86,42 C87.5,42 88.5,43 88.5,44.5 L88.5,55.5 C88.5,57 87.5,58 86,58 L82,58" fill="transparent" stroke="#FAFAFA" stroke-width="1.5" stroke-opacity="0.4" />
-                        <g>
-                            <rect x="16" y="35" width="10" height="30" rx="2" fill="url(#batteryGrad)" />
-                            <rect x="28" y="35" width="10" height="30" rx="2" fill="url(#batteryGrad)" />
-                            <rect x="40" y="35" width="10" height="30" rx="2" fill="url(#batteryGrad)" />
-                            <rect x="52" y="35" width="10" height="30" rx="2" fill="url(#batteryGrad)" />
-                            <rect x="64" y="35" width="10" height="30" rx="2" fill="url(#batteryGrad)">
-                                <animate attributeName="opacity" values="0.1; 1; 0.1" dur="1.5s" repeatCount="indefinite" />
-                            </rect>
-                        </g>
-                    </svg>
-                </div>
-            </div>
-        </section>
-
-        <!-- Block 5 -->
-        <section class="flex flex-col gap-12 !mt-0">
-            <div class="flex-1 space-y-6">
-                <div class="flex flex-col sm:flex-row items-center sm:items-start justify-center sm:justify-start gap-4 sm:gap-6 w-full py-4">
-                    <div class="flex flex-col text-center w-full py-4">
-                        <h2 class="font-bold leading-[1.8] m-0 pb-4 text-center" style="font-size: clamp(24px, 6vw, 42px);">
-                            <span class="bg-[#F97316] px-3 py-1 text-[#ffffff] box-decoration-clone">Хотите работать быстрее?</span>
-                            <div class="h-4"></div>
-                            <span class="bg-[#F97316] px-3 py-1 text-[#ffffff] box-decoration-clone">Сначала научитесь<br/> восстанавливаться.</span>
-                        </h2>
-                    </div>
-                </div>
-                <div class="space-y-4 text-xl md:text-2xl font-medium">
-                    <p>Мозг всегда выбирает безопасность. Даже если ради этого придется отказаться от ваших целей. Хотите открыть бизнес? Переехать? Изменить жизнь? Выступить на сцене?</p>
-                    <p>Если нервная система считает мир опасным, мозг сделает все, чтобы вы остались там, где уже были вчера. Потому что его главная задача - <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">сохранить безопасность. Не потому что он против вас.</span></p>
-                    <p class="mt-6">Современный мир учит ускоряться.</p>
-                    <p class="font-bold text-2xl text-[#FAFAFA]">Выигрывают не самые быстрые.</p>
-                    <p class="font-bold text-[#FAFAFA]">Выигрывают те, кто быстрее переключается между напряжением и восстановлением. Те, кто умеет поддерживать высокий уровень энергии. те кто не сомневаясь в себе движется у цели. <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">Именно это отличает элитных спортсменов, пилотов, предпринимателей и людей, работающих в условиях высокого давления.</span></p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Block 5.5 -->
-        <section class="flex flex-col gap-8 pt-8">
-            <div class="space-y-6 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                <p>Возможно, вы никогда не чувствовали свой настоящий уровень энергии. Не потому что его нет. А потому что ваша нервная система годами ограничивает доступ к нему. Когда мозг живет в режиме выживания, организм перестает тратить ресурсы на развитие, <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">творчество и высокую продуктивность</span>. Он начинает экономить. И однажды вы принимаете это состояние за свою личность. «Наверное, я просто такой человек.» Нет. Это всего лишь режим, в котором вы слишком долго живете.</p>
-            </div>
-        </section>
-
-        <!-- Block 6 -->
-        <section class="w-full max-w-4xl mx-auto flex flex-col gap-6 pt-8 pb-4">
-            <div class="space-y-6">
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-[#FAFAFA]">
-                    Дыхание - это не про вдох и выдох.
-                </h2>
-                <div class="space-y-4 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium leading-relaxed">
-                    <p><span class="text-[#FAFAFA] font-bold text-2xl">Это интерфейс управления.</span></p>
-                    <p>Через дыхание можно влиять на работу нервной системы за считанные секунды.</p>
-                    <p>Меняется дыхание - меняется физиология. Меняется физиология - меняется состояние. Меняется состояние - меняются решения. А вместе с ними меняется и жизнь.</p>
-                    <p class="text-3xl md:text-4xl font-bold mt-8 mb-6 leading-[1.4]">
-                        <span class="bg-[#F97316] text-[#FAFAFA] px-2 py-1 box-decoration-clone">Ваш потенциал определяется не интеллектом. А состоянием, в котором этот интеллект работает.</span>
-                    </p>
-                    <p>Один и тот же человек может принимать гениальные решения. Или совершать элементарные ошибки. Разница часто не в знаниях. Разница в состоянии мозга и нервной системы.</p>
-                    
-                    <div class="space-y-4 my-6">
-                        <p><span class="text-[#FAFAFA] font-bold">Что, если стресс - это не враг? Стресс сделал человека сильнее.</span> <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">Но природа предусмотрела одну важную деталь.</span> После напряжения должно наступать расслабление и восстановление.</p>
-                        <p>Современный человек научился включать стресс. Но почти разучился его выключать. <span class="bg-[#F97316] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">Именно здесь начинается хроническая усталость, тревожность и выгорание.</span></p>
-                    </div>
-
-                    <p class="text-2xl md:text-3xl font-bold mt-8 mb-6 leading-[1.4]">
-                        <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone">Это не просто «курс по дыханию». А способность</span>
-                    </p>
-                    <div class="space-y-4 text-xl md:text-2xl text-[#FAFAFA]/90 font-medium">
-                        <p>Потому что это принципиально другой уровень жизни и позиционирования. Большинство людей всю жизнь тренируют мышцы и интеллект. Но почти никто не тренирует нервную систему хотя именно <span class="bg-[#10B981] text-[#FAFAFA] px-2 py-1 box-decoration-clone leading-normal">она определяет, сколько из своего потенциала вы сможете реализовать</span>.</p>
-                        <p>Мы учим управлять состоянием, в котором мозг работает на максимуме своих возможностей а нервная система перенастраивается на новый режим восстановления.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="w-full max-w-md mx-auto pt-8">
-                <img id="anti-stress-image" class="section-illustration w-full h-auto rounded-none" src="" alt="Breathing UI">
-            </div>
-        </section>
-
-        <!-- FAQ SECTION (Частые вопросы) -->
-        <section class="w-full max-w-4xl mx-auto flex flex-col gap-8 pb-24 pt-12 px-4 relative z-10" id="faq">
-            <h2 class="text-3xl md:text-5xl font-bold text-center text-[#FAFAFA] mb-8 font-mono tracking-wider">Частые вопросы</h2>
-            
-            <div class="space-y-4 w-full">
-                <div class="faq-item border border-[#FAFAFA]/20 rounded-2xl bg-[#0A1016]/80 backdrop-blur-xl transition-all duration-300">
-                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center gap-4 group hover:bg-[#FAFAFA]/5 transition-colors rounded-2xl">
-                        <span class="text-lg md:text-xl font-bold text-[#FAFAFA] group-hover:text-[#10B981] transition-colors leading-snug">«У меня не стресс, я просто постоянно в напряжении. Этот курс мне вообще нужен?»</span>
-                        <svg class="faq-icon w-6 h-6 text-[#10B981] shrink-0 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-content overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0px; opacity: 0;">
-                        <div class="px-6 pb-6 text-[#FAFAFA]/80 text-base md:text-lg leading-relaxed">
-                            Именно это состояние чаще всего и называют «нормальной жизнью»: сжатая челюсть, поверхностное дыхание, внутренний диалог без пауз, усталость даже после выходных. Курс создан не для людей с диагнозом, а для тех, чья нервная система давно живёт в режиме «соберись».
-                        </div>
-                    </div>
-                </div>
-
-                <div class="faq-item border border-[#FAFAFA]/20 rounded-2xl bg-[#0A1016]/80 backdrop-blur-xl transition-all duration-300">
-                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center gap-4 group hover:bg-[#FAFAFA]/5 transition-colors rounded-2xl">
-                        <span class="text-lg md:text-xl font-bold text-[#FAFAFA] group-hover:text-[#10B981] transition-colors leading-snug">«Я уже пробовал медитации, йогу и расслабляющую музыку. Почему дыхание должно сработать?»</span>
-                        <svg class="faq-icon w-6 h-6 text-[#10B981] shrink-0 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-content overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0px; opacity: 0;">
-                        <div class="px-6 pb-6 text-[#FAFAFA]/80 text-base md:text-lg leading-relaxed">
-                            Потому что дыхание - это не идея, а физиология. Мы не убеждаем мозг успокоиться, мы меняем сигналы, которые тело посылает мозгу каждую секунду. Когда меняется ритм дыхания, меняется состояние нервной системы. Это работа не через голову, а через тело.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="faq-item border border-[#FAFAFA]/20 rounded-2xl bg-[#0A1016]/80 backdrop-blur-xl transition-all duration-300">
-                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center gap-4 group hover:bg-[#FAFAFA]/5 transition-colors rounded-2xl">
-                        <span class="text-lg md:text-xl font-bold text-[#FAFAFA] group-hover:text-[#10B981] transition-colors leading-snug">«А если я вообще не умею дышать правильно?»</span>
-                        <svg class="faq-icon w-6 h-6 text-[#10B981] shrink-0 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-content overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0px; opacity: 0;">
-                        <div class="px-6 pb-6 text-[#FAFAFA]/80 text-base md:text-lg leading-relaxed">
-                            Это как раз идеальная точка старта. Большинство людей дышат автоматически и никогда не изучали своё дыхание. В курсе нет требований к подготовке, гибкости или опыту.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="faq-item border border-[#FAFAFA]/20 rounded-2xl bg-[#0A1016]/80 backdrop-blur-xl transition-all duration-300">
-                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center gap-4 group hover:bg-[#FAFAFA]/5 transition-colors rounded-2xl">
-                        <span class="text-lg md:text-xl font-bold text-[#FAFAFA] group-hover:text-[#10B981] transition-colors leading-snug">«Сколько времени нужно, чтобы почувствовать эффект?»</span>
-                        <svg class="faq-icon w-6 h-6 text-[#10B981] shrink-0 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-content overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0px; opacity: 0;">
-                        <div class="px-6 pb-6 text-[#FAFAFA]/80 text-base md:text-lg leading-relaxed">
-                            Первый эффект появляется уже после первой практики: становится тише внутри, глубже сон, меньше внутренней суеты. Но главный эффект - накопительный. Представьте не таблетку, а перенастройку нервной системы. 10-15 минут в день дают результат, который с вами и днем и ночью.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dynamic Final CTA Module -->
-        <div id="cyber-scroll-container" style="height: 250vh; position: relative; display: none;">
-            <section id="activation-section" class="flex flex-col items-center text-center gap-6 md:gap-12 pt-4 pb-12 overflow-visible" style="position: sticky; top: 0;">
-                <div class="w-full max-w-4xl flex flex-col items-center justify-center relative h-full px-4 overflow-visible">
-                    
-                    <p class="mb-8 md:mb-12 text-xl md:text-2xl text-[#10B981] font-bold text-center">
-                        Через практики вам станет доступно менять всю цепочку:
-                    </p>
-
-                    <div class="cyber-module relative w-full max-w-lg flex flex-col items-center justify-between gap-5 sm:gap-6 py-6 md:py-10 overflow-visible" style="--scroll-progress: 0;">
-                        
-                        <div class="absolute left-1/2 top-[76px] md:top-[100px] bottom-[116px] md:bottom-[130px] w-[2px] -translate-x-1/2 pointer-events-none z-0 bg-[#FAFAFA]/10 rounded-full">
-                            <div class="absolute top-0 left-0 right-0 bg-gradient-to-b from-[#10B981] via-[#F97316] to-[#10B981] shadow-[0_0_15px_rgba(16,185,129,0.8)]" style="height: calc(var(--scroll-progress, 0) * 100%); transition: height 0.15s ease-out; border-radius: 4px;"></div>
-                        </div>
-
-                        <div class="cyber-node relative z-10 opacity-60 transition-all duration-300 transform translate-y-4 w-full px-4 sm:w-[360px]" data-threshold="0.1">
-                            <div class="cyber-pill flex items-center gap-4 px-5 py-4 border border-[#FAFAFA]/20 bg-[#0A1016]/80 backdrop-blur-xl text-[#FAFAFA] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] font-bold text-lg sm:text-xl uppercase tracking-wider transition-all duration-300 hover:border-[#10B981]/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] group">
-                                <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#F97316]/10 flex items-center justify-center border border-[#FAFAFA]/10 group-hover:scale-105 group-hover:from-[#10B981]/30 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                </div>
-                                <span class="text-left leading-tight">Нервная система</span>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-node relative z-10 opacity-60 transition-all duration-300 transform translate-y-4 w-full px-4 sm:w-[360px]" data-threshold="0.25">
-                            <div class="cyber-pill flex items-center gap-4 px-5 py-4 border border-[#FAFAFA]/20 bg-[#0A1016]/80 backdrop-blur-xl text-[#FAFAFA] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] font-bold text-lg sm:text-xl uppercase tracking-wider transition-all duration-300 hover:border-[#10B981]/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] group">
-                                <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#F97316]/10 flex items-center justify-center border border-[#FAFAFA]/10 group-hover:scale-105 group-hover:from-[#10B981]/30 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8" />
-                                        <path d="M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8" />
-                                        <path d="M17.5 16a3.5 3.5 0 0 0 0 -7h-.5" />
-                                        <path d="M19 9.3v-2.8a3.5 3.5 0 0 0 -7 0" />
-                                        <path d="M6.5 16a3.5 3.5 0 0 1 0 -7h.5" />
-                                        <path d="M5 9.3v-2.8a3.5 3.5 0 0 1 7 0v10" />
-                                    </svg>
-                                </div>
-                                <span class="text-left leading-tight">Мозг</span>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-node relative z-10 opacity-60 transition-all duration-300 transform translate-y-4 w-full px-4 sm:w-[360px]" data-threshold="0.4">
-                            <div class="cyber-pill flex items-center gap-4 px-5 py-4 border border-[#FAFAFA]/20 bg-[#0A1016]/80 backdrop-blur-xl text-[#FAFAFA] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] font-bold text-lg sm:text-xl uppercase tracking-wider transition-all duration-300 hover:border-[#10B981]/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] group">
-                                <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#F97316]/10 flex items-center justify-center border border-[#FAFAFA]/10 group-hover:scale-105 group-hover:from-[#10B981]/30 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                    </svg>
-                                </div>
-                                <span class="text-left leading-tight">Состояние</span>
-                            </div>
-                        </div>
-
-                        <div class="cyber-node relative z-10 opacity-60 transition-all duration-300 transform translate-y-4 w-full px-4 sm:w-[360px]" data-threshold="0.55">
-                            <div class="cyber-pill flex items-center gap-4 px-5 py-4 border border-[#FAFAFA]/20 bg-[#0A1016]/80 backdrop-blur-xl text-[#FAFAFA] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] font-bold text-lg sm:text-xl uppercase tracking-wider transition-all duration-300 hover:border-[#10B981]/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] group">
-                                <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#F97316]/10 flex items-center justify-center border border-[#FAFAFA]/10 group-hover:scale-105 group-hover:from-[#10B981]/30 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                    </svg>
-                                </div>
-                                <span class="text-left leading-tight">Мысли</span>
-                            </div>
-                        </div>
-
-                        <div class="cyber-node relative z-10 opacity-60 transition-all duration-300 transform translate-y-4 w-full px-4 sm:w-[360px]" data-threshold="0.7">
-                            <div class="cyber-pill flex items-center gap-4 px-5 py-4 border border-[#FAFAFA]/20 bg-[#0A1016]/80 backdrop-blur-xl text-[#FAFAFA] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] font-bold text-lg sm:text-xl uppercase tracking-wider transition-all duration-300 hover:border-[#10B981]/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] group">
-                                <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#F97316]/10 flex items-center justify-center border border-[#FAFAFA]/10 group-hover:scale-105 group-hover:from-[#10B981]/30 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h2.625c.625 0 1.18-.363 1.455-.928L8.25 9.5a1.5 1.5 0 012.784 0l1.17 2.572a1.5 1.5 0 001.455.928H21m-3 3h-2.625c-.625 0-1.18-.363-1.455-.928L12.75 12.5a1.5 1.5 0 00-2.784 0l-1.17 2.572a1.5 1.5 0 01-1.455.928H3" />
-                                    </svg>
-                                </div>
-                                <span class="text-left leading-tight">Поведение</span>
-                            </div>
-                        </div>
-
-                        <div class="cyber-node relative z-10 opacity-60 transition-all duration-300 transform translate-y-4 w-full px-4 sm:w-[360px]" data-step="6" data-threshold="0.85">
-                            <div class="cyber-pill flex items-center gap-4 px-5 py-4 border border-[#FAFAFA]/20 bg-[#0A1016]/80 backdrop-blur-xl text-[#FAFAFA] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] font-bold text-lg sm:text-xl uppercase tracking-wider transition-all duration-300 hover:border-[#10B981]/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] group">
-                                <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#10B981]/10 to-[#F97316]/10 flex items-center justify-center border border-[#FAFAFA]/10 group-hover:scale-105 group-hover:from-[#10B981]/30 transition-all duration-300">
-                                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                                    </svg>
-                                </div>
-                                <span class="text-left leading-tight text-[17px] sm:text-[19px]">Отношение к себе</span>
-                            </div>
-                        </div>
-
-                        <div class="w-full mt-8 md:mt-12 flex justify-center relative z-20 px-4">
-                            <a href="#" onclick="openPaymentModal(); return false;" class="cyber-btn-cta opacity-40 transform scale-95 inline-block px-12 py-5 text-xl md:text-2xl font-black rounded-full transition-all duration-500 ease-out uppercase tracking-widest text-center text-[#FAFAFA] bg-[#F97316] border border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_40px_rgba(249,115,22,0.8)] hover:-translate-y-1 relative group w-full max-w-sm sm:max-w-none sm:w-auto">
-                                <span class="relative z-10">Получить доступ - <span id="cyber-price-display">...</span> ₽</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     </div>
-
-    <!-- ==========================================
-         ОБЩЕЕ МОДАЛЬНОЕ ОКНО ОПЛАТЫ
-         ========================================== -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
-            
-            <div id="step-selection">
-                <div style="margin-bottom: 25px;">
-                    <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление доступа</h2>
-                    <p style="font-size: 13px; opacity: 0.7; color: var(--accent);" id="modal-course-name">Курс</p>
-                </div>
-
-                <input type="email" id="robokassaEmail" placeholder="Ваш Email для доступа" required 
-                       style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none; text-align: center;">
-
-                <button class="btn-main-trigger" onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    💳 Оплатить картой РФ
-                </button>
-
-                <button onclick="showCryptoStep()" style="display: none; width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
-                    ₮ Оплатить USDT (TON)
-                </button>
-                
-                <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
-            </div>
-
-            <div id="step-crypto" style="display: none;">
-                <div style="margin-bottom: 20px;">
-                    <h2 style="font-size: 20px; color: var(--accent); font-weight: 300; margin-bottom: 5px;">Оплата USDT</h2>
-                    <p style="font-size: 13px; opacity: 0.7;">Введите Email для получения доступа</p>
-                </div>
-
-                <form id="orderForm" onsubmit="sendToTelegram(event)">
-                    <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
-                           style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none;">
-                    
-                    <input type="hidden" name="memo_id" id="hiddenMemo">
-                    
-                    <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 15px;">
-                        <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
-                        <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
-                            Переведите <b id="crypto-price">... USDT</b><br>
-                            Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 4px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
-                            Memo: <b id="memoDisplay" style="color:var(--accent)">...</b>
-                        </p>
-                        
-                        <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
-                            <code id="walletAddr" style="font-size: 9px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
-                            <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px;">📋</button>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил</button>
-                    
-                    <button type="button" onclick="showSelectionStep()" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">← Назад к выбору</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-        window.currentCourseData = { id: '', title: '', priceRub: 0, priceUsdt: 0 };
-
-        // МЕНЮ И ШАПКА
-        function toggleMenu(s) { document.getElementById('full-menu').style.display = s ? 'flex' : 'none'; document.body.style.overflow = s ? 'hidden' : 'auto'; }
-        const header = document.getElementById('main-header');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY <= 0) header.classList.remove('header--hidden');
-            else header.classList.add('header--hidden');
-        });
-
-        // МОДАЛЬНОЕ ОКНО
-        function openPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
-        function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; document.body.style.overflow = 'auto'; showSelectionStep(); }
-        function showCryptoStep() { document.getElementById('step-selection').style.display = 'none'; document.getElementById('step-crypto').style.display = 'block'; }
-        function showSelectionStep() { document.getElementById('step-crypto').style.display = 'none'; document.getElementById('step-selection').style.display = 'block'; }
-        function copyWallet() { navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); alert('Адрес скопирован!'); }
+</main>
+    
+<div id="paymentModal" class="modal">
+    <div class="modal-content" style="max-width: 450px; background: rgba(13, 25, 39, 0.95); padding: 40px; border-radius: 30px; border: 1px solid var(--accent); position: relative; text-align: center;">
         
-        const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('memoDisplay').innerText = generatedMemo;
-        document.getElementById('hiddenMemo').value = generatedMemo;
+        <div id="step-selection">
+            <div style="margin-bottom: 25px;">
+                <h2 style="font-size: 24px; color: var(--accent); font-weight: 300; margin-bottom: 10px;">Оформление доступа</h2>
+                <p style="font-size: 13px; opacity: 0.7; color: var(--accent);" id="modal-course-name">Курс</p>
+            </div>
 
-        // ПОДГРУЗКА ИЗ GOOGLE SHEETS
-        document.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseId = urlParams.get('id');
+            <input type="email" id="robokassaEmail" placeholder="Ваш Email для доступа" required 
+                   style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--accent); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 20px; outline: none; text-align: center;">
 
-            if (!courseId) {
-                showError('Курс не найден', 'Перейдите на страницу через каталог.');
-                return;
-            }
+            <button onclick="payWithRobokassa()" style="width: 100%; background: #ff4500; color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                💳 Оплатить картой РФ
+            </button>
 
-            try {
-                const response = await fetch('/api/sheets', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' })
-                });
-                const result = await response.json();
+            <button onclick="showCryptoStep()" style="display: none; width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
+                ₮ Оплатить USDT (TON)
+            </button>
+            
+            <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 12px;">Отмена</button>
+        </div>
 
-                if (result.success && result.data) {
-                    const row = result.data.find(r => r[0] && r[0].toLowerCase() === courseId.toLowerCase());
+        <div id="step-crypto" style="display: none;">
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; color: var(--accent); font-weight: 300; margin-bottom: 5px;">Оплата USDT</h2>
+                <p style="font-size: 13px; opacity: 0.7;">Введите Email для получения доступа</p>
+            </div>
 
-                    if (row) {
-                        const title = row[1] || 'Без названия';
-                        const imageSrc = row[4] || '';
-                        const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
-                        let price = parseInt(row[6]) || 0; 
-                        const priceUsdt = parseInt(row[7]) || 0; 
-                        
-                        const promoPrice = parseInt(row[8]) || 0; 
-                        const promoEndTimeStr = row[9] || '';     
-                        let isPromoActive = false;
+            <form id="orderForm" onsubmit="sendToTelegram(event)">
+                <input type="email" name="email" id="customerEmail" placeholder="Ваш Email" required 
+                       style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none;">
+                
+                <input type="hidden" name="memo_id" id="hiddenMemo">
+                
+                <div style="background: rgba(168, 218, 220, 0.1); border: 1px dashed var(--accent); padding: 20px; border-radius: 15px; text-align: left; margin-bottom: 15px;">
+                    <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;">⚠️ Инструкция</span>
+                    <p style="font-size: 13px; line-height: 1.5; color: var(--text-main);">
+                        Переведите <b id="crypto-price">... USDT</b><br>
+                        Сеть: <span style="background: var(--accent); color: var(--deep); padding: 2px 4px; border-radius: 4px; font-weight: 800;">TON (USDT)</span><br>
+                        Memo: <b id="memoDisplay" style="color:var(--accent)">...</b>
+                    </p>
+                    
+                    <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
+                        <code id="walletAddr" style="font-size: 9px; word-break: break-all; color: var(--accent);">UQCKTal44GEE8V96y6LzhpX5JAk4KXhjBQH68aKhufMf8s3J</code>
+                        <button type="button" onclick="copyWallet()" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px;">📋</button>
+                    </div>
+                </div>
 
-                        if (promoPrice > 0 && promoEndTimeStr) {
-                            if (new Date().getTime() < new Date(promoEndTimeStr).getTime()) isPromoActive = true;
+                <button type="submit" id="submitBtn" style="width: 100%; background: var(--accent); color: var(--deep); border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">Я оплатил</button>
+                
+                <button type="button" onclick="showSelectionStep()" style="background: transparent; border: none; color: var(--accent); margin-top: 15px; cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">← Назад к выбору</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // === 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ КУРСА ===
+    window.currentCourseData = {
+        id: '',
+        title: '',
+        priceRub: 0,
+        priceUsdt: 0
+    };
+
+    // === 2. ДИНАМИЧЕСКАЯ ПОДГРУЗКА ИЗ GOOGLE SHEETS ===
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+
+        if (!courseId) {
+            showError('Курс не найден', 'Пожалуйста, перейдите на эту страницу через каталог на главной.');
+            return;
+        }
+
+        try {
+            // ИЗМЕНЕНИЕ 1: Теперь запрашиваем диапазон A:H (добавили колонку H)
+            // ЗАПРАШИВАЕМ ДИАПАЗОН A:J (Включая акционную цену и дату)
+            const response = await fetch('/api/sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'read', sheetName: 'Products', range: 'A:J' })
+            });
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                const row = result.data.find(r => r[0] && r[0].toLowerCase() === courseId.toLowerCase());
+
+                if (row) {
+                    const title = row[1] || 'Без названия';
+                    const imageSrc = row[4] || '';
+                    const fullDescHTML = row[5] || '<p>Описание заполняется...</p>';
+                    let price = parseInt(row[6]) || 0; 
+                    const priceUsdt = parseInt(row[7]) || 0; 
+                    
+                    // === ЛОГИКА ВРЕМЕННОЙ АКЦИИ ===
+                    const promoPrice = parseInt(row[8]) || 0; // Колонка I
+                    const promoEndTimeStr = row[9] || '';     // Колонка J
+                    let isPromoActive = false;
+
+                    // Проверяем, не истекло ли время
+                    if (promoPrice > 0 && promoEndTimeStr) {
+                        const endTime = new Date(promoEndTimeStr).getTime();
+                        const now = new Date().getTime();
+                        if (now < endTime) {
+                            isPromoActive = true;
                         }
-
-                        window.currentCourseData.id = courseId;
-                        window.currentCourseData.title = title;
-                        window.currentCourseData.priceRub = isPromoActive ? promoPrice : price;
-                        window.currentCourseData.priceUsdt = priceUsdt; 
-
-                        document.title = `ИNOE ДЫХАНИЕ — ${title}`;
-                        document.getElementById('modal-course-name').innerText = title;
-                        
-                        const cryptoPrice = document.getElementById('crypto-price');
-                        if (cryptoPrice) cryptoPrice.innerText = `${priceUsdt} USDT`;
-
-                        // === ПЕРЕКЛЮЧЕНИЕ ШАБЛОНОВ ===
-                        if (courseId.toLowerCase() === 'anti-stress' || courseId.toLowerCase() === 'анти-стресс') {
-                            
-                            // ПОКАЗЫВАЕМ АНТИ-СТРЕСС ЛЕНДИНГ
-                            document.getElementById('standard-layout').style.display = 'none';
-                            document.getElementById('custom-antistress-layout').style.display = 'block';
-
-                            // Цены
-                            const midPrice = document.getElementById('mid-price-display');
-                            const cyberPrice = document.getElementById('cyber-price-display');
-                            if (midPrice) midPrice.innerText = window.currentCourseData.priceRub;
-                            if (cyberPrice) cyberPrice.innerText = window.currentCourseData.priceRub;
-
-                            // Картинка
-                            if (imageSrc) document.getElementById('anti-stress-image').src = imageSrc;
-
-                            document.getElementById('buy-section-antistress').style.display = 'block';
-                            document.getElementById('cyber-scroll-container').style.display = 'block';
-                            
-                            initCyberScroll();
-                            initFaq();
-
-                        } else {
-
-                            // ПОКАЗЫВАЕМ СТАНДАРТНУЮ КАРТОЧКУ
-                            document.getElementById('custom-antistress-layout').style.display = 'none';
-                            document.getElementById('standard-layout').style.display = 'flex';
-
-                            const descContainer = document.getElementById('course-description');
-                            descContainer.innerHTML = fullDescHTML;
-                            descContainer.style.opacity = '1';
-
-                            if (imageSrc) {
-                                document.getElementById('img-loader').style.display = 'none';
-                                const img = document.getElementById('course-image');
-                                img.src = imageSrc;
-                                img.style.display = 'block';
-                            }
-
-                            const priceBtn = document.getElementById('course-price-btn');
-                            const nameContainer = document.getElementById('course-name');
-                            
-                            if (isPromoActive) {
-                                nameContainer.innerHTML = `<div id="course-promo-badge">🔥 Ограниченная акция</div><br>${title}`;
-                                if (priceBtn) priceBtn.innerHTML = `— <span style="text-decoration: line-through; opacity: 0.5; font-size: 12px; margin-right: 5px;">${price} ₽</span> <span style="color: rgba(255, 80, 20, 0.95); font-weight: 700;">${promoPrice} ₽</span>`;
-                            } else {
-                                nameContainer.innerText = title;
-                                if (price > 0 && priceBtn) priceBtn.innerText = `— ${price} ₽`;
-                            }
-                            
-                            document.getElementById('buy-section').style.display = 'block';
-                        }
-
-                    } else {
-                        showError('Курс не найден', `Продукт с ID "${courseId}" отсутствует в таблице.`);
                     }
-                } else {
-                    showError('Ошибка базы данных', result.error || 'Сервер недоступен.');
-                }
-            } catch (error) {
-                console.error(error);
-                showError('Системная ошибка кода', error.message);
-            }
-        });
 
-        function showError(title, desc) {
-            document.getElementById('custom-antistress-layout').style.display = 'none';
-            document.getElementById('standard-layout').style.display = 'flex';
-            document.getElementById('course-name').innerText = title;
-            const descElem = document.getElementById('course-description');
+                    // Если акция активна, перезаписываем цену для Робокассы
+                    window.currentCourseData.id = courseId;
+                    window.currentCourseData.title = title;
+                    window.currentCourseData.priceRub = isPromoActive ? promoPrice : price;
+                    window.currentCourseData.priceUsdt = priceUsdt; 
+
+                    // Вставляем данные в HTML
+                    document.title = `ИNOE ДЫХАНИЕ — ${title}`;
+                    document.getElementById('page-title').innerText = `ИNOE ДЫХАНИЕ — ${title}`;
+                    
+                    const modalName = document.getElementById('modal-course-name');
+                    if (modalName) modalName.innerText = title;
+                    
+                    const descContainer = document.getElementById('course-description');
+                    descContainer.innerHTML = fullDescHTML;
+                    descContainer.style.opacity = '1';
+
+                    if (imageSrc) {
+                        const loader = document.getElementById('img-loader');
+                        if (loader) loader.style.display = 'none';
+                        const img = document.getElementById('course-image');
+                        img.src = imageSrc;
+                        img.alt = title;
+                        img.style.display = 'block';
+                    }
+
+                   // === ОТРИСОВКА ЦЕНЫ С УЧЕТОМ СКИДКИ ===
+                    const priceBtn = document.getElementById('course-price-btn');
+                    const nameContainer = document.getElementById('course-name');
+                    
+                    if (isPromoActive) {
+                        // Показываем плашку скидки и перечеркнутую старую цену
+                        nameContainer.innerHTML = `
+                            <div id="course-promo-badge">
+                                🔥 Ограниченная акция
+                            </div>
+                            <br>${title}
+                        `;
+                        if (priceBtn) priceBtn.innerHTML = `— <span style="text-decoration: line-through; opacity: 0.5; font-size: 12px; margin-right: 5px;">${price} ₽</span> <span style="color: rgba(255, 80, 20, 0.95); font-weight: 700; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-shadow: 0 0 2px rgba(255, 69, 0, 0.25);">${promoPrice} ₽</span>`;
+                    } else { // <--- ВОТ ЗДЕСЬ НЕ ХВАТАЛО ELSE
+                        // Обычное отображение
+                        nameContainer.innerText = title;
+                        if (price > 0) {
+                            if (priceBtn) priceBtn.innerText = `— ${price} ₽`;
+                        } else {
+                            if (priceBtn) priceBtn.innerText = ``; 
+                        }
+                    }
+
+                    const cryptoPrice = document.getElementById('crypto-price');
+                    if (priceUsdt > 0) {
+                        if (cryptoPrice) cryptoPrice.innerText = `${priceUsdt} USDT`;
+                    } else {
+                        if (cryptoPrice) cryptoPrice.innerText = `0 USDT`;
+                    }
+                    
+                    const buySection = document.getElementById('buy-section');
+                    if (buySection) buySection.style.display = 'block';
+
+                } else {
+                    showError('Курс не найден', `Продукт с ID "${courseId}" отсутствует в Google Таблице (Колонка А).`);
+                }
+            } else {
+                showError('Ошибка базы данных', result.error || 'Сервер вернул пустой ответ или доступ к таблице заблокирован.');
+            }
+        } catch (error) {
+            console.error(error);
+            showError('Системная ошибка кода', `Не удалось обработать скрипт. Причина: ${error.message}`);
+        }
+    });
+
+    function showError(title, desc) {
+        const nameElem = document.getElementById('course-name');
+        const descElem = document.getElementById('course-description');
+        const loaderElem = document.getElementById('img-loader');
+        
+        if (nameElem) nameElem.innerText = title;
+        if (descElem) {
             descElem.innerText = desc;
             descElem.style.opacity = '1';
-            document.getElementById('img-loader').style.display = 'none';
+        }
+        if (loaderElem) loaderElem.style.display = 'none';
+    }
+
+    // === 3. НАСТРОЙКА ОПЛАТЫ И МОДАЛЬНОГО ОКНА ===
+    const generatedMemo = 'ID-' + Math.floor(100000 + Math.random() * 900000);
+    const memoDisplay = document.getElementById('memoDisplay');
+    const hiddenMemo = document.getElementById('hiddenMemo');
+    if (memoDisplay) memoDisplay.innerText = generatedMemo;
+    if (hiddenMemo) hiddenMemo.value = generatedMemo;
+
+    function showCryptoStep() { document.getElementById('step-selection').style.display = 'none'; document.getElementById('step-crypto').style.display = 'block'; }
+    function showSelectionStep() { document.getElementById('step-crypto').style.display = 'none'; document.getElementById('step-selection').style.display = 'block'; }
+    function openPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+    function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; document.body.style.overflow = 'auto'; showSelectionStep(); }
+    function copyWallet() { navigator.clipboard.writeText(document.getElementById('walletAddr').innerText); alert('Адрес скопирован!'); }
+
+    async function payWithRobokassa() {
+        const price = window.currentCourseData.priceRub; 
+        const pageTitle = window.currentCourseData.title;
+        
+        if (!price || price === 0) {
+            alert('Внимание: В таблице не указана цена для этого курса. Оплата невозможна.');
+            return;
         }
 
-        // ЛОГИКА ОПЛАТЫ
-        async function payWithRobokassa() {
-            const price = window.currentCourseData.priceRub; 
-            const pageTitle = window.currentCourseData.title;
-            const emailInput = document.getElementById('robokassaEmail').value;
+        // Блокируем кнопку, чтобы не кликали дважды
+        const btn = document.querySelector('.btn-main-trigger');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ ПОДКЛЮЧЕНИЕ К КАССЕ...';
+        btn.style.pointerEvents = 'none';
 
-            if (!emailInput) { alert('Введите ваш Email'); return; }
-            if (!price || price === 0) { alert('В таблице не указана цена.'); return; }
-
-            const btn = document.querySelector('.btn-main-trigger');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ ПОДКЛЮЧЕНИЕ...';
-            btn.style.pointerEvents = 'none';
-
-            try {
-                const response = await fetch('/api/pay', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ courseName: pageTitle, price: price, email: emailInput })
-                });
-                const data = await response.json();
-                if (data.success && data.paymentUrl) window.location.href = data.paymentUrl;
-                else throw new Error(data.error);
-            } catch (error) {
-                alert('Сбой кассы. Попробуйте еще раз.');
-                btn.innerHTML = originalText;
-                btn.style.pointerEvents = 'auto';
-            }
-        }
-
-        async function sendToTelegram(event) {
-            event.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const email = document.getElementById('customerEmail').value;
-            const memo = document.getElementById('hiddenMemo').value;
-            const pageTitle = window.currentCourseData.title;
-            const usdtPrice = window.currentCourseData.priceUsdt;
-
-            btn.innerText = 'ОТПРАВКА...';
-            btn.disabled = true;
-
-            const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: ${usdtPrice} USDT`;
-
-            try {
-                const response = await fetch('/api/notify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text })
-                });
-
-                if (response.ok) {
-                    btn.innerText = 'ОТПРАВЛЕНО!';
-                    btn.style.background = '#4CAF50';
-                    setTimeout(() => {
-                        closePaymentModal();
-                        alert('Успешно отправлено!');
-                        btn.innerText = 'Я ОПЛАТИЛ';
-                        btn.style.background = 'var(--accent)';
-                        btn.disabled = false;
-                        showSelectionStep();
-                    }, 2000);
-                } else throw new Error('Ошибка сети');
-            } catch (error) {
-                alert('Ошибка. Попробуйте еще раз.');
-                btn.innerText = 'Я ОПЛАТИЛ';
-                btn.disabled = false;
-            }
-        }
-
-        // АНИМАЦИИ АНТИ-СТРЕССА
-        function initFaq() {
-            const faqItems = document.querySelectorAll('.faq-item');
-            faqItems.forEach(item => {
-                const button = item.querySelector('.faq-button');
-                const content = item.querySelector('.faq-content');
-                const icon = item.querySelector('.faq-icon');
-                
-                // Чтобы не добавлять события дважды
-                if(button.dataset.listener) return;
-                button.dataset.listener = true;
-
-                button.addEventListener('click', () => {
-                    const isOpen = item.classList.contains('is-open');
-                    if (isOpen) {
-                        item.classList.remove('is-open');
-                        content.style.maxHeight = '0px';
-                        content.style.opacity = '0';
-                        icon.style.transform = 'rotate(0deg)';
-                    } else {
-                        item.classList.add('is-open');
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                        content.style.opacity = '1';
-                        icon.style.transform = 'rotate(180deg)';
-                    }
-                });
+        try {
+            // Обращаемся к нашему бэкенду за ссылкой
+            const response = await fetch('/api/pay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseName: pageTitle, price: price })
             });
-        }
 
-        function initCyberScroll() {
-            const scrollContainer = document.getElementById('cyber-scroll-container');
-            const moduleContainer = document.querySelector('.cyber-module');
-            const nodes = document.querySelectorAll('.cyber-node');
-            const finalCta = document.querySelector('.cyber-btn-cta');
+            const data = await response.json();
 
-            if (scrollContainer && moduleContainer) {
-                const updateScrub = () => {
-                    const rect = scrollContainer.getBoundingClientRect();
-                    const scrollableDistance = rect.height - window.innerHeight;
-                    let progress = 0;
-                    if (scrollableDistance > 0) {
-                        const scrolled = -rect.top;
-                        progress = scrolled / scrollableDistance;
-                    }
-                    progress = Math.max(0, Math.min(1, progress));
-                    moduleContainer.style.setProperty('--scroll-progress', progress);
-
-                    nodes.forEach((node) => {
-                        const threshold = parseFloat(node.getAttribute('data-threshold'));
-                        if (progress >= threshold) {
-                            node.classList.add('is-active');
-                            node.classList.remove('opacity-60', 'translate-y-4');
-                        } else {
-                            node.classList.remove('is-active');
-                            node.classList.add('opacity-60', 'translate-y-4');
-                        }
-                    });
-
-                    if (progress >= 0.9) {
-                        if (finalCta) {
-                            finalCta.classList.add('is-active');
-                            finalCta.classList.remove('opacity-40', 'scale-95');
-                        }
-                    } else {
-                        if (finalCta) {
-                            finalCta.classList.remove('is-active');
-                            finalCta.classList.add('opacity-40', 'scale-95');
-                        }
-                    }
-
-                    if (progress >= 0.99) {
-                        nodes.forEach(node => node.classList.add('is-fully-active'));
-                        if (finalCta) finalCta.classList.add('is-fully-active');
-                    } else {
-                        nodes.forEach(node => node.classList.remove('is-fully-active'));
-                        if (finalCta) finalCta.classList.remove('is-fully-active');
-                    }
-                };
-
-                window.addEventListener('scroll', updateScrub);
-                window.addEventListener('resize', updateScrub);
-                updateScrub();
+            if (data.success && data.paymentUrl) {
+                // Если сервер дал ссылку — переходим в кассу
+                window.location.href = data.paymentUrl;
+            } else {
+                throw new Error(data.error || "Ошибка создания платежа");
             }
+        } catch (error) {
+            console.error("Ошибка:", error);
+            alert('Сбой при подключении к кассе. Попробуйте еще раз.');
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'auto';
         }
-    </script>
-    <script src="/victory-chat.js"></script>
+    }
+
+    async function sendToTelegram(event) {
+        event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const email = document.getElementById('customerEmail').value;
+        const memo = document.getElementById('hiddenMemo').value;
+        const pageTitle = window.currentCourseData.title;
+        const usdtPrice = window.currentCourseData.priceUsdt;
+
+        btn.innerText = 'ОТПРАВКА...';
+        btn.disabled = true;
+
+        const text = `🚀 *Новая оплата USDT!*\n\nПродукт: ${pageTitle}\nEmail: ${email}\nMemo: ${memo}\nСумма: ${usdtPrice} USDT (TON)`;
+
+        try {
+            const response = await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            });
+
+            if (response.ok) {
+                btn.innerText = 'ОТПРАВЛЕНО!';
+                btn.style.background = '#4CAF50';
+                setTimeout(() => {
+                    closePaymentModal();
+                    alert('Данные успешно отправлены. Мы свяжемся с вами!');
+                    btn.innerText = 'Я ОПЛАТИЛ';
+                    btn.style.background = 'var(--accent)';
+                    btn.disabled = false;
+                    showSelectionStep();
+                }, 2000);
+            } else { throw new Error('Ошибка сети'); }
+        } catch (error) {
+            alert('Ошибка при отправке. Попробуйте еще раз.');
+            btn.innerText = 'Я ОПЛАТИЛ';
+            btn.disabled = false;
+        }
+    }
+
+    // === 4. ЧАТ И МЕНЮ ===
+    function toggleMenu(s) { document.getElementById('full-menu').style.display = s ? 'flex' : 'none'; document.body.style.overflow = s ? 'hidden' : 'auto'; }
+    
+</script>
+<script src="/victory-chat.js"></script>
 </body>
 </html>
+
