@@ -223,6 +223,19 @@
     <script>
         window.pendingCommands = {};
         window.lastUpdate = null; 
+// ГЛОБАЛЬНЫЙ ПЕРЕХВАТЧИК: Автоматически прикрепляем токен ко всем запросам к API
+        const originalFetch = window.fetch;
+        window.fetch = async function(resource, config) {
+            // Если запрос идет к нашему API (кроме самого логина)
+            if (typeof resource === 'string' && resource.startsWith('/api/') && resource !== '/api/login') {
+                config = config || {};
+                config.headers = {
+                    ...config.headers,
+                    'Authorization': 'Bearer ' + localStorage.getItem('ordo_admin_token') // Прикрепляем пропуск
+                };
+            }
+            return originalFetch(resource, config);
+        };
 
         function saveAdminState() {
             const chatBox = document.getElementById('chat-messages');
