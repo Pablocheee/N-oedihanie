@@ -59,6 +59,24 @@ export default async function handler(req, res) {
     try {
         const { action, sheetName, range, values } = req.body;
         
+        // === НАЧАЛО БЛОКА БЕЗОПАСНОСТИ ===
+        // Если это попытка ИЗМЕНИТЬ базу (не чтение), требуем секретный пропуск
+        if (action !== 'read') {
+            const authHeader = req.headers.authorization;
+            if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                return res.status(401).json({ success: false, error: 'Доступ запрещен. Отсутствует токен безопасности.' });
+            }
+
+            const clientToken = authHeader.split(' ')[1];
+            // Генерируем токен из пароля Vercel так же, как делали это при логине
+            const expectedToken = crypto.createHmac('sha256', process.env.ADMIN_PASSWORD || 'fallback').update('admin_session_token').digest('hex');
+
+            if (clientToken !== expectedToken) {
+                return res.status(403).json({ success: false, error: 'Попытка взлома. Неверный токен.' });
+            }
+        }
+        // === КОНЕЦ БЛОКА БЕЗОПАСНОСТИ ===
+
         if (!CONFIG.client_email || !CONFIG.private_key || !CONFIG.spreadsheet_id) {
             throw new Error('Ключи Google не найдены. Проверьте переменную GOOGLE_CREDENTIALS.');
         }
