@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<script>
+    // УМНЫЙ РОУТЕР: Если мы пытаемся открыть "Анти-стресс", мгновенно перекидываем на новый лендинг
+    const currentParams = new URLSearchParams(window.location.search);
+    const checkId = currentParams.get('id');
+    
+    if (checkId && (checkId.toLowerCase() === 'anti-stress' || checkId.toLowerCase() === 'анти-стресс')) {
+        window.location.replace('/antistress.html');
+    }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">ИNOE ДЫХАНИЕ — Загрузка...</title>
