@@ -977,7 +977,7 @@
                 const result = await response.json();
 
                 if (result.success && result.data) {
-                    const row = result.data.find(r => r[0] && (r[0].toLowerCase() === 'anti-stress' || r[0].toLowerCase() === 'анти-стресс'));
+                    const row = result.data.find(r => r[0] && (r[0].toLowerCase() === 'anti-stress' || r[0].toLowerCase() === 'анти-стресс' || r[0].toLowerCase() === 'antistress'));
 
                     if (row) {
                         const title = row[1] || 'Анти-стресс';
