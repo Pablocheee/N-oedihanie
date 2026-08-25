@@ -2,12 +2,16 @@
 <html lang="ru">
 <head>
 <script>
-    // УМНЫЙ РОУТЕР: Если мы пытаемся открыть "Анти-стресс", мгновенно перекидываем на новый лендинг
+    // УМНЫЙ РОУТЕР: ловит любые варианты ID анти-стресса
     const currentParams = new URLSearchParams(window.location.search);
     const checkId = currentParams.get('id');
     
-    if (checkId && (checkId.toLowerCase() === 'anti-stress' || checkId.toLowerCase() === 'анти-стресс')) {
-        window.location.replace('/antistress.html');
+    if (checkId) {
+        const idLower = checkId.toLowerCase();
+        if (idLower === 'anti-stress' || idLower === 'анти-стресс' || idLower === 'antistress') {
+            // Перекидываем на новую страницу
+            window.location.replace('/antistress.html'); 
+        }
     }
 </script>
     <meta charset="UTF-8">
