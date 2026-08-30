@@ -530,7 +530,7 @@
             </div>
             
             <div id="buy-section-1" class="text-center pt-12" style="display: none;">
-                <a href="#" onclick="openPaymentModal(); return false;" class="inline-block px-12 py-5 text-xl md:text-2xl font-black rounded-full transition-all duration-300 uppercase tracking-widest text-center text-[#FAFAFA] bg-[#F97316] border border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_40px_rgba(249,115,22,0.8)] hover:-translate-y-1 relative group w-full max-w-sm sm:max-w-none sm:w-auto">
+                <a href="#" onclick="payWithRobokassa(this); return false;" class="inline-block px-12 py-5 text-xl md:text-2xl font-black rounded-full transition-all duration-300 uppercase tracking-widest text-center text-[#FAFAFA] bg-[#F97316] border border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_40px_rgba(249,115,22,0.8)] hover:-translate-y-1 relative group w-full max-w-sm sm:max-w-none sm:w-auto">
                     <span class="relative z-10">Получить доступ - <span id="mid-price-display">...</span> ₽</span>
                     <div class="absolute inset-0 rounded-full border-2 border-[#F97316] opacity-0 group-hover:animate-[cyber-radiate_1.5s_infinite_ease-out] -z-10"></div>
                 </a>
@@ -754,7 +754,7 @@
                         </div>
 
                         <div class="w-full mt-8 md:mt-12 flex justify-center relative z-20 px-4">
-                            <a href="#" onclick="openPaymentModal(); return false;" class="cyber-btn-cta opacity-40 transform scale-95 inline-block px-12 py-5 text-xl md:text-2xl font-black rounded-full transition-all duration-500 ease-out uppercase tracking-widest text-center text-[#FAFAFA] bg-[#F97316] border border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_40px_rgba(249,115,22,0.8)] hover:-translate-y-1 relative group w-full max-w-sm sm:max-w-none sm:w-auto">
+                            <a href="#" onclick="payWithRobokassa(this); return false;" class="cyber-btn-cta opacity-40 transform scale-95 inline-block px-12 py-5 text-xl md:text-2xl font-black rounded-full transition-all duration-500 ease-out uppercase tracking-widest text-center text-[#FAFAFA] bg-[#F97316] border border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_40px_rgba(249,115,22,0.8)] hover:-translate-y-1 relative group w-full max-w-sm sm:max-w-none sm:w-auto">
                                 <span class="relative z-10">Получить доступ - <span id="cyber-price-display">...</span> ₽</span>
                                 <div class="absolute inset-0 rounded-full border-2 border-[#F97316] opacity-0 group-hover:animate-[cyber-radiate_1.5s_infinite_ease-out] -z-10"></div>
                             </a>
@@ -1025,35 +1025,51 @@
             }
         });
 
-        async function payWithRobokassa() {
-            const price = window.currentCourseData.priceRub; 
-            const pageTitle = window.currentCourseData.title;
-            const emailInput = document.getElementById('robokassaEmail').value;
+        async function payWithRobokassa(btnElement) {
+    const price = window.currentCourseData.priceRub; 
+    const pageTitle = window.currentCourseData.title;
 
-            if (!emailInput) { alert('Пожалуйста, введите ваш Email'); return; }
-            if (!price || price === 0) { alert('Внимание: В таблице не указана цена для этого курса.'); return; }
+    if (!price || price === 0) { 
+        alert('Внимание: В таблице не указана цена для этого курса. Оплата невозможна.'); 
+        return; 
+    }
 
-            const btn = document.querySelector('.btn-main-trigger');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ ПОДКЛЮЧЕНИЕ К КАССЕ...';
-            btn.style.pointerEvents = 'none';
+    // Аккуратно находим текст внутри кнопки, чтобы не сломать анимацию
+    let textSpan = null;
+    let originalText = '';
 
-            try {
-                const response = await fetch('/api/pay', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ courseName: pageTitle, price: price, email: emailInput })
-                });
-                const data = await response.json();
-                if (data.success && data.paymentUrl) window.location.href = data.paymentUrl;
-                else throw new Error(data.error || "Ошибка создания платежа");
-            } catch (error) {
-                console.error("Ошибка:", error);
-                alert('Сбой при подключении к кассе. Попробуйте еще раз.');
-                btn.innerHTML = originalText;
-                btn.style.pointerEvents = 'auto';
-            }
+    if (btnElement) {
+        textSpan = btnElement.querySelector('span.relative.z-10') || btnElement;
+        originalText = textSpan.innerHTML;
+        textSpan.innerHTML = '⏳ ПОДКЛЮЧЕНИЕ...';
+        btnElement.style.pointerEvents = 'none';
+    }
+
+    try {
+        // Отправляем запрос на сервер БЕЗ поля email
+        const response = await fetch('/api/pay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseName: pageTitle, price: price })
+        });
+        const data = await response.json();
+        
+        if (data.success && data.paymentUrl) {
+            // Мгновенный переход на кассу
+            window.location.href = data.paymentUrl;
+        } else {
+            throw new Error(data.error || "Ошибка создания платежа");
         }
+    } catch (error) {
+        console.error("Ошибка:", error);
+        alert('Сбой при подключении к кассе. Попробуйте еще раз.');
+        // Возвращаем кнопку в исходное состояние при ошибке
+        if (textSpan) {
+            textSpan.innerHTML = originalText;
+            btnElement.style.pointerEvents = 'auto';
+        }
+    }
+}
 
         function initCyberScroll() {
             const scrollContainer = document.getElementById('cyber-scroll-container');
