@@ -666,7 +666,7 @@
             logItem.innerHTML = `<div class="log-header"><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span><span class="log-status ${colorClass}">${statusText}</span></div><div>${descText}</div>`;
         }
 
-        document.getElementById('admin-pass').addEventListener('keypress', function(e) { if (e.key === 'Enter') checkLogin(); });
+        document.getElementById('admin-chat-input').addEventListener('keypress', function(e) {      if (e.key === 'Enter') sendAdminCommand();  });
 
         // === ЛОГИКА ВСТРОЕННОЙ ЗАГРУЗКИ (С УМНЫМ СЖАТИЕМ ФОТО) ===
         window.handleInlineUpload = async function(input, logId) {
