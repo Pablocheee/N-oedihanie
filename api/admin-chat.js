@@ -12,9 +12,9 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false, error: 'Пустое сообщение' });
         }
 
-        const apiKey = process.env.GROQ_API_KEY;
+        const apiKey = process.env.OPENROUTER_API_KEY;
         if (!apiKey) {
-            throw new Error('Не настроен ключ GROQ_API_KEY в переменных окружения');
+            throw new Error('Не настроен ключ OPENROUTER_API_KEY в переменных окружения Vercel');
         }
 
         // === ОБНОВЛЕННЫЙ СИСТЕМНЫЙ ПРОМПТ ДЛЯ ИИ ===
@@ -62,15 +62,18 @@ export default async function handler(req, res) {
         
 ТВОЙ ОТВЕТ ДОЛЖЕН БЫТЬ ТОЛЬКО В ФОРМАТЕ JSON. Никакого маркдауна, никаких пояснений до или после. Никаких символов \`\`\`json.`;
 
-        // Запрос к Groq API
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        // Запрос к OpenRouter API
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
+                'HTTP-Referer': 'https://inoedyhanie.vercel.app/', 
+                'X-Title': 'ORDO AXIO ADMIN',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile', 
+                model: 'openai/gpt-4o-mini', 
+                response_format: { type: "json_object" },
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: message }
@@ -82,7 +85,7 @@ export default async function handler(req, res) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(`Ошибка Groq API: ${data.error?.message || 'Неизвестная ошибка'}`);
+            throw new Error(`Ошибка OpenRouter API: ${data.error?.message || 'Неизвестная ошибка'}`);
         }
 
         const aiText = data.choices[0].message.content.trim();
